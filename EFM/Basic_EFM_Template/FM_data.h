@@ -1,4 +1,21 @@
-﻿#pragma once
+﻿/*    Grinnelli Designs F-22A Raptor
+    Copyright (C) 2025, Branden Hooper
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see https://www.gnu.org/licenses.
+    */
+
+#pragma once
 #include "stdafx.h"
 
 namespace FM_DATA
@@ -27,7 +44,6 @@ namespace FM_DATA
     double cy_flap = 0.272;
 
     // Zero-lift drag coefficient (parasitic drag) as a function of Mach.
-    //double cx0[] = { 0.0245, 0.020, 0.030, 0.0475, 0.0688, 0.0445, 0.038, 0.036, 0.035 }; //testing
     double cx0[] = { 0.013, 0.0135, 0.014, 0.021, 0.0378, 0.0505, 0.0455, 0.04175, 0.038, 0.037, 0.0368, 0.0362, 0.039 };
 
     // Lift curve slope vs. Mach. Defines how much lift increases per degree of AoA.
@@ -38,7 +54,6 @@ namespace FM_DATA
     double OmxMax[] = { 1.65, 2.45, 3.25, 4.7, 3.98, 3.2, 2.5, 2.25, 2.0, 1.85, 1.7, 1.5, 1.3 };
 
     // Critical angle of attack (degrees) vs. Mach. Beyond this AoA, the wing stalls (lift drops).
-    //double Aldop[] = { 35, 35, 33, 30, 30, 30, 30, 30, 30 }; //current working
     double Aldop[] = { 60, 57.5, 55, 50, 45, 40, 35, 32.5, 30, 30, 30, 30, 30 };
 
     // Maximum lift coefficient vs. Mach. Represents peak lift capability before stall
@@ -52,7 +67,6 @@ namespace FM_DATA
 
     double beta_table[] = { 0.0, 5.0, 10.0, 20.0, 30.0 }; // Sideslip angle (deg)
     double Cy_beta[] = { 0.0, 0.05, 0.1, 0.2, 0.3 }; // Side-force coefficient
-    //double Cy_beta[] = { 0.0, 0.06, 0.13, 0.26, 0.39 };
 
     double idle_rpm = 50.0;
     double fuel_consumption = 1.00798;
