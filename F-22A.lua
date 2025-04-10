@@ -14,8 +14,15 @@
     
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses.
---]]
+	
+	CONTRIBUTORS:
 
+	Copyright (c) 2025: Branden Hooper
+	Changes:
+	Updates to mach data in EFM (weight, fuel, etc.)
+	Damage args that broke EFM have been commented out
+	
+--]]
 
 --F-22A by Grinnellidesigns - Version 4 - 4-23-19
 --F-22A by Grinnellidesigns - Version 5 - 11-17-20
@@ -56,11 +63,11 @@ F_22A =
 	attribute  			= {wsType_Air, wsType_Airplane, wsType_Fighter, F_22A, "Fighters", "Refuelable",},--AG WSTYPE_PLACEHOLDER
 	Categories= {"{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}", "Interceptor",},
 	
-		M_empty						=	13380,--19700	-- kg  with pilot and nose load, F15
-		M_nominal					=	19000,--27637	-- kg (Empty Plus Full Internal Fuel)    --was 27637
-		M_max						=	30845,--38000	-- kg (Maximum Take Off Weight)
-		M_fuel_max					=	6103,--7937		-- kg (Internal Fuel Only)
-		H_max						=	18300,--20000	-- m  (Maximum Operational Ceiling)
+		M_empty						=	19650,--19700	-- kg  with pilot and nose load, F15
+		M_nominal					=	27814,--27637	-- kg (Empty Plus Full Internal Fuel)    --was 27637
+		M_max						=	37875,--38000	-- kg (Maximum Take Off Weight)
+		M_fuel_max					=	8164,--7937		-- kg (Internal Fuel Only)
+		H_max						=	22000,--20000	-- m  (Maximum Operational Ceiling)
 		average_fuel_consumption	=	0.271,
 		CAS_min						=	58,		-- Minimum CAS speed (m/s) (for AI)
 		V_opt						=	220,	-- Cruise speed (m/s) (for AI)
@@ -75,35 +82,45 @@ F_22A =
 	    nose_gear_amortizer_reversal_stroke  		= -0.317,  -- up 
 	    nose_gear_amortizer_normal_weight_stroke 	= -0.199,  -- down from nose_gear_pos
 	    nose_gear_wheel_diameter 	                =  0.587,  -- in m
+		
+		main_gear_pos 						 	    = {-0.472,	-1.655,	-1.678}, --1.678
+		main_gear_amortizer_direct_stroke	 	    =  -0.4,     -- 
+	    main_gear_amortizer_reversal_stroke  	    =  -0.2,     --  up 
+	    main_gear_amortizer_normal_weight_stroke  	=  -0.2,     --  down from main_gear_pos .2
+	    main_gear_wheel_diameter 				    =   0.841, --  in m 841
 
-	    main_gear_pos 						 	    = {-0.472,	-1.655,	-1.678},-- maingear coord = {-0.472,	-1.585,	-1.678},-- maingear coord
+--[[
+		main_gear_pos 						 	    = {-0.472,	-1.655,	-1.678}, --1.678
 	    main_gear_amortizer_direct_stroke	 	    =   0,     --  down from main_gear_pos !!!
 	    main_gear_amortizer_reversal_stroke  	    =  -0.099,     --  up 
 	    main_gear_amortizer_normal_weight_stroke  	=  -0.050,     --  down from main_gear_pos
 	    main_gear_wheel_diameter 				    =   0.841, --  in m
+]]
 
+	
+	
 		effects_presets =   {{effect = "OVERWING_VAPOR", file = current_mod_path.."/Effects/F-22A_overwingVapor.lua"}},
 
 		AOA_take_off				=	0.16,	-- AoA in take off (for AI)
 		stores_number				=	11,
 		bank_angle_max				=	60,		-- Max bank angle (for AI)
 		Ny_min						=	-3,		-- Min G (for AI)
-		Ny_max						=	8,		-- Max G (for AI)
+		Ny_max						=	9,		-- Max G (for AI)
 		tand_gear_max				=	3.73,	--XX  FA18 3.73, 
 		V_max_sea_level				=	403,	-- Max speed at sea level in m/s (for AI)
 		V_max_h						=	736.11,	-- Max speed at max altitude in m/s (for AI)
 		wing_area					=	56.5,	-- wing area in m2
-		thrust_sum_max				=	13347,	-- thrust in kgf (64.3 kN)
-		thrust_sum_ab				=	21952,	-- thrust in kgf (95.1 kN)
+		thrust_sum_max 				= 	56800, 	-- ~312 kN in kgf
+		thrust_sum_ab 				= 	70000,  	-- ~444 kN in kgf
 		Vy_max						=	275,	-- Max climb speed in m/s (for AI)
 		flaps_maneuver				=	1,
-		Mach_max					=	2.5,	-- Max speed in Mach (for AI)
+		Mach_max					=	2.25,	-- Max speed in Mach (for AI)
 		range						=	2540,	-- Max range in km (for AI)
-		RCS							=	0.01,   -- Radar Cross Section m2 was 0.0001
+		RCS							=	0.00001,   -- Radar Cross Section m2 was 0.0001
 		Ny_max_e					=	8,		-- Max G (for AI)
-		detection_range_max			=	250,
-		IR_emission_coeff			=	0.5,	-- Normal engine -- IR_emission_coeff = 1 is Su-27 without afterburner. It is reference. was /25
-		IR_emission_coeff_ab		=	1,		-- With afterburner
+		detection_range_max			=	550,
+		IR_emission_coeff			=	0.15,	-- Normal engine -- IR_emission_coeff = 1 is Su-27 without afterburner. It is reference. was /25
+		IR_emission_coeff_ab		=	0.3,		-- With afterburner
 		tanker_type					=	1,		--F14=2/S33=4/M29=0/S27=0/F15=1/F16=1/To=0/F18=2/A10A=1/M29K=4/M2000=2/F4=0/F5=0/
 		wing_span					=	13.05,	--XX   wing spain in m 13.05 19.54 
 		wing_type 					= 	0,		-- 0=FIXED_WING/ 1=VARIABLE_GEOMETRY/ 2=FOLDED_WING/ 3=ARIABLE_GEOMETRY_FOLDED
@@ -118,7 +135,7 @@ F_22A =
 		brakeshute_name				= 0,
 		is_tanker					= false,
 		air_refuel_receptacle_pos 	= {8.319, 0.803, 1.148},
-		--sound_name	=	"aircraft\F-22A\Sounds",
+		sound_name	=	"aircraft/F-22A/Sounds",
 
 		engines_nozzles = 
 		{
@@ -273,8 +290,7 @@ F_22A =
 				use_full_connector_position = true,
             },
             {
-				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}" }, --aim 9X
-				{ CLSID = "{AIM-9XX}" },
+				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}", Cx_gain = 0 }, --aim 9X
             }
         ),
         pylon(2, 0, -0.210, -0.9, -1.487,--Left Wing Pylon
@@ -292,8 +308,9 @@ F_22A =
 				use_full_connector_position = true,
             },
             {
-				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}" }, --AIM_120C
-				{ CLSID = "{AIM-120D}"},
+				{ CLSID = "{AIM260-JATM}", Cx_gain = 0 },
+				{ CLSID = "{JAS39_Meteor}", Cx_gain = 0 },
+
             }
         ),
         pylon(4, 1, 2.649, -0.48, -0.37,--Weapons Bay Left 2
@@ -303,8 +320,7 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}" }, --AIM_120C
-				{ CLSID = "{AIM-120D}"},
+				{ CLSID = "{AIM260-JATM}", Cx_gain = 0},
             }
         ),
         pylon(5, 1, -2.083, -0.30, -0.37,--Weapons Bay Left 3
@@ -314,8 +330,7 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}" }, --AIM_120C
-				{ CLSID = "{AIM-120D}"},
+				{ CLSID = "{AIM260-JATM}", Cx_gain = 0},
             }
         ),
         pylon(6, 1, 1.6, -0.31, 0,--SMOKE POD CENTER REAR HIDDEN
@@ -337,8 +352,7 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}" }, --AIM_120C
-				{ CLSID = "{AIM-120D}"},
+				{ CLSID = "{AIM260-JATM}", Cx_gain = 0},
             }
         ),
         pylon(8, 1, 2.649, -0.48, 0.37,--Weapons Bay Right 2
@@ -348,8 +362,7 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}" }, --AIM_120
-				{ CLSID = "{AIM-120D}"},
+				{ CLSID = "{AIM260-JATM}", Cx_gain = 0},
             }
         ),
 		pylon(9, 1, 1.2, -0.1, 2.95,--Weapons Bay Right 1
@@ -358,8 +371,8 @@ F_22A =
             },
             {
             
-				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}" }, --AIM_120C
-				{ CLSID = "{AIM-120D}"},
+				{ CLSID = "{AIM260-JATM}", Cx_gain = 0 },
+				{ CLSID = "{JAS39_Meteor}", Cx_gain = 0 },
 				
             }
         ),
@@ -378,8 +391,7 @@ F_22A =
 				use_full_connector_position = true,
             },
             {
-				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}" }, --Aim 9X
-				{ CLSID = "{AIM-9XX}" },
+				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}", Cx_gain = 0 }, --Aim 9X
             }
         ),
 },
@@ -491,54 +503,86 @@ F_22A =
 		},
 		
 -- index meaning see in  Scripts\Aircrafts\_Common\Damage.lua
-	Damage = 
-	{
+	Damage = {
+		-- NOSE, COCKPIT & AVIONICS
 		[0]  = {critical_damage = 5, args = {146}}, 								--[[damage_cells["NOSE_CENTER"] = 0]]
 		[1]  = {critical_damage = 3, args = {296}}, 								--[[damage_cells["NOSE_LEFT_SIDE"] = 1]]
 		[2]  = {critical_damage = 3, args = {297}}, 								--[[damage_cells["NOSE_RIGHT_SIDE"] = 2]]
 		[3]  = {critical_damage = 8, args = {65}},  								--[[damage_cells["COCKPIT"] = 3]]
 		[4]  = {critical_damage = 2, args = {298}}, 								--[[damage_cells["CABIN_LEFT_SIDE"] = 4]]
 		[5]  = {critical_damage = 2, args = {301}}, 								--[[damage_cells["CABIN_RIGHT_SIDE"] = 5]]
-		[7]  = {critical_damage = 2, args = {249}}, 								--[[damage_cells["GUN"] = 7]]
-		[8]  = {critical_damage = 3, args = {265}}, 								--[[damage_cells["GEAR_F"] = 8]]
-		[9]  = {critical_damage = 3, args = {154}}, 								--[[damage_cells["FUSELAGE_LEFT_SIDE"] = 9]]
-		[10] = {critical_damage = 3, args = {153}}, 								--[[damage_cells["FUSELAGE_RIGHT_SIDE"] = 10]]
-		[11] = {critical_damage = 1, args = {167}}, 								--[[damage_cells["ENGINE_L"] = 11]]
-		[12] = {critical_damage = 1, args = {161}}, 								--[[damage_cells["ENGINE_R"] = 12]]
-		-- [13] = {critical_damage = 2,  args = {169}}, 							--[[damage_cells["MTG_L_BOTTOM"] = 13]]
-		-- [14] = {critical_damage = 2,  args = {163}}, 							--[[damage_cells["MTG_R_BOTTOM"] = 14]]
-		[15] = {critical_damage = 2, args = {267}}, 								--[[damage_cells["GEAR_L"] = 15]]
-		[16] = {critical_damage = 2, args = {266}}, 								--[[damage_cells["GEAR_R"] = 16]]
-		-- [17] = {critical_damage = 2,  args = {168}}, 							--[[damage_cells["MTG_L"] = 17]]
-		-- [18] = {critical_damage = 2,  args = {162}}, 							--[[damage_cells["MTG_R"] = 18]]
-		-- [20] = {critical_damage = 2,  args = {183}}, 							--[[damage_cells["AIR_BRAKE_R"] = 20]]
-		[23] = {critical_damage = 5, args = {223}}, 								--[[damage_cells["WING_L_OUT"] = 23]]
-		[24] = {critical_damage = 5, args = {213}}, 								--[[damage_cells["WING_R_OUT"] = 24]]
-		[25] = {critical_damage = 2, args = {226}}, 								--[[damage_cells["AILERON_L"] = 25]]
-		[26] = {critical_damage = 2, args = {216}}, 								--[[damage_cells["AILERON_R"] = 26]]
-		[29] = {critical_damage = 5, args = {224}, deps_cells = {23, 25}}, 			--[[damage_cells["WING_L_CENTER"] = 29]]
-		[30] = {critical_damage = 5, args = {214}, deps_cells = {24, 26}}, 			--[[damage_cells["WING_R_CENTER"] = 30]]
-		[35] = {critical_damage = 6, args = {225}, deps_cells = {23, 29, 25, 37}}, 	--[[damage_cells["WING_L_IN"] = 35]]
-		[36] = {critical_damage = 6, args = {215}, deps_cells = {24, 30, 26, 38}}, 	--[[damage_cells["WING_R_IN"] = 36]]
-		[37] = {critical_damage = 2, args = {228}}, 								--[[damage_cells["FLAP_L"] = 37]]
-		[38] = {critical_damage = 2, args = {218}}, 								--[[damage_cells["FLAP_R"] = 38]]
-		[39] = {critical_damage = 2, args = {244}, deps_cells = {53}}, 				--[[damage_cells["FIN_L_TOP"] = 39]]
-		[40] = {critical_damage = 2, args = {241}, deps_cells = {54}}, 				--[[damage_cells["FIN_R_TOP"] = 40]]
-		[43] = {critical_damage = 2, args = {243}, deps_cells = {39, 53}}, 			--[[damage_cells["FIN_L_BOTTOM"] = 43]]
-		[44] = {critical_damage = 2, args = {242}, deps_cells = {40, 54}}, 			--[[damage_cells["FIN_R_BOTTOM"] = 44]]
-		[51] = {critical_damage = 2, args = {240}}, 								--[[damage_cells["ELEVATOR_L"] = 51]]
-		[52] = {critical_damage = 2, args = {238}}, 								--[[damage_cells["ELEVATOR_R"] = 52]]
-		[53] = {critical_damage = 2, args = {248}}, 								--[[damage_cells["RUDDER_L"] = 53]]
-		[54] = {critical_damage = 2, args = {247}}, 								--[[damage_cells["RUDDER_R"] = 54]]
-		[56] = {critical_damage = 2, args = {158}}, 								--[[damage_cells["TAIL_LEFT_SIDE"] = 56]]
-		[57] = {critical_damage = 2, args = {157}}, 								--[[damage_cells["TAIL_RIGHT_SIDE"] = 57]]
-		[59] = {critical_damage = 3, args = {148}}, 								--[[damage_cells["NOSE_BOTTOM"] = 59]]
-		-- [61] = {critical_damage = 2,  args = {147}}, 							--[[damage_cells["FUEL_TANK_F"] = 61]]
-		[82] = {critical_damage = 2, args = {152}}, 								--[[damage_cells["FUSELAGE_BOTTOM"] = 82]]
-		[83] = {critical_damage = 2, args = {134}},									--[[damage_cells["WHEEL_F"] = 83]]
-		[84] = {critical_damage = 2, args = {136}},									--[[damage_cells["WHEEL_L"] = 84]]
-		[85] = {critical_damage = 2, args = {135}}									--[[damage_cells["WHEEL_R"] = 85]]
+		--[90] = {critical_damage =  5},					
+		--[86] = {critical_damage =  8, args = {300}},	
+		--[87] = {critical_damage =  8, args = {301}},	
+		--[88] = {critical_damage =  8, args = {302}},	
+-- extras
+
+		
+		[12] = {critical_damage = 1, args = {161}},
+		[37] = {critical_damage = 2, args = {228}},
+		[38] = {critical_damage = 2, args = {218}},
+		[40] = {critical_damage = 2, args = {241}, deps_cells = {54}},
+		
+		[54] = {critical_damage = 2, args = {247}},
+		[59] = {critical_damage = 3, args = {148}},
+-----		
+		
+		-- CONTROL SURFACES
+		[53] = {critical_damage = 2, args = {248}},	
+		[25] = {critical_damage = 2, args = {226}},	
+		[51] = {critical_damage = 2, args = {240}},	
+		[52] = {critical_damage = 2, args = {238}},	
+		[26] = {critical_damage = 2, args = {216}},	
+		[21] = {critical_damage =  5, args = {232}},	
+		[33] = {critical_damage =  5, args = {230}},	
+		[22] = {critical_damage =  5, args = {222}},	
+		[34] = {critical_damage =  5, args = {220}},	
+		[19] = {critical_damage =  5, args = {183}},	
+		[20] = {critical_damage =  5, args = {185}},	
+
+		-- ENGINE & FUEL TANKS
+		[11] = {critical_damage = 1, args = {167}},	
+		--[61] = {critical_damage = 10, args = {224}},	
+		--[62] = {critical_damage = 10, args = {214}},	
+		--[65] = {critical_damage = 10, args = {155}},	
+
+		-- FUSELAGE & WINGS
+		[39] = {critical_damage = 2, args = {244}, deps_cells = {53}},								
+		[41] = {critical_damage = 10, args = {245}, deps_cells = {39,53}},			
+		
+		[43] = {critical_damage = 2, args = {243}, deps_cells = {39, 53}},		--[43] = {critical_damage = 10, args = {246}, deps_cells = {41,88}},	
+		[44] = {critical_damage = 2, args = {242}, deps_cells = {40, 54}},		--note
+		
+		[23] = {critical_damage = 5, args = {223}},				
+		[29] = {critical_damage = 5, args = {224}, deps_cells = {23, 25}},	    
+		[35] = {critical_damage = 6, args = {225}, deps_cells = {23, 29, 25, 37}},	
+		[36] = {critical_damage = 6, args = {215}, deps_cells = {24, 30, 26, 38}},	
+		[30] = {critical_damage = 5, args = {214}, deps_cells = {24, 26}},	    
+		[24] = {critical_damage = 5, args = {213}},				
+		[9]  = {critical_damage = 3, args = {154}}, 								
+		[82] = {critical_damage = 2, args = {152}},								
+		[10] = {critical_damage = 3, args = {153}},								
+		[55] = {critical_damage = 10, args = {159}},								
+		[56] = {critical_damage = 2, args = {158}},								
+		[57] = {critical_damage = 2, args = {157}},								
+		[58] = {critical_damage = 10, args = {156}},								
+
+		-- LANDING GEAR
+		[8]  = {critical_damage = 3, args = {265}},	
+		[15] = {critical_damage = 2, args = {267}}, 	
+		[16] = {critical_damage = 2, args = {266}},	
+		[83] = {critical_damage = 2, args = {134}},						
+		[84] = {critical_damage = 2, args = {136}},						
+		[85] = {critical_damage = 2, args = {135}},						
+
+		-- WEAPONS
+		[7]  = {critical_damage = 2, args = {249}},					
+			
+        
+	 
+
 	},
+
 
 	DamageParts = 
 	{  

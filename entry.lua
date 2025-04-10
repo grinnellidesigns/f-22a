@@ -14,71 +14,79 @@
     
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses.
+	
+	CONTRIBUTORS:
+
+	Copyright (c) 2025: Branden Hooper
+	Changes:
+	Added FM and binaries
+	
 --]]
 
-
 self_ID = "F-22A by GrinnelliDesigns"
-
-declare_plugin(self_ID, 
-{
-	image     	 = "FC3.bmp",
-	installed 	 = true, -- if false that will be place holder , or advertising
-	dirName	  	 = current_mod_path,
-	developerName	 = _("GrinnelliDesigns"),
-	developerLink      = _("https://grinnellidesigns.com/"),
-	fileMenuName       = _("F-22A"),
-	displayName        = _("F-22A"),
-	shortName   	 = _("F-22A"),
-	version	 	 = "MK II",
-	state		 = "installed",
-	update_id       	 = "F-22A",
-	info		 = _("F-22A Raptor Mod by GrinnelliDesigns"),
-	encyclopedia_path  = current_mod_path..'/Encyclopedia',
-	rules = { ["F-15C"] = {required = true},},
-
-	Skins	=
-	{
-		{
-		    name	= _("F-22A"),
-			dir		= "Theme"
-		},
-	},
-	Missions =
-	{
-		{
-			name		    = _("F-22A"),
-			dir			    = "Missions",
-  		},
-	},
-	LogBook =
-	{
-		{
-			name		= _("F-22A"),
-			type		= "F-22A",
-		},
-	},	
-	InputProfiles =
-	{
-		["F-22A"] = current_mod_path .. '/Input/F-22A',
-	}
+declare_plugin(self_ID, {
+    image        = "FC3.bmp",
+    installed    = true,
+    dirName      = current_mod_path,
+    binaries     = {'F22', },
+    developerName = _("GrinnelliDesigns"),
+    developerLink = _("https://grinnellidesigns.com/"),
+    fileMenuName  = _("F-22A"),
+    displayName   = _("F-22A"),
+    shortName     = _("F-22A"),
+    version       = "MK II - EFM",
+    state         = "installed",
+    update_id     = "F-22A",
+    info          = _("F-22A Raptor 3D Model by GrinnelliDesigns; EFM by BHOOP Studios"),
+    encyclopedia_path = current_mod_path .. '/Encyclopedia',
+    Skins = {{name = _("F-22A"), dir = "Theme"}},
+    Missions = {{name = _("F-22A"), dir = "Missions"}},
+    LogBook = {{name = _("F-22A"), type = "F-22A"}},
+    InputProfiles = {["F-22A"] = current_mod_path .. '/Input/F-22A'}
 })
-----------------------------------------------------------------------------------------
-mount_vfs_model_path(current_mod_path.."/Shapes")
-mount_vfs_model_path(current_mod_path.."/Cockpit/Shape") 
-mount_vfs_liveries_path(current_mod_path.."/Liveries")
-mount_vfs_texture_path(current_mod_path.."/Textures")
-mount_vfs_texture_path(current_mod_path.."/Textures/F-22A.zip")
-mount_vfs_texture_path(current_mod_path.."/Textures/F-22A_Cockpit.zip")
-mount_vfs_texture_path(current_mod_path.."/Textures/Clipboards")
-mount_vfs_texture_path(current_mod_path.."/Textures/Cockpit Photo")
-----------------------------------------------------------------------------------------
-dofile(current_mod_path.."/Weapons.lua")
-dofile(current_mod_path.."/Views.lua")
-make_view_settings('F-22A', ViewSettings, SnapViews)
-----------------------------------------------------------------------------------------
-F15FM.old = 6
-MAC_flyable('F-22A', current_mod_path..'/Cockpit/Scripts/', F15FM, current_mod_path..'/comm.lua')
+mount_vfs_model_path(current_mod_path .. "/Shapes")
+mount_vfs_model_path(current_mod_path .. "/Cockpit/Shape") 
+--mount_vfs_sound_path(current_mod_path .. "/Sounds/")
+mount_vfs_liveries_path(current_mod_path .. "/Liveries")
+mount_vfs_texture_path(current_mod_path .. "/Textures")
+mount_vfs_texture_path(current_mod_path .. "/Textures/F-22A.zip")
+mount_vfs_texture_path(current_mod_path .. "/Textures/F-22A_Cockpit.zip")
+mount_vfs_texture_path(current_mod_path .. "/Textures/Clipboards")
+mount_vfs_texture_path(current_mod_path .. "/Textures/Cockpit Photo")
 
-dofile(current_mod_path..'/F-22A.lua')
+-------------------
+
+mount_vfs_model_path(current_mod_path .. "/Shapes")
+
+dofile(current_mod_path .. "/Views.lua")
+dofile(current_mod_path .. "/Sounds.lua") 
+make_view_settings('F-22A', ViewSettings, SnapViews)
+dofile(current_mod_path .. "/F-22A.lua")
+dofile(current_mod_path .. "/Weapons.lua")
+
+local cfg_path = current_mod_path .. "/FM/config.lua"
+dofile(cfg_path)
+
+local FM = {
+[1] = self_ID,
+[2] = 'F22.dll',
+center_of_mass = {-0.073, 0.00, 0.0},
+config_path = cfg_path,
+suspension = suspension,
+old = 6,
+}
+
+--FC4 Avionics
+MAC_flyable('F-22A', current_mod_path..'/Cockpit/Scripts/', FM, current_mod_path..'/comm.lua')
+
 
 plugin_done()
+----------------------------------------------------------------------------------------
+--this is needed in the F15C entry.lua file: 
+
+--binaries =
+--{
+--'F15CCWS',
+--'F15'
+--},
+--load_immediately = true,
