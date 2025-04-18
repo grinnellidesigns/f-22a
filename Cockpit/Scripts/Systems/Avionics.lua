@@ -14,6 +14,12 @@
     
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses.
+	
+	CONTRIBUTORS:
+
+	Copyright (c) 2025: Branden Hooper
+	Changes:
+	Updated fuel quantity
 --]]
 
 
@@ -246,7 +252,7 @@ function update()
 	parameters.RPM_R        :set(sensor_data.getEngineRightRPM())
 	parameters.FUELL        :set(sensor_data.getTotalFuelWeight() * 0.01 ) -- Working, don't change: 0.36622 
 	parameters.FUEL         :set(sensor_data.getTotalFuelWeight() * 2.20462 ) -- Working, don't change: 0.36622
-	parameters.FUELT        :set(sensor_data.getTotalFuelWeight() * 2.20462 - 13454) -- Working, don't change: 0.36622 **25725 - 17500 = 8225**
+	parameters.FUELT        :set(sensor_data.getTotalFuelWeight() * 2.20462 - 18000) -- Working, don't change: 0.36622 **25725 - 17500 = 8225**
 	parameters.EGT_L        :set(sensor_data.getEngineLeftTemperatureBeforeTurbine())
 	parameters.EGT_R        :set(sensor_data.getEngineRightTemperatureBeforeTurbine())
 

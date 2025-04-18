@@ -16,65 +16,61 @@
     along with this program.  If not, see https://www.gnu.org/licenses.
 	
 	CONTRIBUTORS:
-
-	
-	
 --]]
 
 -- NOSEGEAR
-local nose_amortizer_min_length                 = 0.00
-local nose_amortizer_max_length                 = 0.57  
-local nose_amortizer_basic_length               = 0.57  
-local nose_amortizer_reduce_length              = 0.10 
+local nose_amortizer_min_length                 = 0.0
+local nose_amortizer_max_length                 = 0.51
+local nose_amortizer_basic_length               = 0.43
+local nose_amortizer_reduce_length              = 0.16
 
-local nose_amortizer_spring_force_factor        = 5.0e+06  
-local nose_amortizer_spring_force_factor_rate   = 2.0
+local nose_amortizer_spring_force_factor        = 5.2e+06
+local nose_amortizer_spring_force_factor_rate   = 3.1
 
-local nose_amortizer_static_force               = 6965.0 * 9.81
-local nose_damper_force                         = 6.0e+04
-local nose_amortizer_direct_damper_force_factor = nose_damper_force * 0.75
-local nose_amortizer_back_damper_force_factor   = nose_damper_force
+local nose_amortizer_static_force               = 51000
 
-local nose_wheel_moment_of_inertia              = 0.9  
+local nose_amortizer_direct_damper_force_factor = 40000
+local nose_amortizer_back_damper_force_factor   = 42000
 
-local nose_wheel_kz_factor                      = 0.4
-local nose_noise_k                              = 0.5
+local nose_wheel_moment_of_inertia              = 1.1
+
+local nose_wheel_kz_factor                      = 0.3
+local nose_noise_k                              = 0.45
 
 
 -- MAINGEAR
 local main_amortizer_min_length                 = 0.00
-local main_amortizer_max_length                 = 0.50  
-local main_amortizer_basic_length               = 0.50
-local main_amortizer_reduce_length              = 0.135 
+local main_amortizer_max_length                 = 0.60
+local main_amortizer_basic_length               = 0.585
+local main_amortizer_reduce_length              = 0.1 
 
 local main_amortizer_spring_force_factor        = 1.0e+08
-local main_amortizer_spring_force_factor_rate   = 3.5
+local main_amortizer_spring_force_factor_rate   = 3.5 
 
-local main_amortizer_static_force               = 10450.0 * 9.81
+local main_amortizer_static_force               = 102500.0 
 
-local main_damper_force                         = 9.0e+04
-local main_amortizer_direct_damper_force_factor = main_damper_force * 0.75
-local main_amortizer_back_damper_force_factor   = main_damper_force
+local main_amortizer_direct_damper_force_factor = 67500 
+local main_amortizer_back_damper_force_factor   = 90000 
 
 local main_damper_coeff                         = 150.0
 
 local main_wheel_moment_of_inertia              = 3.2  
 
-local wheel_static_friction_factor_COMMON       = 0.32
-local wheel_side_friction_factor_COMMON         = 0.95
-local wheel_roll_friction_factor_COMMON         = 0.105
-local wheel_glide_friction_factor_COMMON        = 0.25
+local wheel_static_friction_factor_COMMON       = 0.34
+local wheel_side_friction_factor_COMMON         = 1.1
+local wheel_roll_friction_factor_COMMON         = 0.11
+local wheel_glide_friction_factor_COMMON        = 0.55
 
-local wheel_static_friction_factor_NOSE         = 0.28--
+local wheel_static_friction_factor_NOSE         = 0.33
 local wheel_side_friction_factor_NOSE           = 1.0
-local wheel_roll_friction_factor_NOSE           = 0.11--
-local wheel_glide_friction_factor_NOSE          = 0.265
+local wheel_roll_friction_factor_NOSE           = 0.11
+local wheel_glide_friction_factor_NOSE          = 0.49
 
-local brake_moment_main                         = 15000.0  
+local brake_moment_main                         = 24000
 
 local wheel_radius_factor                       = 1.0
 
-local main_wheel_kz_factor                      = 0.65
+local main_wheel_kz_factor                      = 0.35
 local main_noise_k                              = 0.4
 
 suspension =
@@ -86,9 +82,9 @@ suspension =
         mass                                    = 60.0,  
         damage_element                          = 83,
         moment_of_inertia                       = {12.0, 0.6, 12.0},  
-        wheel_axle_offset                       = 0.19,
+        wheel_axle_offset                       = 0.0,
         self_attitude                           = true,
-        yaw_limit                               = math.rad(180.0),  
+        yaw_limit                               = math.rad(60.0),  
 
         amortizer_min_length                    = nose_amortizer_min_length,
         amortizer_max_length                    = nose_amortizer_max_length,
@@ -109,7 +105,7 @@ suspension =
         wheel_glide_friction_factor             = wheel_glide_friction_factor_NOSE,
         wheel_damage_force_factor               = 300.0,  
         wheel_damage_speed                      = 220.0,  
-        wheel_brake_moment_max                  = 100.0,
+        wheel_brake_moment_max                  = 800.0,
         wheel_moment_of_inertia                 = nose_wheel_moment_of_inertia,
         wheel_kz_factor                         = nose_wheel_kz_factor,
         noise_k                                 = nose_noise_k,

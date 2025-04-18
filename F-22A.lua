@@ -19,7 +19,7 @@
 
 	Copyright (c) 2025: Branden Hooper
 	Changes:
-	Updates to mach data in EFM (weight, fuel, etc.)
+	Updates to match data in EFM (weight, fuel, etc.)
 	Damage args that broke EFM have been commented out
 	
 --]]
@@ -308,8 +308,7 @@ F_22A =
 				use_full_connector_position = true,
             },
             {
-				{ CLSID = "{AIM260-JATM}", Cx_gain = 0 },
-				{ CLSID = "{JAS39_Meteor}", Cx_gain = 0 },
+				{ CLSID = "{AIM-120D}", Cx_gain = 0 },
 
             }
         ),
@@ -320,7 +319,7 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{AIM260-JATM}", Cx_gain = 0},
+				{ CLSID = "{AIM-120D}", Cx_gain = 0},
             }
         ),
         pylon(5, 1, -2.083, -0.30, -0.37,--Weapons Bay Left 3
@@ -330,7 +329,7 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{AIM260-JATM}", Cx_gain = 0},
+				{ CLSID = "{AIM-120D}", Cx_gain = 0},
             }
         ),
         pylon(6, 1, 1.6, -0.31, 0,--SMOKE POD CENTER REAR HIDDEN
@@ -352,7 +351,7 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{AIM260-JATM}", Cx_gain = 0},
+				{ CLSID = "{AIM-120D}", Cx_gain = 0},
             }
         ),
         pylon(8, 1, 2.649, -0.48, 0.37,--Weapons Bay Right 2
@@ -362,7 +361,7 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{AIM260-JATM}", Cx_gain = 0},
+				{ CLSID = "{AIM-120D}", Cx_gain = 0},
             }
         ),
 		pylon(9, 1, 1.2, -0.1, 2.95,--Weapons Bay Right 1
@@ -371,8 +370,7 @@ F_22A =
             },
             {
             
-				{ CLSID = "{AIM260-JATM}", Cx_gain = 0 },
-				{ CLSID = "{JAS39_Meteor}", Cx_gain = 0 },
+				{ CLSID = "{AIM-120D}", Cx_gain = 0 },
 				
             }
         ),

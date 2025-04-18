@@ -19,7 +19,7 @@
 
 	Copyright (c) 2025: Branden Hooper
 	Changes:
-	Removed AIM-120C and added Meteor and AIM-260
+	Removed invisible pylon that created drag
 	
 --]]
 
@@ -27,7 +27,7 @@ local unitPayloads = {
 	["name"] = "F-22A",
 	["payloads"] = {
 		[1] = {
-			["name"] = "Stealthy Air-to-Air | AIM-260 x6  AIM-9X x2",
+			["name"] = "Stealthy Air-to-Air | AIM-120 x6  AIM-9X x2",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}", --AIM-9x
@@ -38,27 +38,27 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[3] = {
-					["CLSID"] = "{AIM260-JATM}", --AIM-120C
+					["CLSID"] = "{AIM-120D}", --AIM-120C
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{AIM260-JATM}", --AIM-120C
+					["CLSID"] = "{AIM-120D}", --AIM-120C
 					["num"] = 4,
 				},
 				[5] = {
-					["CLSID"] = "{AIM260-JATM}", --AIM-120C
+					["CLSID"] = "{AIM-120D}", --AIM-120C
 					["num"] = 5,
 				},
 				[6] = {
-					["CLSID"] = "{AIM260-JATM}", --AIM-120C
+					["CLSID"] = "{AIM-120D}", --AIM-120C
 					["num"] = 7,
 				},
 				[7] = {
-					["CLSID"] = "{AIM260-JATM}", --AIM-120C
+					["CLSID"] = "{AIM-120D}", --AIM-120C
 					["num"] = 8,
 				},
 				[8] = {
-					["CLSID"] = "{AIM260-JATM}", --AIM-120C
+					["CLSID"] = "{AIM-120D}", --AIM-120C
 					["num"] = 9,
 				},
 				[9] = {
