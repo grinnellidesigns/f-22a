@@ -273,6 +273,8 @@ F_22A =
 					 619,--Canopy Cycle
 					 620,--Garfield Window Cling
 					 621,--Visor Color
+					 622,--TVN Right
+					 623,--TVN Left
 					},
 
 	Guns = {gun_mount("M_61", { count = 480 },{muzzle_pos = {0.50000, 0.500000, -0.000000}})},   --M_61 is F-15C Mounted Gun

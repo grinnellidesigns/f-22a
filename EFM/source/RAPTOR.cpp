@@ -1036,7 +1036,10 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
 
     data[15] = (float)limit(RAPTOR::right_elevon_command, -1, 1);
     data[16] = (float)limit(RAPTOR::left_elevon_command, -1, 1);
-
+    double max_tv_deflection_rad = RAPTOR::rad(lerp(FM_DATA::mach_table, FM_DATA::max_thrust_vector_deflection, sizeof(FM_DATA::mach_table) / sizeof(double), RAPTOR::mach));
+    data[622] = (float)limit((-RAPTOR::tv_angle / max_tv_deflection_rad) * 1.25, -1.0, 1.0);
+    data[623] = (float)limit((-RAPTOR::tv_angle / max_tv_deflection_rad) * 1.25, -1.0, 1.0);
+    data[603] = (float)limit(RAPTOR::slats_pos, 0, 1);
     data[11] = (float)limit(RAPTOR::aileron_command, -1, 1);
     data[12] = (float)limit(-RAPTOR::aileron_command, -1, 1);
     data[17] = (float)limit(RAPTOR::rudder_command, -1, 1);
@@ -1045,10 +1048,14 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     data[21] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
     data[182] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
     data[184] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
-
-    data[9] = (float)limit(RAPTOR::flaps_pos, 0, 1);
-    data[10] = (float)limit(RAPTOR::flaps_pos, 0, 1);
-
+    if (RAPTOR::flaps_pos > 0.0f) {
+        data[9] = (float)limit(RAPTOR::flaps_pos, 0, 1);
+        data[10] = (float)limit(RAPTOR::flaps_pos, 0, 1);
+    }
+    else {
+        data[9] = (float)limit(-RAPTOR::aileron_command, -1, 1);
+        data[10] = (float)limit(RAPTOR::aileron_command, -1, 1);
+    }
 
     if (RAPTOR::left_engine_state == RAPTOR::OFF) {
         data[29] = 0.0f;

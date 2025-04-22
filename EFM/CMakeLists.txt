@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.40)
+cmake_minimum_required(VERSION 3.30)
 
 project(f22_efm LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 23)

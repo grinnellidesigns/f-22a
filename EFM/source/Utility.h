@@ -1,23 +1,20 @@
 #pragma once
-
+//#include "stdafx.h"
 #include <math.h>
 #include <stdio.h>
 #include <string>
-#include <concepts>
 // This file contains useful functions, mostly math.
 
 // Convert number from degrees to radians
 inline double rad(double x)
 {
-	constexpr double expr = std::numbers::pi / 180.0;
-	return x * expr;
+	return x / 57.295779513082320876798154814105;
 };
 
 // Convert number from radians to degrees
 inline double deg(double x)
 {
-	constexpr double expr = 180.0 / std::numbers::pi;
-	return x * expr;
+	return x * 57.295779513082320876798154814105;
 };
 
 // Simple actuator
@@ -40,10 +37,20 @@ inline double actuator(double value, double target, double down_speed, double up
 };
 
 // Simple upper and lower limiter
-// TODO: replace limit with clamp
 inline double limit(double input, double lower_limit, double upper_limit)
 {
-	return std::clamp(input, lower_limit, upper_limit);
+	if (input > upper_limit)
+	{
+		return upper_limit;
+	}
+	else if (input < lower_limit)
+	{
+		return lower_limit;
+	}
+	else
+	{
+		return input;
+	}
 };
 
 // Rescales a -1 to +1 scale to different minima/maxima. Example: -1 to +1 -> -10 to +15
