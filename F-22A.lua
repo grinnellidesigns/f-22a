@@ -77,7 +77,7 @@ F_22A =
 		has_speedbrake				=	true,
 		radar_can_see_ground		=	true,
 		
-		nose_gear_pos 				                = {5.981,	-1.850,	0.0},  -- = {5.981,	-1.907,	0.0},  
+		nose_gear_pos 				                = {5.981,	-1.85,	0.0},  -- = {5.981,	-1.907,	0.0},
 	    nose_gear_amortizer_direct_stroke   		=  0,      -- down from nose_gear_pos !!!
 	    nose_gear_amortizer_reversal_stroke  		= -0.317,  -- up 
 	    nose_gear_amortizer_normal_weight_stroke 	= -0.199,  -- down from nose_gear_pos
@@ -143,20 +143,26 @@ F_22A =
 			{
 				pos = 	{-6.901,	0.000,	-1.45},
 				elevation	=	0,          -- AFB cone elevation  
-				diameter	=	1.0,          --1.072 AFB cone diameter
+				diameter	=	1.3, --1.0,          --1.072 AFB cone diameter
 				exhaust_length_ab	=	12.00, --8.629 lenght in m
 				exhaust_length_ab_K	=	1,  --0.76 AB animation
 				smokiness_level     = 	0.01,
+				afterburner_circles_count = 8,
+				afterburner_circles_pos = {0.2, 0.8},
+				afterburner_circles_scale = 1.3,
 				afterburner_effect_texture = "F22_burner",
 			},
 			[2] = 
 			{
 				pos = 	{-6.901,	0.000,	1.45},---6.701,	-0.215,	1.524  Tribwerke
 				elevation	=	0,--0
-				diameter	=	1.0,--1.072
+				diameter	=	1.3, --1.0,--1.072
 				exhaust_length_ab	=	12.00,--8.629
 				exhaust_length_ab_K	=	1,--0.76
 				smokiness_level     = 	0.01, 
+				afterburner_circles_count = 8,
+				afterburner_circles_pos = {0.2, 0.8},
+				afterburner_circles_scale = 1.3,
 				afterburner_effect_texture = "F22_burner",
 			},
 		},

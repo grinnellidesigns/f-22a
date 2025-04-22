@@ -1,16 +1,16 @@
 ﻿/*    Grinnelli Designs F-22A Raptor
     Copyright (C) 2025, Branden Hooper
-    
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses.
     */
@@ -18,7 +18,7 @@
     // FM_DATA.h : External Flight Model for light model for Grinnelli Designs F-22A
 
 #pragma once
-#include "stdafx.h"
+
 #include <map>
 #include <string>
 #include <cstddef> 
@@ -28,18 +28,17 @@ namespace FM_DATA
 {
     double mach_table[] = { 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4 };
 
-    //Aerodynamics
     // Zero-lift side-force coefficient. Represents lateral force at zero AoA (small for symmetry)
-    double Cy0 = 0.008;  
+    double Cy0 = 0.008;
 
-    // Pitch damping or elevator effectiveness coefficient. Negative value suggests a stabilizing pitch-down moment.
+    // Pitch damping or elevator effectiveness coefficient.
     double Czbe = -0.028;
 
     //Drag and Lift for external surfaces
-    double cx_gear = 0.155;
+    double cx_gear = 0.175;
     double cx_brk = 0.062;
     double cx_flap = 0.051;
-    double cy_flap = 0.186;
+    double cy_flap = 0.092;
 
     // Zero-lift drag coefficient (parasitic drag) as a function of Mach.
     double cx0[] = { 0.013, 0.0135, 0.014, 0.021, 0.0378, 0.0505, 0.0455, 0.04175, 0.038, 0.037, 0.0368, 0.0362, 0.039 };
@@ -49,7 +48,7 @@ namespace FM_DATA
 
     // Maximum roll rate vs. Mach. Indicates roll agility.
     double OmxMax[] = { 1.65, 2.45, 3.25, 4.7, 3.98, 3.2, 2.5, 2.25, 2.0, 1.85, 1.7, 1.5, 1.3 };
-    
+
 
     // Critical angle of attack (degrees) vs. Mach. Beyond this AoA, the wing stalls (lift drops).
     double Aldop[] = { 60, 57.5, 55, 50, 45, 40, 35, 32.5, 30, 30, 30, 30, 30 };
@@ -67,8 +66,8 @@ namespace FM_DATA
     double Cy_beta[] = { 0.0, 0.05, 0.1, 0.2, 0.3 }; // Side-force coefficient
 
     //Thrust - per engine
-    double idle_thrust[] = { 
-        6000, 
+    double idle_thrust[] = {
+        6000,
         5980,
         5900,
         6000,
@@ -82,24 +81,24 @@ namespace FM_DATA
         11000,
         11600
     };
-    
-    double max_thrust[] = { 
+
+    double max_thrust[] = {
         115600, // Mach 0.0 (~26,000 lbf total, real MIL)
-        117050, 
+        117050,
         118500, // Mach 0.4 (slight dip, engine efficiency)
         127250, // Mach 0.6 (minimum before ram boost)
         154000, // Mach 0.8 (ram effect kicks in)
         183800, // Mach 1.0 (transonic boost)
         245000, // Mach 1.2 (supersonic rise)
-        293000, 
+        293000,
         330000, // Mach 1.6 (supercruise tuned for M1.76)
         230000, // Mach 1.8 (supercruise tuned for M1.76)
         0, // Mach 2.0
         0, // Mach 2.2
         0  // Mach 2.4
     };
-    
-    double ab_thrust[] = { 
+
+    double ab_thrust[] = {
         197000, // Mach 0.0 (~40,000 lbf total, real AB+)
         215300, // Mach 0.2
         232600, // Mach 0.4 (slight dip, engine efficiency)
@@ -134,7 +133,7 @@ namespace FM_DATA
 
 }
 
-    // ----- EFM Data -----
+// ----- EFM Data -----
 namespace RAPTOR {
     Vec3 common_force, common_moment, center_of_mass, wind, velocity_world, airspeed;
     double const pi = 3.1415926535897932384626433832795;
@@ -180,9 +179,12 @@ namespace RAPTOR {
     double wheel_brake = 0;
     int carrier_pos = 0;
 
+    const double max_internal_fuel = 8165.0; 
+    const double ground_refuel_rate = 45.36;
+    const double min_usable_fuel = 25.0;
     double internal_fuel = 0, external_fuel = 0, total_fuel = internal_fuel + external_fuel;
     double fuel_consumption_since_last_time = 0;
-    const double fuel_rate_idle = 0.4;
+    const double fuel_rate_idle = 0.108;
     const double fuel_rate_mil = 2.2;
     const double fuel_rate_ab = 6.5;
 
@@ -193,7 +195,7 @@ namespace RAPTOR {
     bool on_ground = false;
     double pitch = 0, pitch_rate = 0, roll = 0, roll_rate = 0, heading = 0, yaw_rate = 0;
 
-    int element_integrity[111];
+    double element_integrity[111];
     double left_wing_integrity = 1.0, right_wing_integrity = 1.0, tail_integrity = 1.0;
     double left_engine_integrity = 1.0, right_engine_integrity = 1.0;
     double total_damage = 1 - (left_wing_integrity + right_wing_integrity + tail_integrity +
@@ -211,20 +213,16 @@ namespace RAPTOR {
     double last_g = 0.0;
     double autotrim_elevator_cmd = 0.0;
     double takeoff_trim_cmd = 0.0;
-    double g_limit_positive = 12.0; 
+    double g_limit_positive = 12.0;
     double g_limit_negative = -4.5;
     double Kp_g = 0.1;
-
-
-    // Thrust vectoring state variable
-    double tv_angle = 0.0; 
-
-    double ground_speed_knots = 0.0;
+    double tv_angle = 0.0;
 
     // Global variables for state persistence
     double last_yaw_input = 0.0;
     double last_tv_cmd = 0.0;
     double last_pitch_input = 0.0;
+    double ground_speed_knots = 0.0;
 
     //Engine Start Sequence
     enum EngineState { OFF, STARTING, RUNNING, SHUTDOWN };
@@ -236,13 +234,13 @@ namespace RAPTOR {
     // Engine start parameters
     const double engine_start_time = 30.0;
     const double starter_phase_duration = 8.0;
-    const double ignition_phase_duration = 12.0; 
+    const double ignition_phase_duration = 12.0;
     const double spool_up_phase_duration = 10.0;
-    const double starter_rpm = 0.2; 
-    const double ignition_rpm = 0.4; 
-    const double starter_rate = starter_rpm / starter_phase_duration; 
-    const double ignition_rate = (ignition_rpm - starter_rpm) / ignition_phase_duration; 
-    const double spool_up_rate = (idle_rpm - ignition_rpm) / spool_up_phase_duration; 
+    const double starter_rpm = 0.2;
+    const double ignition_rpm = 0.4;
+    const double starter_rate = starter_rpm / starter_phase_duration;
+    const double ignition_rate = (ignition_rpm - starter_rpm) / ignition_phase_duration;
+    const double spool_up_rate = (idle_rpm - ignition_rpm) / spool_up_phase_duration;
 
     //Lights
     bool taxi_lights = false;
@@ -263,7 +261,7 @@ namespace RAPTOR {
     const double blink_period = blink_on_time + blink_off_time;
 }
 
-    // ----- Cockpit Logic -----
+// ----- Cockpit Logic -----
 
 class CockpitManager {
 public:

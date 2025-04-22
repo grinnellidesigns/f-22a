@@ -1,8 +1,9 @@
 #pragma once
-#include "stdafx.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <string>
+#include <concepts>
 // This file contains useful functions, mostly math.
 
 // Convert number from degrees to radians
