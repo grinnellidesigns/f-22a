@@ -14,11 +14,6 @@
     
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses.
-	
-	CONTRIBUTORS:
-
-	Copyright (c) 2025: Branden Hooper
-	
 --]]
 
 self_ID = "F-22A by GrinnelliDesigns"

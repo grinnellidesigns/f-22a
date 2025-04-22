@@ -14,13 +14,6 @@
     
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses.
-	
-	CONTRIBUTORS:
-
-	Copyright (c) 2025: Branden Hooper
-	Moved all animations and logic into EFM
-	Clickable/set-commands remain due to multi-variable switches
-	
 --]]
 
 dofile(LockOn_Options.script_path.."devices.lua")

@@ -14,14 +14,6 @@
     
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses.
-	
-	CONTRIBUTORS:
-
-	Copyright (c) 2025: Branden Hooper
-	Changes:
-	Updates to match data in EFM (weight, fuel, etc.)
-	Damage args that broke EFM have been commented out
-	
 --]]
 
 --F-22A by Grinnellidesigns - Version 4 - 4-23-19
