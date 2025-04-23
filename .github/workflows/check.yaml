@@ -18,7 +18,7 @@ jobs:
         submodules: 'recursive'
     
     - name: Configure CMake Project
-      run: cmake --preset x64-release
+      run: cmake --preset x64-release -G "Visual Studio 17 2022"
 
     - name: Build CMake Project
       run: cmake --build --preset x64-release
