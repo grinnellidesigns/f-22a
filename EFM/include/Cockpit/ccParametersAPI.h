@@ -30,23 +30,6 @@ typedef bool   (*PFN_ED_COCKPIT_PARAMETER_VALUE_TO_NUMBER   )  (const void * han
 typedef bool   (*PFN_ED_COCKPIT_PARAMETER_VALUE_TO_STRING   )  (const void * handle	,char * buffer	,unsigned buffer_size);
 typedef int    (*PFN_ED_COCKPIT_COMPARE_PARAMETERS			)  (void		  * handle_1,void * handle_2);
 
-/* usage
-HMODULE	cockpit_dll						= GetModuleHandle("CockpitBase.dll"); assume that we work inside same process
-
-ed_cockpit_get_parameter_handle			= (PFN_ED_COCKPIT_GET_PARAMETER_HANDLE)		   GetProcAddress(cockpit_dll,"ed_cockpit_get_parameter_handle");
-ed_cockpit_update_parameter_with_number = (PFN_ED_COCKPIT_UPDATE_PARAMETER_WITH_NUMBER)GetProcAddress(cockpit_dll,"ed_cockpit_update_parameter_with_number");
-ed_cockpit_parameter_value_to_number    = (PFN_ED_COCKPIT_PARAMETER_VALUE_TO_NUMBER)   GetProcAddress(cockpit_dll,"ed_cockpit_parameter_value_to_number");
-....
-
-void * handle = ed_cockpit_get_parameter_handle("TEST_PARAM");
-ed_cockpit_update_parameter_with_number(handle,0);
-
-....
-double val;
-ed_cockpit_parameter_value_to_number   (handle,val);
-ed_cockpit_update_parameter_with_number(handle,val + 1);
-*/
-
 struct cockpit_param_api
 {
 	PFN_ED_COCKPIT_GET_PARAMETER_HANDLE	pfn_ed_cockpit_get_parameter_handle;		

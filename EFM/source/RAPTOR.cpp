@@ -1206,13 +1206,13 @@ double ed_fm_get_param(unsigned index) {
 void ed_fm_refueling_add_fuel(double fuel)
 {
     if (fuel > 0) {
-        double dt = 0.006; // DCS frame time
-        double fuel_to_add = std::min(fuel, 100.0 * dt); // 100 kg/s
+        double dt = 0.006; 
+        double fuel_to_add = std::min(fuel, 100.0 * dt);
         RAPTOR::internal_fuel = std::min(RAPTOR::max_internal_fuel, RAPTOR::internal_fuel + fuel_to_add);
-        RAPTOR::total_fuel = RAPTOR::internal_fuel; // Exclude external_fuel, handled by DCS
+        RAPTOR::total_fuel = RAPTOR::internal_fuel;
         double fuel_fraction = std::min(1.0, std::max(0.0, RAPTOR::internal_fuel / RAPTOR::max_internal_fuel));
         g_mass_changes.push({
-            -fuel_to_add, // Negative for mass gain
+            -fuel_to_add,
             {-0.41 * (1.0 - fuel_fraction), 0.0, 0.0},
             {0.0, 0.0, 0.0}
             });

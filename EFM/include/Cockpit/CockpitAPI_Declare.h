@@ -32,15 +32,6 @@ public:
 			return res;
 		}
 
-		/*
-		const char* getParamString(void* handle, unsigned buffer_size)
-		{
-			char buffer[256];
-			ed_param_api.parameter_value_to_string(handle, buffer, 256);
-			return &buffer[0];
-		}
-		*/
-
 		inline void getParamString(void* ptr, char* buffer, unsigned int bufferSize) const
 		{
 			ed_param_api.pfn_ed_cockpit_parameter_value_to_string(ptr, buffer, bufferSize);
