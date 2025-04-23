@@ -27,7 +27,7 @@ local AIM_120_D3 =
 	display_name_short = "AIM-120D3",
 	scheme			= "aa_missile_amraam2",
 	class_name		= "wAmmunitionSelfHoming",
-	model			= "AIM-120D",
+	model			= "AIM-120D3",
     wsTypeOfWeapon  = {4,4,7,WSTYPE_PLACEHOLDER},
 
 	warhead 	= predefined_warhead("AIM_120"),
@@ -40,7 +40,7 @@ local AIM_120_D3 =
 	shape_table_data =
 	{
 		{
-			file  = "AIM-120D";
+			file  = "AIM-120D3";
 			life  = 1;
 			fire  = {0, 1};
 			name  	 = "AIM_120D3";
@@ -296,7 +296,7 @@ declare_loadout({
 				[1]	=	{1,	1},
 				[2]	=	{2,	1},
 			},	
-			ShapeName	=	"AIM-120D",
+			ShapeName	=	"AIM-120D3",
 		},
 	},	
 })
@@ -320,14 +320,14 @@ declare_loadout({
 		{
 			DrawArgs = {[1] = {1,1},[2] = {2,1},},
 			Position	=	{0.5,	-0.06,	0.22},
-			ShapeName	=	"AIM-120D",
+			ShapeName	=	"AIM-120D3",
 			Rotation = {-90,0,0},
 		},
 		
 		{
 			DrawArgs = {[1] = {1,1},[2] = {2,1},},
 			Position	=	{0.5,	-0.06,	-0.22},
-			ShapeName	=	"AIM-120D",
+			ShapeName	=	"AIM-120D3",
 			Rotation = {90,0,0},
 		},
 		

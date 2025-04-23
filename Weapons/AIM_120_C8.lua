@@ -27,7 +27,7 @@ local AIM_120_C8 =
 	display_name_short = "AIM-120C8",
 	scheme			= "aa_missile_amraam2",
 	class_name		= "wAmmunitionSelfHoming",
-	model			= "aim-120c",
+	model			= "AIM-120C8",
     wsTypeOfWeapon  = {4,4,7,WSTYPE_PLACEHOLDER},
 
 	warhead 	= predefined_warhead("AIM_120"),
@@ -40,7 +40,7 @@ local AIM_120_C8 =
 	shape_table_data =
 	{
 		{
-			file  = "aim-120c";
+			file  = "AIM-120C8";
 			life  = 1;
 			fire  = {0, 1};
 			name  	 = "AIM_120C8";
@@ -296,7 +296,7 @@ declare_loadout({
 				[1]	=	{1,	1},
 				[2]	=	{2,	1},
 			},	
-			ShapeName	=	"aim-120c",
+			ShapeName	=	"AIM-120C8",
 		},
 	},	
 })
@@ -320,14 +320,14 @@ declare_loadout({
 		{
 			DrawArgs = {[1] = {1,1},[2] = {2,1},},
 			Position	=	{0.5,	-0.06,	0.22},
-			ShapeName	=	"aim-120c",
+			ShapeName	=	"AIM-120C8",
 			Rotation = {-90,0,0},
 		},
 		
 		{
 			DrawArgs = {[1] = {1,1},[2] = {2,1},},
 			Position	=	{0.5,	-0.06,	-0.22},
-			ShapeName	=	"aim-120c",
+			ShapeName	=	"AIM-120C8",
 			Rotation = {90,0,0},
 		},
 		
