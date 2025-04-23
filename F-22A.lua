@@ -28,7 +28,7 @@ F_22A =
         Picture 		= "F-22A.png",
         Rate 			= "50",
         Shape			= "F-22A",--AG	
-        WorldID			=  WSTYPE_PLACEHOLDER,     
+        WorldID			=  6,     
 	shape_table_data 	= 
 	{
 		{
@@ -38,7 +38,7 @@ F_22A =
 			desrt    	= 'F-22A_destr'; -- Name of destroyed object file name
 			fire  	 	= { 300, 2}; -- Fire on the ground after destoyed: 300sec 2m
 			username	= 'F-22A';--AG
-			index       =  WSTYPE_PLACEHOLDER;
+			index       =  F_22A;
 			classname   = "lLandPlane";
 			positioning = "BYNORMAL";
 		},

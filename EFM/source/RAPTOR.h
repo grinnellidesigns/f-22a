@@ -15,7 +15,7 @@
     along with this program.  If not, see https://www.gnu.org/licenses.
     */
 
-    // FM_DATA.h : External Flight Model for light model for Grinnelli Designs F-22A
+    // RAPTOR.h : External Flight Model for light model for Grinnelli Designs F-22A
 
 #pragma once
 

@@ -110,7 +110,7 @@ void simulate_fuel_consumption(double dt)
 
     if (RAPTOR::fuel_consumption_since_last_time > 0) {
         RAPTOR::internal_fuel = std::max(0.0, RAPTOR::internal_fuel - limit(RAPTOR::fuel_consumption_since_last_time, 0, RAPTOR::internal_fuel));
-        RAPTOR::total_fuel = RAPTOR::internal_fuel; // Exclude external_fuel, handled by DCS
+        RAPTOR::total_fuel = RAPTOR::internal_fuel;
         double fuel_fraction = std::min(1.0, std::max(0.0, RAPTOR::internal_fuel / RAPTOR::max_internal_fuel));
         g_mass_changes.push({
             RAPTOR::fuel_consumption_since_last_time,
@@ -1033,7 +1033,6 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     data[0] = (float)limit(RAPTOR::gear_pos, 0, 1);
     data[3] = (float)limit(RAPTOR::gear_pos, 0, 1);
     data[5] = (float)limit(RAPTOR::gear_pos, 0, 1);
-
     data[15] = (float)limit(RAPTOR::right_elevon_command, -1, 1);
     data[16] = (float)limit(RAPTOR::left_elevon_command, -1, 1);
     double max_tv_deflection_rad = RAPTOR::rad(lerp(FM_DATA::mach_table, FM_DATA::max_thrust_vector_deflection, sizeof(FM_DATA::mach_table) / sizeof(double), RAPTOR::mach));
@@ -1044,7 +1043,6 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     data[12] = (float)limit(-RAPTOR::aileron_command, -1, 1);
     data[17] = (float)limit(RAPTOR::rudder_command, -1, 1);
     data[18] = (float)limit(RAPTOR::rudder_command, -1, 1);
-
     data[21] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
     data[182] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
     data[184] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
@@ -1114,8 +1112,6 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
             data[610] = 0.0f;
         }
     }
-
-
     data[604] = RAPTOR::taxi_lights ? 1.0f : 0.0f;
     data[605] = RAPTOR::landing_lights ? 1.0f : 0.0f;
     data[606] = RAPTOR::form_light ? 1.0f : 0.0f;
