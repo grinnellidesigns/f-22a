@@ -14,6 +14,10 @@
     
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses.
+	
+	CONTRIBUTORS:
+
+	Copyright (c) 2025: Ash Blythe	
 --]]
 
 
@@ -71,6 +75,7 @@ mount_vfs_texture_path(current_mod_path.."/Textures/F-22A.zip")
 mount_vfs_texture_path(current_mod_path.."/Textures/F-22A_Cockpit.zip")
 mount_vfs_texture_path(current_mod_path.."/Textures/Clipboards")
 mount_vfs_texture_path(current_mod_path.."/Textures/Cockpit Photo")
+mount_vfs_texture_path(current_mod_path .. "/Textures/Weapons.zip")
 ----------------------------------------------------------------------------------------
 dofile(current_mod_path.."/Weapons.lua")
 dofile(current_mod_path.."/Views.lua")
