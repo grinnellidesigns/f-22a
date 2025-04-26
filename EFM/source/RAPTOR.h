@@ -35,10 +35,10 @@ namespace FM_DATA
     double Czbe = -0.028;
 
     //Drag and Lift for external surfaces
-    double cx_gear = 0.175;
+    double cx_gear = 0.155;
     double cx_brk = 0.062;
     double cx_flap = 0.051;
-    double cy_flap = 0.092;
+    double cy_flap = 0.112;
 
     // Zero-lift drag coefficient (parasitic drag) as a function of Mach.
     double cx0[] = { 0.013, 0.0135, 0.014, 0.021, 0.0378, 0.0505, 0.0455, 0.04175, 0.038, 0.037, 0.0368, 0.0362, 0.039 };
@@ -59,7 +59,7 @@ namespace FM_DATA
 
     //Reactions
     double AoA_table[] = { 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0 };
-    double AoA_drag_factor[] = { 0.0, 0.01, 0.024, 0.10, 0.24, 0.375, 0.47, 0.60, 0.71, 1.0 };
+    double AoA_drag_factor[] = { 0.0, 0.006, 0.024, 0.10, 0.24, 0.375, 0.47, 0.60, 0.71, 1.0 };
 
     //Misc.
     double beta_table[] = { 0.0, 5.0, 10.0, 20.0, 30.0 }; // Sideslip angle (deg)
@@ -140,7 +140,7 @@ namespace RAPTOR {
     double const rad_to_deg = 180.0 / pi;
     inline double rad(double deg) { return deg * pi / 180.0; }
 
-    double const S = 78.04;
+    double const S = 78.06;
     double const wingspan = 13.56, length = 18.92, height = 5.08;
     double idle_rpm = 0.675;
     double const empty_mass = 19700;
@@ -212,6 +212,7 @@ namespace RAPTOR {
     bool autotrim_active = false;
     double last_g = 0.0;
     double autotrim_elevator_cmd = 0.0;
+    bool manual_trim_applied = false;
     double takeoff_trim_cmd = 0.0;
     double g_limit_positive = 12.0;
     double g_limit_negative = -4.5;
@@ -231,7 +232,7 @@ namespace RAPTOR {
     double left_engine_start_timer = 0.0;
     double right_engine_start_timer = 0.0;
 
-    // Engine start parameters
+    // Engine parameters
     const double engine_start_time = 30.0;
     const double starter_phase_duration = 8.0;
     const double ignition_phase_duration = 12.0;
@@ -241,6 +242,8 @@ namespace RAPTOR {
     const double starter_rate = starter_rpm / starter_phase_duration;
     const double ignition_rate = (ignition_rpm - starter_rpm) / ignition_phase_duration;
     const double spool_up_rate = (idle_rpm - ignition_rpm) / spool_up_phase_duration;
+    double left_engine_phase = 0.0; 
+    double right_engine_phase = 0.0;
 
     //Lights
     bool taxi_lights = false;
