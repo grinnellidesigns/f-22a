@@ -391,7 +391,7 @@ void ed_fm_simulate(double dt) {
         RAPTOR::takeoff_trim_cmd += limit(trim_error, -takeoff_trim_rate * dt, takeoff_trim_rate * dt);
 
         const double autotrim_gain = 0.05;
-        const double autotrim_max_cmd = 0.2;
+        const double autotrim_max_cmd = 0.25;
         const double autotrim_rate_limit = 0.04;
         const double autotrim_fade_rate = 0.1;
         const double ref_q = 0.5 * 1.225 * 200.0 * 200.0;
@@ -400,7 +400,7 @@ void ed_fm_simulate(double dt) {
         bool autotrim_enabled = !RAPTOR::on_ground &&
             fabs(RAPTOR::roll) <= 1.2217 &&
             !RAPTOR::manual_trim_applied &&
-            RAPTOR::alpha < 7.0; //6
+            RAPTOR::alpha < 7.0;
 
         if (autotrim_enabled) {
             RAPTOR::autotrim_active = true;
@@ -1101,8 +1101,8 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     data[184] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
     static float current_left_aileron = 0.0f;
     static float current_right_aileron = 0.0f;
-    const float transition_time = 0.45f; // Transition duration in seconds
-    const float lerp_rate = 1.0f / (transition_time * 60.0f); // Assuming ~60 FPS
+    const float transition_time = 0.45f; 
+    const float lerp_rate = 1.0f / (transition_time * 60.0f);
 
     if (RAPTOR::flaps_pos > 0.0f) {
         data[9] = (float)limit(RAPTOR::flaps_pos, 0, 1);
@@ -1119,7 +1119,6 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
         float target_left_aileron = (RAPTOR::g >= 6.0f) ? g_factor : (float)limit(RAPTOR::aileron_command, -1, 1);
         float target_right_aileron = (RAPTOR::g >= 6.0f) ? g_factor : (float)limit(-RAPTOR::aileron_command, -1, 1);
 
-        // Smooth transition for G >= 6.0, instantaneous otherwise
         if (RAPTOR::g >= 6.0f) {
             current_left_aileron = current_left_aileron + lerp_rate * (target_left_aileron - current_left_aileron);
             current_right_aileron = current_right_aileron + lerp_rate * (target_right_aileron - current_right_aileron);
