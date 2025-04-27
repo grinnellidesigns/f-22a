@@ -187,6 +187,7 @@ namespace RAPTOR {
     double g_limit_negative = -4.5;
     double Kp_g = 0.1;
     double tv_angle = 0.0;
+    double g_assist_pos = 0;
 
     // Global variables for state persistence
     double last_yaw_input = 0.0;

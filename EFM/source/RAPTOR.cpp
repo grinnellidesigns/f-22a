@@ -271,6 +271,14 @@ void ed_fm_simulate(double dt) {
         }
     }
 
+    if (RAPTOR::g >= 6) {
+        RAPTOR::g_assist_pos = limit(actuator(RAPTOR::g_assist_pos, 1.0, -0.008, 0.007), 0.0, 1.0);
+    }
+    else {
+        RAPTOR::g_assist_pos = limit(actuator(RAPTOR::g_assist_pos, 0.0, -0.007, 0.006), 0.0, 1.0);
+    }
+
+
     double drag_direction = (fabs(RAPTOR::alpha) < 100.0) ? 1.0 : -1.0;
     double CyAlpha_ = lerp(FM_DATA::mach_table.data(), FM_DATA::Cya, FM_DATA::mach_table.size(), RAPTOR::mach);
     double CyMax_ = lerp(FM_DATA::mach_table.data(), FM_DATA::CyMax, FM_DATA::mach_table.size(), RAPTOR::mach);
@@ -503,7 +511,7 @@ void ed_fm_simulate(double dt) {
         if (RAPTOR::alpha > 60.0) tv_pitch_cmd -= (RAPTOR::alpha - 60.0) * 0.022;
         if (RAPTOR::alpha < -60.0) tv_pitch_cmd += (-RAPTOR::alpha - 60.0) * 0.022;
 
-        tv_pitch_cmd += -RAPTOR::pitch_rate * 0.75;
+        tv_pitch_cmd += -RAPTOR::pitch_rate; // *0.75;
 
         double tv_command = limit(RAPTOR::last_tv_cmd + limit(tv_pitch_cmd - RAPTOR::last_tv_cmd, -max_rate * dt, max_rate * dt), -1.0, 1.0);
         RAPTOR::last_tv_cmd = tv_command;
@@ -1118,8 +1126,6 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     data[184] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
     static float current_left_aileron = 0.0f;
     static float current_right_aileron = 0.0f;
-    const float transition_time = 0.45f;
-    const float lerp_rate = 1.0f / (transition_time * 60.0f);
 
     if (RAPTOR::flaps_pos > 0.0f) {
         data[9] = (float)limit(RAPTOR::flaps_pos, 0, 1);
@@ -1128,25 +1134,11 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
         current_right_aileron = data[12] = (float)limit(-RAPTOR::aileron_command, -1, 1);
     }
     else {
-        float g_factor = 0.0f;
-        if (RAPTOR::g >= 6.0f) {
-            g_factor = (RAPTOR::g - 6.0f) / (8.0f - 6.0f);
-            g_factor = limit(g_factor, 0.0f, 1.0f);
-        }
-        float target_left_aileron = (RAPTOR::g >= 6.0f) ? g_factor : (float)limit(RAPTOR::aileron_command, -1, 1);
-        float target_right_aileron = (RAPTOR::g >= 6.0f) ? g_factor : (float)limit(-RAPTOR::aileron_command, -1, 1);
+        float target_left_aileron = (RAPTOR::g_assist_pos > 0.0f) ? RAPTOR::g_assist_pos : (float)limit(RAPTOR::aileron_command, -1, 1);
+        float target_right_aileron = (RAPTOR::g_assist_pos > 0.0f) ? RAPTOR::g_assist_pos : (float)limit(-RAPTOR::aileron_command, -1, 1);
 
-        if (RAPTOR::g >= 6.0f) {
-            current_left_aileron = current_left_aileron + lerp_rate * (target_left_aileron - current_left_aileron);
-            current_right_aileron = current_right_aileron + lerp_rate * (target_right_aileron - current_right_aileron);
-        }
-        else {
-            current_left_aileron = target_left_aileron;
-            current_right_aileron = target_right_aileron;
-        }
-
-        data[11] = current_left_aileron;
-        data[12] = current_right_aileron;
+        data[11] = target_left_aileron;
+        data[12] = target_right_aileron;
         data[9] = (float)limit(-RAPTOR::aileron_command, -1, 1);
         data[10] = (float)limit(RAPTOR::aileron_command, -1, 1);
     }
