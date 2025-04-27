@@ -89,10 +89,10 @@ enum InputCommands
 	resetTrim = 97,
 
 	//Autopilot
-	AltitudeHoldToggle = 10500,
+	AltitudeHoldToggle = 10500, //62,
 	AttitudeHoldToggle = 10501,
 	AutoThrottleToggle = 10502,
-	AutopilotDisengage = 10503,
+	AutopilotDisengage = 10503, // 408,
 
 	Reserved // Placeholder
 };

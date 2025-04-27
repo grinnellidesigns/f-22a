@@ -170,9 +170,9 @@ local R_BRAKE       = 10057
 
 join(res.keyCommands,{
 
-		{down = 95, name = "F-22: Trim Up", category = "Flight Control"},
-        {down = 96, name = "F-22: Trim Down", category = "Flight Control"},
-        {down = 97, name = "F-22: Reset Trim", category = "Flight Control"},
+		{down = iCommandPlaneTrimUp, name = "F-22: Trim Up", category = "Flight Control"},
+        {down = iCommandPlaneTrimDown, name = "F-22: Trim Down", category = "Flight Control"},
+        {down = iCommandPlaneTrimCancel, name = "F-22: Reset Trim", category = "Flight Control"},
         {down = 10500, value_down = 1.0, name = _('F-22: Altitude Hold Toggle'), category = _('F-22 EFM Commands')},
         {down = 10501, value_down = 1.0, name = _('F-22: Attitude Hold Toggle'), category = _('F-22 EFM Commands')},
         {down = 10502, value_down = 1.0, name = _('F-22: Auto Throttle Toggle'), category = _('F-22 EFM Commands')},
@@ -331,9 +331,6 @@ join(res.keyCommands,{
     {down = R_BRAKE,  up = BrakesOFF,   name = _('Wheel Brakes Right'),                 category = _('F-22A Systems')},
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Autopilot
-    {combos = {{key = 'A'}, {key = '1', reformers = {'LAlt'}}}, down = iCommandPlaneAutopilot,  name = _('Autopilot - Attitude Hold'),  category = _('Autopilot')},
-    {combos = {{key = 'H'}, {key = '2', reformers = {'LAlt'}}}, down = iCommandPlaneStabHbar,   name = _('Autopilot - Altitude Hold'),  category = _('Autopilot')},
-    {combos = {{key = '9', reformers = {'LAlt'}}},              down = iCommandPlaneStabCancel, name = _('Autopilot Disengage'),        category = _('Autopilot')},    
 --Flight Control
     {combos = {{key = 'T', reformers = {'LAlt'}}}, down = iCommandPlaneTrimOn, up = iCommandPlaneTrimOff, name = _('T/O Trim'), category = _('Flight Control')},
 -- Systems

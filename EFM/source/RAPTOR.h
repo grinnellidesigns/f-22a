@@ -22,11 +22,14 @@
 #include <map>
 #include <string>
 #include <cstddef> 
+#include <array>
 
     // ----- Aerodynamics, etc. -----
 namespace FM_DATA
 {
-    double mach_table[] = { 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4 };
+    static inline std::array<double, 13> mach_table = {
+        0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4
+    };
 
     // Zero-lift side-force coefficient. Represents lateral force at zero AoA (small for symmetry)
     double Cy0 = 0.008;
@@ -56,78 +59,41 @@ namespace FM_DATA
     // Maximum lift coefficient vs. Mach. Represents peak lift capability before stall
     double CyMax[] = { 1.8, 1.85, 1.9, 1.85, 1.75, 1.6, 1.45, 1.35, 1.25, 1.15, 1.1, 1.05, 1.0 };
 
-
     //Reactions
     double AoA_table[] = { 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0 };
     double AoA_drag_factor[] = { 0.0, 0.006, 0.024, 0.10, 0.24, 0.375, 0.47, 0.60, 0.71, 1.0 };
 
     //Misc.
-    double beta_table[] = { 0.0, 5.0, 10.0, 20.0, 30.0 }; // Sideslip angle (deg)
-    double Cy_beta[] = { 0.0, 0.05, 0.1, 0.2, 0.3 }; // Side-force coefficient
+    double beta_table[] = { 0.0, 5.0, 10.0, 20.0, 30.0 }; 
+    double Cy_beta[] = { 0.0, 0.05, 0.1, 0.2, 0.3 };
 
     //Thrust - per engine
-    double idle_thrust[] = {
-        6000,
-        5980,
-        5900,
-        6000,
-        6150,
-        6300,
-        7000,
-        7900,
-        9100,
-        9900,
-        10500,
-        11000,
-        11600
+    static inline std::array<double, 13> idle_thrust = {
+        6000, 5980, 5900, 6000, 6150, 6300, 7000, 7900, 9100, 9900, 10500, 11000, 11600
     };
 
-    double max_thrust[] = {
-        115600, // Mach 0.0 (~26,000 lbf total, real MIL)
-        117050,
-        118500, // Mach 0.4 (slight dip, engine efficiency)
-        127250, // Mach 0.6 (minimum before ram boost)
-        154000, // Mach 0.8 (ram effect kicks in)
-        183800, // Mach 1.0 (transonic boost)
-        245000, // Mach 1.2 (supersonic rise)
-        293000,
-        330000, // Mach 1.6 (supercruise tuned for M1.76)
-        230000, // Mach 1.8 (supercruise tuned for M1.76)
-        0, // Mach 2.0
-        0, // Mach 2.2
-        0  // Mach 2.4
+    static inline std::array<double, 13> max_thrust = {
+        115600, 117050, 118500, 127250, 154000, 183800, 245000, 293000, 330000, 230000, 0, 0, 0
     };
 
-    double ab_thrust[] = {
-        197000, // Mach 0.0 (~40,000 lbf total, real AB+)
-        215300, // Mach 0.2
-        232600, // Mach 0.4 (slight dip, engine efficiency)
-        256500, // Mach 0.6 (minimum before ram boost)
-        275000, // Mach 0.8 (ram effect kicks in)
-        298000, // Mach 1.0 (transonic boost)
-        325000, // Mach 1.2 (supersonic rise)
-        355000, // Mach 1.4
-        405000, // Mach 1.6
-        470000, // Mach 1.8
-        535000, // Mach 2.0
-        536500, // Mach 2.2 
-        0  // Mach 2.4
+    static inline std::array<double, 13> ab_thrust = {
+    197000, 215300, 232600, 256500, 275000, 298000, 325000, 355000, 405000, 470000, 535000, 536500, 0
     };
 
     //FBW Limits
     //Elevator
-    double elevator_rate_table[] = { 1.396, 1.396, 1.30, 1.036, 0.912, 0.912, 0.912, 0.912, 0.912, 0.912, 0.912, 0.912, 0.912 };
-    double max_elevator_deflection[] = { 30.0, 28.0, 21.5, 13.8, 11.5, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0, 11.0 };
+    double elevator_rate_table[] = { 1.396, 1.396, 1.30, 1.016, 0.912, 0.912, 0.912, 0.942, 0.942, 0.989, 0.989, 0.989, 0.989 };
+    double max_elevator_deflection[] = { 30.0, 28.0, 21.5, 13.8, 11.5, 11.0, 11.0, 11.0, 11.0, 11.0, 12.0, 12.0, 12.0 };
 
     //Aileron
     const double max_aileron_rate = 15.55;
 
     //Thrust Vectoring Nozzles
     double max_thrust_vector_deflection[] = { 20.0, 20.0, 17.0, 11.5, 6.0, 4.0, 2.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0 };
-    double thrust_vector_rate[] = { 1.396, 1.3905, 1.385, 0.915, 0.791, 0.737, 0.601, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    double thrust_vector_rate[] = { 1.396, 1.3905, 1.189, 0.855, 0.759, 0.737, 0.601, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
     // Damping tables
-    double Kd_pitch[] = { 0.635, 0.662, 0.654, 0.72, 1.1, 1.95, 2.2, 2.5, 3.75, 3.0, 3.1, 3.15, 3.158 };
+    double Kd_pitch[] = { 0.635, 0.662, 0.654, 0.80, 1.25, 1.95, 2.2, 2.5, 2.8, 2.8, 2.8, 2.8, 2.8 };
     double Kd_roll[] = { 0.50, 0.39, 0.35, 0.31, 0.33, 0.37, 0.42, 0.52, 0.62, 0.74, 0.85, 0.88, 0.81 };
     double Kd_yaw[] = { 2.0, 2.0, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0 };
 
@@ -177,7 +143,6 @@ namespace RAPTOR {
     bool gear_switch = false;
     double gear_pos = 0;
     double wheel_brake = 0;
-    int carrier_pos = 0;
 
     const double max_internal_fuel = 8165.0; 
     const double ground_refuel_rate = 45.36;
@@ -187,6 +152,10 @@ namespace RAPTOR {
     const double fuel_rate_idle = 0.108;
     const double fuel_rate_mil = 2.2;
     const double fuel_rate_ab = 6.5;
+    double left_fuel_rate = 0.0;
+    double right_fuel_rate = 0.0;
+    double left_fuel_rate_kg_s;
+    double right_fuel_rate_kg_s;
 
     double atmosphere_density = 1.225, altitude_ASL = 0, altitude_AGL = 0, V_scalar = 0;
     double speed_of_sound = 320, mach = 0;
@@ -259,10 +228,151 @@ namespace RAPTOR {
     bool nav_white_blink = false;
     double nav_lights_timer = 0.0;
     bool nav_lights_blink = false;
-    const double blink_on_time = 1.0;
-    const double blink_off_time = 1.0;
+    const double blink_on_time = 0.5;
+    const double blink_off_time = 0.75;
     const double blink_period = blink_on_time + blink_off_time;
 }
+
+// ----- Damage Elements -----
+
+enum class DamageElement : size_t {
+    NoseCenter = 0,
+    NoseLeft = 1,
+    NoseRight = 2,
+    Cockpit = 3,
+    CabinLeft = 4,
+    CabinRight = 5,
+    CabinBottom = 6,
+    Gun = 7,
+    FrontGear = 8,
+    FuselageLeft = 9,
+    FuselageRight = 10,
+    EngineInLeft = 11,
+    EngineInRight = 12,
+    NacelleLeftBottom = 13,
+    NacelleRightBottom = 14,
+    GearLeft = 15,
+    GearRight = 16,
+    NacelleLeft = 17,
+    NacelleRight = 18,
+    AirbrakeLeft = 19,
+    AirbrakeRight = 20,
+    SlatOutLeft = 21,
+    SlatOutRight = 22,
+    WingOutLeft = 23,
+    WingOutRight = 24,
+    AileronLeft = 25,
+    AileronRight = 26,
+    SlatCentreLeft = 27,
+    SlatCentreRight = 28,
+    WingCentreLeft = 29,
+    WingCentreRight = 30,
+    FlapOutLeft = 31,
+    FlapOutRight = 32,
+    SlatInLeft = 33,
+    SlatInRight = 34,
+    WingInLeft = 35,
+    WingInRight = 36,
+    FlapInLeft = 37,
+    FlapInRight = 38,
+    FinTopLeft = 39,
+    FinTopRight = 40,
+    FinCentreLeft = 41,
+    FinCentreRight = 42,
+    FinBottomLeft = 43,
+    FinBottomRight = 44,
+    StabilizerOutLeft = 45,
+    StabilizerOutRight = 46,
+    StabilizerInLeft = 47,
+    StabilizerInRight = 48,
+    ElevatorOutLeft = 49,
+    ElevatorOutRight = 50,
+    ElevatorInLeft = 51,
+    ElevatorInRight = 52,
+    RudderLeft = 53,
+    RudderRight = 54,
+    Tail = 55,
+    TailLeft = 56,
+    TailRight = 57,
+    TailBottom = 58,
+    NoseBottom = 59,
+    Pitot = 60,
+    FuelTankFrontLeft = 61,
+    FuelTankBackRight = 62,
+    Rotor = 63,
+    Blade1In = 64,
+    Blade1Centre = 65,
+    Blade1Out = 66,
+    Blade2In = 67,
+    Blade2Centre = 68,
+    Blade2Out = 69,
+    Blade3In = 70,
+    Blade3Centre = 71,
+    Blade3Out = 72,
+    Blade4In = 73,
+    Blade4Centre = 74,
+    Blade4Out = 75,
+    Blade5In = 76,
+    Blade5Centre = 77,
+    Blade5Out = 78,
+    Blade6In = 79,
+    Blade6Centre = 80,
+    Blade6Out = 81,
+    FuselageBottom = 82,
+    WheelNose = 83,
+    WheelLeft = 84,
+    WheelRight = 85,
+    Payload1 = 86,
+    Payload2 = 87,
+    Payload3 = 88,
+    Payload4 = 89,
+    Crew1 = 90,
+    Crew2 = 91,
+    Crew3 = 92,
+    Crew4 = 93,
+    ArmorNoseLeft = 94,
+    ArmorNoseRight = 95,
+    ArmorLeft = 96,
+    ArmorRight = 97,
+    Hook = 98,
+    TailTop = 100,
+    FlapCentreLeft = 101,
+    FlapCentreRight = 102,
+    Engine1 = 103,
+    Engine2 = 104,
+    Engine3 = 105,
+    Engine4 = 106,
+    Engine5 = 107,
+    Engine6 = 108,
+    Engine7 = 109,
+    Engine8 = 110,
+    WingL00 = 111,
+    WingL01 = 112,
+    WingL02 = 113,
+    WingL03 = 114,
+    WingL04 = 115,
+    WingL05 = 116,
+    WingL06 = 117,
+    WingL07 = 118,
+    WingL08 = 119,
+    WingL09 = 120,
+    WingL10 = 121,
+    WingL11 = 122,
+    WingR00 = 123,
+    WingR01 = 124,
+    WingR02 = 125,
+    WingR03 = 126,
+    WingR04 = 127,
+    WingR05 = 128,
+    WingR06 = 129,
+    WingR07 = 130,
+    WingR08 = 131,
+    WingR09 = 132,
+    WingR10 = 133,
+    WingR11 = 134,
+    LaunchBar = 135,
+    TailRotor = 136
+};
 
 // ----- Cockpit Logic -----
 

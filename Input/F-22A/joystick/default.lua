@@ -172,9 +172,9 @@ local LIGHT_LANDING_T = 10154
 
 join(res.keyCommands,{    
 
-		{down = 95, name = "F-22: Trim Up", category = "Flight Control"},
-        {down = 96, name = "F-22: Trim Down", category = "Flight Control"},
-        {down = 97, name = "F-22: Reset Trim", category = "Flight Control"},
+		{down = iCommandPlaneTrimUp, name = "F-22: Trim Up", category = "Flight Control"},
+        {down = iCommandPlaneTrimDown, name = "F-22: Trim Down", category = "Flight Control"},
+        {down = iCommandPlaneTrimCancel, name = "F-22: Reset Trim", category = "Flight Control"},
         {down = 10500, value_down = 1.0, name = _('F-22: Altitude Hold Toggle'), category = _('F-22 EFM Commands')},
         {down = 10501, value_down = 1.0, name = _('F-22: Attitude Hold Toggle'), category = _('F-22 EFM Commands')},
         {down = 10502, value_down = 1.0, name = _('F-22: Auto Throttle Toggle'), category = _('F-22 EFM Commands')},
@@ -329,9 +329,6 @@ join(res.keyCommands,{
     {down = LIGHT_LANDING_T,            name = _('Landing Light Toggle'),               category = _('F-22A Systems')},   
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Autopilot
-    {down = iCommandPlaneAutopilot,     name = _('Autopilot - Attitude Hold'),          category = _('Autopilot')},
-    {down = iCommandPlaneStabHbar,      name = _('Autopilot - Altitude Hold'),          category = _('Autopilot')},
-    {down = iCommandPlaneStabCancel,    name = _('Autopilot Disengage'),                category = _('Autopilot')},
 -- Flight Control
     {down = iCommandPlaneTrimOn, up = iCommandPlaneTrimOff, name = _('T/O Trim'), category = _('Flight Control')},
 -- Systems

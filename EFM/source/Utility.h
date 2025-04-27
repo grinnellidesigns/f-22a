@@ -141,22 +141,27 @@ Matrix33 quaternion_to_matrix(const Quaternion & v)
 */
 
 // Linear interpolation
-inline double lerp(double* x, double* f, unsigned sz, double t)
+inline double lerp(const double* x, const double* f, size_t sz, double t)
 {
-	for (unsigned i = 0; i < sz; i++)
+	if (sz == 0) return 0.0;
+	if (sz == 1) return f[0];
+
+	for (size_t i = 0; i < sz; i++)
 	{
 		if (t <= x[i])
 		{
 			if (i > 0)
 			{
-				return ((f[i] - f[i - 1]) / (x[i] - x[i - 1]) * t +
-					(x[i] * f[i - 1] - x[i - 1] * f[i]) / (x[i] - x[i - 1]));
+				double dx = x[i] - x[i - 1];
+				if (dx == 0.0) return f[i - 1];
+				return ((f[i] - f[i - 1]) / dx * t +
+					(x[i] * f[i - 1] - x[i - 1] * f[i]) / dx);
 			}
 			return f[0];
 		}
 	}
 	return f[sz - 1];
-};
+}
 
 /*	
 	This takes two tables and makes a sort of "virtual graph".
