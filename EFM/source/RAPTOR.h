@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <cstddef> 
 #include <array>
@@ -393,8 +393,8 @@ public:
 
 private:
     EDPARAM param_api_; // Parameter API
-    std::map<std::string, void*> param_handles_; // Handles for APU_POWER, AAR, AAR_READY, etc.
-    std::map<int, float> draw_args_; // Input args (709, 712-715), output args (604-613)
+    std::unordered_map<std::string, void*> param_handles_; // Handles for APU_POWER, AAR, AAR_READY, etc.
+    std::unordered_map<int, float> draw_args_; // Input args (709, 712-715), output args (604-613)
 
     // Helper functions for light logic
     void updateGearLights(double dt);
