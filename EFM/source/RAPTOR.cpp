@@ -199,7 +199,7 @@ void ed_fm_simulate(double dt) {
         RAPTOR::right_aileron_pos = Vec3(RAPTOR::center_of_mass.x, RAPTOR::center_of_mass.y, RAPTOR::wingspan * 0.5);
         RAPTOR::rudder_pos = Vec3(-RAPTOR::length / 2, RAPTOR::height / 2, 0);
         RAPTOR::left_engine_pos = Vec3(-3.793, 0.0, -1.45);
-        RAPTOR::right_engine_pos = Vec3(-3.793, 0.0, 1.45); //0.716
+        RAPTOR::right_engine_pos = Vec3(-3.793, 0.0, 1.45);
         RAPTOR::left_elevon_command = RAPTOR::right_elevon_command = 0.0;
         RAPTOR::left_elevon_angle = RAPTOR::right_elevon_angle = 0.0;
         RAPTOR::aileron_command = RAPTOR::last_aileron_cmd = 0.0;
@@ -511,7 +511,7 @@ void ed_fm_simulate(double dt) {
         if (RAPTOR::alpha > 60.0) tv_pitch_cmd -= (RAPTOR::alpha - 60.0) * 0.022;
         if (RAPTOR::alpha < -60.0) tv_pitch_cmd += (-RAPTOR::alpha - 60.0) * 0.022;
 
-        tv_pitch_cmd += -RAPTOR::pitch_rate; // *0.75;
+        tv_pitch_cmd += -RAPTOR::pitch_rate;
 
         double tv_command = limit(RAPTOR::last_tv_cmd + limit(tv_pitch_cmd - RAPTOR::last_tv_cmd, -max_rate * dt, max_rate * dt), -1.0, 1.0);
         RAPTOR::last_tv_cmd = tv_command;
@@ -1275,9 +1275,9 @@ double ed_fm_get_param(unsigned index) {
     case ED_FM_SUSPENSION_2_GEAR_POST_STATE: return RAPTOR::gear_pos;
 
     case ED_FM_ENGINE_0_RPM:
-    case ED_FM_ENGINE_0_RELATED_RPM://return 1;
+    case ED_FM_ENGINE_0_RELATED_RPM:
     case ED_FM_ENGINE_0_THRUST:
-    case ED_FM_ENGINE_0_RELATED_THRUST:// return 0;
+    case ED_FM_ENGINE_0_RELATED_THRUST:
 
     case ED_FM_ENGINE_1_CORE_RPM:
     case ED_FM_ENGINE_1_RPM: return RAPTOR::left_engine_power_readout;
