@@ -188,29 +188,7 @@ void ed_fm_simulate(double dt) {
 
     static double last_g = 0.0;
 
-    if (!RAPTOR::sim_initialised) {
-        cockpit_manager.initialize();
-        RAPTOR::left_wing_pos = Vec3(RAPTOR::center_of_mass.x - 0.8, RAPTOR::center_of_mass.y + 0.5, -RAPTOR::wingspan / 2);
-        RAPTOR::right_wing_pos = Vec3(RAPTOR::center_of_mass.x - 0.8, RAPTOR::center_of_mass.y + 0.5, RAPTOR::wingspan / 2);
-        RAPTOR::tail_pos = Vec3(RAPTOR::center_of_mass.x - 0.7, RAPTOR::center_of_mass.y, 0);
-        RAPTOR::left_elevon_pos = Vec3(-RAPTOR::length / 2, RAPTOR::center_of_mass.y, -RAPTOR::wingspan * 0.25);
-        RAPTOR::right_elevon_pos = Vec3(-RAPTOR::length / 2, RAPTOR::center_of_mass.y, RAPTOR::wingspan * 0.25);
-        RAPTOR::left_aileron_pos = Vec3(RAPTOR::center_of_mass.x, RAPTOR::center_of_mass.y, -RAPTOR::wingspan * 0.5);
-        RAPTOR::right_aileron_pos = Vec3(RAPTOR::center_of_mass.x, RAPTOR::center_of_mass.y, RAPTOR::wingspan * 0.5);
-        RAPTOR::rudder_pos = Vec3(-RAPTOR::length / 2, RAPTOR::height / 2, 0);
-        RAPTOR::left_engine_pos = Vec3(-3.793, 0.0, -1.45);
-        RAPTOR::right_engine_pos = Vec3(-3.793, 0.0, 1.45);
-        RAPTOR::left_elevon_command = RAPTOR::right_elevon_command = 0.0;
-        RAPTOR::left_elevon_angle = RAPTOR::right_elevon_angle = 0.0;
-        RAPTOR::aileron_command = RAPTOR::last_aileron_cmd = 0.0;
-        RAPTOR::rudder_command = RAPTOR::last_rudder_cmd = 0.0;
-        RAPTOR::roll_error_i = RAPTOR::yaw_error_i = 0.0;
-        RAPTOR::last_yaw_input = 0.0;
-        RAPTOR::tv_angle = 0.0;
-        RAPTOR::last_tv_cmd = 0.0;
-        RAPTOR::last_pitch_input = 0.0;
-        RAPTOR::idle_rpm = 0.675;
-    }
+    
 
     cockpit_manager.update(dt);
 
@@ -1232,7 +1210,31 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     data[621] = 0.2f;
 }
 
-void ed_fm_configure(const char* cfg_path) {}
+void ed_fm_configure(const char* cfg_path) {
+    if (!RAPTOR::sim_initialised) {
+        cockpit_manager.initialize();
+        RAPTOR::left_wing_pos = Vec3(RAPTOR::center_of_mass.x - 0.8, RAPTOR::center_of_mass.y + 0.5, -RAPTOR::wingspan / 2);
+        RAPTOR::right_wing_pos = Vec3(RAPTOR::center_of_mass.x - 0.8, RAPTOR::center_of_mass.y + 0.5, RAPTOR::wingspan / 2);
+        RAPTOR::tail_pos = Vec3(RAPTOR::center_of_mass.x - 0.7, RAPTOR::center_of_mass.y, 0);
+        RAPTOR::left_elevon_pos = Vec3(-RAPTOR::length / 2, RAPTOR::center_of_mass.y, -RAPTOR::wingspan * 0.25);
+        RAPTOR::right_elevon_pos = Vec3(-RAPTOR::length / 2, RAPTOR::center_of_mass.y, RAPTOR::wingspan * 0.25);
+        RAPTOR::left_aileron_pos = Vec3(RAPTOR::center_of_mass.x, RAPTOR::center_of_mass.y, -RAPTOR::wingspan * 0.5);
+        RAPTOR::right_aileron_pos = Vec3(RAPTOR::center_of_mass.x, RAPTOR::center_of_mass.y, RAPTOR::wingspan * 0.5);
+        RAPTOR::rudder_pos = Vec3(-RAPTOR::length / 2, RAPTOR::height / 2, 0);
+        RAPTOR::left_engine_pos = Vec3(-3.793, 0.0, -1.45);
+        RAPTOR::right_engine_pos = Vec3(-3.793, 0.0, 1.45);
+        RAPTOR::left_elevon_command = RAPTOR::right_elevon_command = 0.0;
+        RAPTOR::left_elevon_angle = RAPTOR::right_elevon_angle = 0.0;
+        RAPTOR::aileron_command = RAPTOR::last_aileron_cmd = 0.0;
+        RAPTOR::rudder_command = RAPTOR::last_rudder_cmd = 0.0;
+        RAPTOR::roll_error_i = RAPTOR::yaw_error_i = 0.0;
+        RAPTOR::last_yaw_input = 0.0;
+        RAPTOR::tv_angle = 0.0;
+        RAPTOR::last_tv_cmd = 0.0;
+        RAPTOR::last_pitch_input = 0.0;
+        RAPTOR::idle_rpm = 0.675;
+    }
+}
 
 double ed_fm_get_param(unsigned index) {
     switch (index) {
