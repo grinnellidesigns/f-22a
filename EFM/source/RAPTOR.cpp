@@ -480,7 +480,7 @@ void ed_fm_simulate(double dt) {
 
         double tv_pitch_cmd = (pitch_cmd_source * fabs(pitch_cmd_source) * 1.1) * tv_sensitivity;
         if (RAPTOR::alpha > 60.0) tv_pitch_cmd -= (RAPTOR::alpha - 60.0) * 0.022;
-        if (RAPTOR::alpha < -60.0) tv_pitch_cmd += (-RAPTOR::alpha - 60.0) * 0.022;
+        if (RAPTOR::alpha < -40.0) tv_pitch_cmd += (-RAPTOR::alpha - 40.0) * 0.022;
 
         tv_pitch_cmd += -RAPTOR::pitch_rate;
 
@@ -838,6 +838,7 @@ void ed_fm_simulate(double dt) {
     if (!RAPTOR::on_ground) {
         if (fabs(RAPTOR::alpha) > 90) RAPTOR::shake_amplitude += (fabs(RAPTOR::alpha) - 90) / 100;
         if (fabs(RAPTOR::beta) > 10) RAPTOR::shake_amplitude += (fabs(RAPTOR::beta) - 10) / 100;
+        if (fabs(RAPTOR::g) > 10.5) RAPTOR::shake_amplitude += (fabs(RAPTOR::g) - 10.5) / 100;
         if (RAPTOR::mach > 2.31) RAPTOR::shake_amplitude += (RAPTOR::mach - 2.31) / 2;
     }
 
@@ -1298,28 +1299,37 @@ double ed_fm_get_param(unsigned index) {
     case ED_FM_ENGINE_0_RPM:
     case ED_FM_ENGINE_0_RELATED_RPM:
     case ED_FM_ENGINE_0_THRUST:
-    case ED_FM_ENGINE_0_RELATED_THRUST:
+    case ED_FM_ENGINE_0_RELATED_THRUST: return 0;
 
-    case ED_FM_ENGINE_1_CORE_RPM:
+    case ED_FM_ENGINE_1_CORE_RPM: return RAPTOR::left_throttle_input; 
     case ED_FM_ENGINE_1_RPM: return RAPTOR::left_engine_power_readout;
-    case ED_FM_ENGINE_1_COMBUSTION:
+    case ED_FM_ENGINE_1_COMBUSTION: return RAPTOR::left_engine_integrity; 
     case ED_FM_ENGINE_1_RELATED_THRUST: return limit(RAPTOR::left_engine_power_readout * 0.35, 0.0, 0.9);
-    case ED_FM_ENGINE_1_CORE_RELATED_THRUST:
-    case ED_FM_ENGINE_1_RELATED_RPM:
+    case ED_FM_ENGINE_1_CORE_RELATED_THRUST: {
+        double max_dry_thrust = lerp(FM_DATA::mach_table.data(), FM_DATA::max_thrust.data(), FM_DATA::mach_table.size(), RAPTOR::mach);
+        double max_dry_core_thrust = max_dry_thrust * 0.7; 
+        double core_thrust = RAPTOR::left_thrust_force * (RAPTOR::left_throttle_output > 1.025 ? 0.6 : 0.7);
+        return max_dry_core_thrust > 0 ? limit(core_thrust / max_dry_core_thrust, 0.0, 2.0) : 0.0;
+    }    
+    case ED_FM_ENGINE_1_RELATED_RPM: return limit(RAPTOR::left_engine_power_readout * 0.35, 0.0, 0.9);
     case ED_FM_ENGINE_1_CORE_RELATED_RPM: return RAPTOR::left_engine_power_readout;
-    case ED_FM_ENGINE_1_CORE_THRUST:
+    case ED_FM_ENGINE_1_CORE_THRUST: return RAPTOR::left_thrust_force * (RAPTOR::left_throttle_output > 1.025 ? 0.6 : 0.7); 
     case ED_FM_ENGINE_1_THRUST: return RAPTOR::left_thrust_force;
     case ED_FM_ENGINE_1_TEMPERATURE: return (pow(RAPTOR::left_engine_power_readout, 3) * 300) + RAPTOR::atmosphere_temperature;
-    case ED_FM_ENGINE_1_FUEL_FLOW: return RAPTOR::left_throttle_input * 50;
 
-    case ED_FM_ENGINE_2_CORE_RPM:
+    case ED_FM_ENGINE_2_CORE_RPM: return RAPTOR::right_throttle_input; 
     case ED_FM_ENGINE_2_RPM: return RAPTOR::right_engine_power_readout;
-    case ED_FM_ENGINE_2_COMBUSTION:
+    case ED_FM_ENGINE_2_COMBUSTION: return RAPTOR::right_engine_integrity;
     case ED_FM_ENGINE_2_RELATED_THRUST: return limit(RAPTOR::right_engine_power_readout * 0.35, 0.0, 0.9);
-    case ED_FM_ENGINE_2_CORE_RELATED_THRUST:
-    case ED_FM_ENGINE_2_RELATED_RPM:
+    case ED_FM_ENGINE_2_CORE_RELATED_THRUST: {
+        double max_dry_thrust = lerp(FM_DATA::mach_table.data(), FM_DATA::max_thrust.data(), FM_DATA::mach_table.size(), RAPTOR::mach);
+        double max_dry_core_thrust = max_dry_thrust * 0.7; 
+        double core_thrust = RAPTOR::right_thrust_force * (RAPTOR::right_throttle_output > 1.025 ? 0.6 : 0.7);
+        return max_dry_core_thrust > 0 ? limit(core_thrust / max_dry_core_thrust, 0.0, 2.0) : 0.0;
+    }
+    case ED_FM_ENGINE_2_RELATED_RPM: return limit(RAPTOR::right_engine_power_readout * 0.35, 0.0, 0.9); 
     case ED_FM_ENGINE_2_CORE_RELATED_RPM: return RAPTOR::right_engine_power_readout;
-    case ED_FM_ENGINE_2_CORE_THRUST:
+    case ED_FM_ENGINE_2_CORE_THRUST: return RAPTOR::right_thrust_force * (RAPTOR::left_throttle_output > 1.025 ? 0.6 : 0.7); 
     case ED_FM_ENGINE_2_THRUST: return RAPTOR::right_thrust_force;
     case ED_FM_ENGINE_2_TEMPERATURE: return (pow(RAPTOR::right_engine_power_readout, 3) * 300) + RAPTOR::atmosphere_temperature;
     }
