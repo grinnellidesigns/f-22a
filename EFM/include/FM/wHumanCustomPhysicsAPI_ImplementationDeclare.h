@@ -94,6 +94,15 @@ EXPORT_ED_FM_PHYSICS_IMP void ed_fm_set_atmosphere(double h,//altitude above sea
 								   double wind_vy,//components of velocity vector, including turbulence in world coordinate system
 								   double wind_vz //components of velocity vector, including turbulence in world coordinate system
 								   );
+								   
+/*
+called before simulation to set up your environment for the next step
+
+prototype for void ed_fm_set_clouds_density(const atmo_clouds_and_precipation & info);
+
+*/
+EXPORT_ED_FM_PHYSICS_IMP void ed_fm_set_clouds_density(const atmo_clouds_and_precipation & info);
+
 /*
 called before simulation to set up your environment for the next step
 

@@ -177,18 +177,12 @@ void reset_fm_state() {
     RAPTOR::autotrim_elevator_cmd = 0.0;
 }
 
-//#########################################
-//#       Flight Module Simulation        #
-//#########################################
-
 void ed_fm_simulate(double dt) {
     RAPTOR::fm_clock += dt;
     RAPTOR::common_force = Vec3();
     RAPTOR::common_moment = Vec3();
 
     static double last_g = 0.0;
-
-    
 
     cockpit_manager.update(dt);
 
@@ -205,7 +199,6 @@ void ed_fm_simulate(double dt) {
 
     double aoa = RAPTOR::alpha;
     double x_offset;
-
 
     double x_offset_normal;
     if (aoa <= 3.5) {
@@ -524,7 +517,7 @@ void ed_fm_simulate(double dt) {
 
         double elevon_force_magnitude = q * RAPTOR::S * 0.2;
         if (ias_knots < 50.0) {
-            elevon_force_magnitude = 0.0; 
+            elevon_force_magnitude = 0.0;
         }
         add_local_force(Vec3(0, RAPTOR::left_elevon_angle * elevon_force_magnitude, 0), RAPTOR::left_elevon_pos);
         add_local_force(Vec3(0, RAPTOR::right_elevon_angle * elevon_force_magnitude, 0), RAPTOR::right_elevon_pos);
@@ -560,6 +553,7 @@ void ed_fm_simulate(double dt) {
     const double ab_spool_time_ground = 1.65;
     const double spool_up_rate_ground = 0.079;
     const double spool_down_rate_ground = 0.0813;
+    const double shutoff_spool_down = 0.041;
 
     double ab_spool_time = RAPTOR::on_ground ? ab_spool_time_ground : ab_spool_time_air;
     double spool_up_rate = RAPTOR::on_ground ? spool_up_rate_ground : spool_up_rate_air;
@@ -643,7 +637,7 @@ void ed_fm_simulate(double dt) {
         }
     }
     else if (RAPTOR::left_engine_state == RAPTOR::SHUTDOWN) {
-        RAPTOR::left_throttle_output -= spool_down_rate * dt;
+        RAPTOR::left_throttle_output -= shutoff_spool_down * dt;
         if (RAPTOR::left_throttle_output <= 0.0) {
             RAPTOR::left_throttle_output = 0.0;
             RAPTOR::left_engine_state = RAPTOR::OFF;
@@ -759,7 +753,7 @@ void ed_fm_simulate(double dt) {
         }
     }
     else if (RAPTOR::right_engine_state == RAPTOR::SHUTDOWN) {
-        RAPTOR::right_throttle_output -= spool_down_rate * dt;
+        RAPTOR::right_throttle_output -= shutoff_spool_down * dt;
         if (RAPTOR::right_throttle_output <= 0.0) {
             RAPTOR::right_throttle_output = 0.0;
             RAPTOR::right_engine_state = RAPTOR::OFF;
@@ -822,13 +816,13 @@ void ed_fm_simulate(double dt) {
     add_local_moment(Vec3(0, roll_yaw_moment, 0));
     double OmxMax_ = lerp(FM_DATA::mach_table.data(), FM_DATA::OmxMax, FM_DATA::mach_table.size(), RAPTOR::mach);
     double roll_rate_ratio = std::fabs(RAPTOR::roll_rate) / (OmxMax_ + 0.1);
-    double clamped_ratio = std::clamp(roll_rate_ratio, 0.0001, 2.0); 
-    double amplified_ratio = std::pow(clamped_ratio, 6); 
-    double dynamic_pressure_term = 2.0 * q + 50000.0; 
-    double scaling_factor = amplified_ratio * dynamic_pressure_term;  
-    double clamped_scaling = std::clamp(scaling_factor, -1e7, 1e7);  
+    double clamped_ratio = std::clamp(roll_rate_ratio, 0.0001, 2.0);
+    double amplified_ratio = std::pow(clamped_ratio, 6);
+    double dynamic_pressure_term = 2.0 * q + 50000.0;
+    double scaling_factor = amplified_ratio * dynamic_pressure_term;
+    double clamped_scaling = std::clamp(scaling_factor, -1e7, 1e7);
     double roll_rate_limiter = -RAPTOR::roll_rate * clamped_scaling;
-    
+
     add_local_moment(Vec3(roll_rate_limiter, 0, 0));
     double yaw_rate_limiter = -(RAPTOR::yaw_rate + RAPTOR::aos) * (q + 1e5 * 0.5);
     add_local_moment(Vec3(0, yaw_rate_limiter, 0));
@@ -849,10 +843,6 @@ void ed_fm_simulate(double dt) {
 
     RAPTOR::sim_initialised = true;
 }
-
-//#########################################
-//#     Flight Module Simulation End      #
-//#########################################
 
 void ed_fm_set_atmosphere(double h, double t, double a, double ro, double p, double wind_vx, double wind_vy, double wind_vz) {
     RAPTOR::wind = Vec3(wind_vx, wind_vy, wind_vz);
@@ -1132,7 +1122,6 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
         data[29] = 0.0f;
     }
 
-
     if (RAPTOR::right_engine_state == RAPTOR::OFF) {
         data[28] = 0.0f;
     }
@@ -1143,7 +1132,6 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
         data[28] = 0.0f;
     }
 
-
     if (RAPTOR::left_engine_state == RAPTOR::OFF) {
         data[611] = 1.0f;
     }
@@ -1153,7 +1141,10 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     }
     else {
         float throttle = static_cast<float>(RAPTOR::left_throttle_output);
-        if (throttle < 0.99) {
+        if (RAPTOR::left_engine_state == RAPTOR::SHUTDOWN) {
+            data[611] = 0.3f + (1.0f - 0.3f) * ((0.67f - throttle) / 0.67f);
+        }
+        else if (throttle < 0.99) { 
             data[611] = 0.30f - (0.30f - 0.0f) * (throttle - 0.67f) / (0.99f - 0.67f);
         }
         else {
@@ -1162,6 +1153,17 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     }
     data[611] = static_cast<float>(limit(data[611], 0.0f, 1.0f));
 
+    float rpml = static_cast<float>(RAPTOR::left_engine_power_readout);
+    if (rpml > 0.66f) {
+        data[90] = 0.0f;
+    }
+    else if (rpml < 0.1f) {
+        data[90] = 1.0f;
+    }
+    else {
+        data[90] = (rpml - 0.66f) / (0.1f - 0.66f);
+    }
+    data[90] = static_cast<float>(limit(data[90], 0.0f, 1.0f));
 
     if (RAPTOR::right_engine_state == RAPTOR::OFF) {
         data[610] = 1.0f;
@@ -1172,23 +1174,40 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     }
     else {
         const float throttle = static_cast<float>(RAPTOR::right_throttle_output);
-        if (throttle < 0.99f) {
+        if (RAPTOR::right_engine_state == RAPTOR::SHUTDOWN) {
+            data[610] = 0.3f + (1.0f - 0.3f) * ((0.67f - throttle) / 0.67f);
+        }
+        else if (throttle < 0.99f) { 
             data[610] = 0.30f - (0.30f - 0.0f) * (throttle - 0.67f) / (0.99f - 0.67f);
         }
         else {
             data[610] = 0.0f;
         }
     }
+    data[610] = static_cast<float>(limit(data[610], 0.0f, 1.0f));
+
+    float rpmr = static_cast<float>(RAPTOR::right_engine_power_readout);
+    if (rpmr > 0.66f) {
+        data[89] = 0.0f;
+    }
+    else if (rpmr < 0.1f) {
+        data[89] = 1.0f;
+    }
+    else {
+        data[89] = (rpmr - 0.66f) / (0.1f - 0.66f);
+    }
+    data[89] = static_cast<float>(limit(data[89], 0.0f, 1.0f));
+
     if (size > 325) {
         if (RAPTOR::right_engine_state == RAPTOR::OFF) {
-            data[324] = 0.0f;
+            data[324] = NULL;
         }
         else {
             data[324] = static_cast<float>(RAPTOR::right_engine_phase);
         }
 
         if (RAPTOR::left_engine_state == RAPTOR::OFF) {
-            data[325] = 0.0f;
+            data[325] = NULL;
         }
         else {
             data[325] = static_cast<float>(RAPTOR::left_engine_phase);
@@ -1221,8 +1240,8 @@ void ed_fm_configure(const char* cfg_path) {
         RAPTOR::left_aileron_pos = Vec3(RAPTOR::center_of_mass.x, RAPTOR::center_of_mass.y, -RAPTOR::wingspan * 0.5);
         RAPTOR::right_aileron_pos = Vec3(RAPTOR::center_of_mass.x, RAPTOR::center_of_mass.y, RAPTOR::wingspan * 0.5);
         RAPTOR::rudder_pos = Vec3(-RAPTOR::length / 2, RAPTOR::height / 2, 0);
-        RAPTOR::left_engine_pos = Vec3(-3.793, 0.0, -1.45);
-        RAPTOR::right_engine_pos = Vec3(-3.793, 0.0, 1.45);
+        RAPTOR::left_engine_pos = Vec3(-3.793, 0.0, -0.716);
+        RAPTOR::right_engine_pos = Vec3(-3.793, 0.0, 0.716);
         RAPTOR::left_elevon_command = RAPTOR::right_elevon_command = 0.0;
         RAPTOR::left_elevon_angle = RAPTOR::right_elevon_angle = 0.0;
         RAPTOR::aileron_command = RAPTOR::last_aileron_cmd = 0.0;
@@ -1284,19 +1303,19 @@ double ed_fm_get_param(unsigned index) {
     case ED_FM_ENGINE_1_CORE_RPM:
     case ED_FM_ENGINE_1_RPM: return RAPTOR::left_engine_power_readout;
     case ED_FM_ENGINE_1_COMBUSTION:
-    case ED_FM_ENGINE_1_RELATED_THRUST: return limit(RAPTOR::left_engine_power_readout * 0.35, 0.0, 0.9); //heat blur
+    case ED_FM_ENGINE_1_RELATED_THRUST: return limit(RAPTOR::left_engine_power_readout * 0.35, 0.0, 0.9);
     case ED_FM_ENGINE_1_CORE_RELATED_THRUST:
     case ED_FM_ENGINE_1_RELATED_RPM:
     case ED_FM_ENGINE_1_CORE_RELATED_RPM: return RAPTOR::left_engine_power_readout;
     case ED_FM_ENGINE_1_CORE_THRUST:
     case ED_FM_ENGINE_1_THRUST: return RAPTOR::left_thrust_force;
     case ED_FM_ENGINE_1_TEMPERATURE: return (pow(RAPTOR::left_engine_power_readout, 3) * 300) + RAPTOR::atmosphere_temperature;
-
+    case ED_FM_ENGINE_1_FUEL_FLOW: return RAPTOR::left_throttle_input * 50;
 
     case ED_FM_ENGINE_2_CORE_RPM:
     case ED_FM_ENGINE_2_RPM: return RAPTOR::right_engine_power_readout;
     case ED_FM_ENGINE_2_COMBUSTION:
-    case ED_FM_ENGINE_2_RELATED_THRUST: return limit(RAPTOR::right_engine_power_readout * 0.35, 0.0, 0.9); //heat blur
+    case ED_FM_ENGINE_2_RELATED_THRUST: return limit(RAPTOR::right_engine_power_readout * 0.35, 0.0, 0.9);
     case ED_FM_ENGINE_2_CORE_RELATED_THRUST:
     case ED_FM_ENGINE_2_RELATED_RPM:
     case ED_FM_ENGINE_2_CORE_RELATED_RPM: return RAPTOR::right_engine_power_readout;
@@ -1482,7 +1501,6 @@ CockpitManager::CockpitManager() {
 }
 
 void CockpitManager::initialize() {
-    // Initialize parameter handles
     param_handles_["APU_POWER"] = param_api_.getParamHandle("APU_POWER");
     param_handles_["BATTERY_POWER"] = param_api_.getParamHandle("BATTERY_POWER");
     param_handles_["MAIN_POWER"] = param_api_.getParamHandle("MAIN_POWER");
@@ -1497,14 +1515,14 @@ void CockpitManager::initialize() {
     param_handles_["AAR_KNOB"] = param_api_.getParamHandle("AAR_KNOB");
     param_handles_["AAR_READY"] = param_api_.getParamHandle("AAR_READY");
 
-    // Initialize draw arguments based on Lua parameters
-    draw_args_[709] = static_cast<float>(getParameter("TAXI_SWITCH", 0.0)); // TAXI_SWITCH
-    draw_args_[712] = static_cast<float>(getParameter("AAR", 0.0)); // AAR port
-    draw_args_[713] = static_cast<float>(getParameter("AAR_KNOB", 0.0)); // AAR_KNOB
-    draw_args_[714] = static_cast<float>(getParameter("FORM_KNOB", 0.0)); // FORM_KNOB
-    draw_args_[715] = static_cast<float>(getParameter("NAV_LIGHT_SWITCH", 0.0)); // NAV_LIGHT_SWITCH
+    
+    draw_args_[709] = static_cast<float>(getParameter("TAXI_SWITCH", 0.0));
+    draw_args_[712] = static_cast<float>(getParameter("AAR", 0.0)); 
+    draw_args_[713] = static_cast<float>(getParameter("AAR_KNOB", 0.0)); 
+    draw_args_[714] = static_cast<float>(getParameter("FORM_KNOB", 0.0)); 
+    draw_args_[715] = static_cast<float>(getParameter("NAV_LIGHT_SWITCH", 0.0));
 
-    // Set default power states
+
     param_api_.setParamNumber(param_handles_["MAIN_POWER"], (RAPTOR::left_engine_state == RAPTOR::RUNNING || RAPTOR::right_engine_state == RAPTOR::RUNNING) ? 1.0 : 0.0);
     param_api_.setParamNumber(param_handles_["BATTERY_POWER"], (RAPTOR::left_engine_switch || RAPTOR::right_engine_switch) ? 1.0 : 0.0);
 }
@@ -1524,12 +1542,11 @@ void CockpitManager::updateDrawArgs(float* data, size_t size) {
         }
         };
 
-    // Set cockpit switch/knob animations
-    setArg(709, static_cast<float>(getParameter("TAXI_SWITCH", 0.0))); // TAXI_SWITCH
-    setArg(712, static_cast<float>(getParameter("AAR", 0.0))); // AAR port
-    setArg(713, static_cast<float>(getParameter("AAR_KNOB", 0.0))); // AAR_KNOB
-    setArg(714, static_cast<float>(getParameter("FORM_KNOB", 0.0))); // FORM_KNOB
-    setArg(715, static_cast<float>(getParameter("NAV_LIGHT_SWITCH", 0.0))); // NAV_LIGHT_SWITCH
+    setArg(709, static_cast<float>(getParameter("TAXI_SWITCH", 0.0))); 
+    setArg(712, static_cast<float>(getParameter("AAR", 0.0))); 
+    setArg(713, static_cast<float>(getParameter("AAR_KNOB", 0.0))); 
+    setArg(714, static_cast<float>(getParameter("FORM_KNOB", 0.0))); 
+    setArg(715, static_cast<float>(getParameter("NAV_LIGHT_SWITCH", 0.0)));
 }
 
 double CockpitManager::getParameter(const std::string& name, double fallback_value) {
@@ -1539,7 +1556,7 @@ double CockpitManager::getParameter(const std::string& name, double fallback_val
     }
 
     double result = param_api_.getParamNumber(it->second);
-    if (result != result) { // Check for NaN/invalid
+    if (result != result) { 
         if (name == "WoW") {
             return RAPTOR::on_ground ? 1.0 : 0.0;
         }
@@ -1556,9 +1573,9 @@ double CockpitManager::getParameter(const std::string& name, double fallback_val
 
 void CockpitManager::updateGearLights(double dt) {
     double battery_power = getParameter("BATTERY_POWER");
-    double nose_gear = RAPTOR::gear_pos; // Arg 0
-    double right_gear = RAPTOR::gear_pos; // Arg 3
-    double left_gear = RAPTOR::gear_pos; // Arg 5
+    double nose_gear = RAPTOR::gear_pos; 
+    double right_gear = RAPTOR::gear_pos;
+    double left_gear = RAPTOR::gear_pos;
 
     double nose_gear_light = (nose_gear >= 1.0 && battery_power >= 1.0) ? 1.0 : 0.0;
     double right_gear_light = (right_gear >= 1.0 && battery_power >= 1.0) ? 1.0 : 0.0;
@@ -1572,7 +1589,7 @@ void CockpitManager::updateGearLights(double dt) {
 void CockpitManager::updateTaxiLandingLights(double dt) {
     double taxi_switch = getParameter("TAXI_SWITCH");
     double main_power = getParameter("MAIN_POWER");
-    double nose_gear = RAPTOR::gear_pos; // Arg 0
+    double nose_gear = RAPTOR::gear_pos; 
 
     RAPTOR::taxi_lights = false;
     RAPTOR::landing_lights = false;
@@ -1628,27 +1645,23 @@ void CockpitManager::updateNavAntiCollisionLights(double dt) {
     }
 
     if (light_switch < 0.15) {
-        // Mode 1: Anti-collision + nav white blinking
         RAPTOR::nav_white = true;
         RAPTOR::anti_collision = true;
         RAPTOR::nav_white_blink = true;
         RAPTOR::anti_collision_blink = true;
     }
     else if (light_switch < 0.25) {
-        // Mode 2: Anti-collision blinking, nav white + green/red on
         RAPTOR::nav_white = true;
         RAPTOR::anti_collision = true;
         RAPTOR::nav_lights = true;
         RAPTOR::anti_collision_blink = true;
     }
     else if (light_switch < 0.35) {
-        // Mode 3: Nav white blinking + green/red steady
         RAPTOR::nav_white = true;
         RAPTOR::nav_lights = true;
         RAPTOR::nav_white_blink = true;
     }
     else {
-        // Mode 4: Nav white + green/red steady
         RAPTOR::nav_white = true;
         RAPTOR::nav_lights = true;
     }

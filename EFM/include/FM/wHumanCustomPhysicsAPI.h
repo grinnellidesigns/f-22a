@@ -142,6 +142,35 @@ typedef void(*PFN_WIND_VECTOR_FIELD_UPDATE_REQUEST)(wind_vector_field & in_out);
 typedef void(*PFN_WIND_VECTOR_FIELD_DONE)();
 
 
+/*
+NOTE!!! clouds sampling is asyncronious and request GPU access, so return value have a lag of several frames
+please be carefull to use this in simulation 
+*/
+struct atmo_clouds_and_precipation
+{
+	/*
+	clouds density in position requested {frameLag} frames before.
+	if value is negative then density is  INVALID 
+	*/
+	float density		= -1;
+	/*
+	sampled precipitation in position requested {frameLag} frames before.
+	if value is negative then precipation is  INVALID 
+	*/
+	float precipation	= -1;
+};
+
+typedef void (*PFN_SET_CLOUDS_DENSITY)(const atmo_clouds_and_precipation& info);
+
+/*
+called before simulation to set up your environment for the next step
+
+prototype for
+void ed_fm_set_clouds_density(const atmo_clouds_and_precipation & info);
+
+DCS will  call ed_fm_set_clouds_density 
+
+*/
 
 /*
 called before simulation to set up your environment for the next step
@@ -414,6 +443,8 @@ enum ed_fm_param_enum
     ED_FM_ENGINE_0_GAIN,                        /// Engine (sound/power) gain factor
     ED_FM_ENGINE_0_DETONATION,                  /// Detonation level for piston engines, 1 in detonation present, 0 otherwise
     ED_FM_ENGINE_0_MAIN_BEARING_DAMAGE,         /// Main bearing damage level for radial engines, [0, 1]
+
+	ED_FM_ENGINE_0_FLOW_SPEED,					/// Engine Jet fLow speed or Propeller slipstream for piston and turboprop [m/s]
 	/*RESERVED PLACE FOR OTHER ENGINE PARAMS*/
 
 
@@ -453,6 +484,8 @@ enum ed_fm_param_enum
     ED_FM_ENGINE_1_GAIN,                        /// Engine (sound/power) gain factor
     ED_FM_ENGINE_1_DETONATION,                  /// Detonation level for piston engines, 1 in detonation present, 0 otherwise
     ED_FM_ENGINE_1_MAIN_BEARING_DAMAGE,         /// Main bearing damage level for radial engines, [0, 1]
+	
+	ED_FM_ENGINE_1_FLOW_SPEED,					/// Engine Jet fLow speed or Propeller slipstream for piston and turboprop [m/s]
 	/*RESERVED PLACE FOR OTHER ENGINE PARAMS*/
 
 
@@ -492,7 +525,9 @@ enum ed_fm_param_enum
     ED_FM_ENGINE_2_GAIN,                        /// Engine (sound/power) gain factor
     ED_FM_ENGINE_2_DETONATION,                  /// Detonation level for piston engines, 1 in detonation present, 0 otherwise
     ED_FM_ENGINE_2_MAIN_BEARING_DAMAGE,         /// Main bearing damage level for radial engines, [0, 1]
-    /*RESERVED PLACE FOR OTHER ENGINE PARAMS*/
+    
+	ED_FM_ENGINE_2_FLOW_SPEED,					/// Engine Jet fLow speed or Propeller slipstream for piston and turboprop [m/s]
+	/*RESERVED PLACE FOR OTHER ENGINE PARAMS*/
 
 
 
@@ -531,6 +566,8 @@ enum ed_fm_param_enum
     ED_FM_ENGINE_3_GAIN,                        /// Engine (sound/power) gain factor
     ED_FM_ENGINE_3_DETONATION,                  /// Detonation level for piston engines, 1 in detonation present, 0 otherwise
     ED_FM_ENGINE_3_MAIN_BEARING_DAMAGE,         /// Main bearing damage level for radial engines, [0, 1]
+	
+	ED_FM_ENGINE_3_FLOW_SPEED,					/// Engine Jet fLow speed or Propeller slipstream for piston and turboprop [m/s]
 	/*RESERVED PLACE FOR OTHER ENGINE PARAMS*/
 
 
@@ -570,6 +607,8 @@ enum ed_fm_param_enum
     ED_FM_ENGINE_4_GAIN,                        /// Engine (sound/power) gain factor
     ED_FM_ENGINE_4_DETONATION,                  /// Detonation level for piston engines, 1 in detonation present, 0 otherwise
     ED_FM_ENGINE_4_MAIN_BEARING_DAMAGE,         /// Main bearing damage level for radial engines, [0, 1]
+	
+	ED_FM_ENGINE_4_FLOW_SPEED,					/// Engine Jet fLow speed or Propeller slipstream for piston and turboprop [m/s]
 	/*RESERVED PLACE FOR OTHER ENGINE PARAMS*/
 
 
@@ -609,6 +648,8 @@ enum ed_fm_param_enum
     ED_FM_ENGINE_5_GAIN,                        /// Engine (sound/power) gain factor
     ED_FM_ENGINE_5_DETONATION,                  /// Detonation level for piston engines, 1 in detonation present, 0 otherwise
     ED_FM_ENGINE_5_MAIN_BEARING_DAMAGE,         /// Main bearing damage level for radial engines, [0, 1]
+	
+	ED_FM_ENGINE_5_FLOW_SPEED,					/// Engine Jet fLow speed or Propeller slipstream for piston and turboprop [m/s]
 	/*RESERVED PLACE FOR OTHER ENGINE PARAMS*/
 
 
@@ -648,6 +689,8 @@ enum ed_fm_param_enum
     ED_FM_ENGINE_6_GAIN,                        /// Engine (sound/power) gain factor
     ED_FM_ENGINE_6_DETONATION,                  /// Detonation level for piston engines, 1 in detonation present, 0 otherwise
     ED_FM_ENGINE_6_MAIN_BEARING_DAMAGE,         /// Main bearing damage level for radial engines, [0, 1]
+	
+	ED_FM_ENGINE_6_FLOW_SPEED,					/// Engine Jet fLow speed or Propeller slipstream for piston and turboprop [m/s]
 	/*RESERVED PLACE FOR OTHER ENGINE PARAMS*/
 
 
@@ -687,6 +730,8 @@ enum ed_fm_param_enum
     ED_FM_ENGINE_7_GAIN,                        /// Engine (sound/power) gain factor
     ED_FM_ENGINE_7_DETONATION,                  /// Detonation level for piston engines, 1 in detonation present, 0 otherwise
     ED_FM_ENGINE_7_MAIN_BEARING_DAMAGE,         /// Main bearing damage level for radial engines, [0, 1]
+	
+	ED_FM_ENGINE_7_FLOW_SPEED,					/// Engine Jet fLow speed or Propeller slipstream for piston and turboprop [m/s]
 	/*RESERVED PLACE FOR OTHER ENGINE PARAMS*/
 
 
@@ -726,6 +771,8 @@ enum ed_fm_param_enum
     ED_FM_ENGINE_8_GAIN,                        /// Engine (sound/power) gain factor
     ED_FM_ENGINE_8_DETONATION,                  /// Detonation level for piston engines, 1 in detonation present, 0 otherwise
     ED_FM_ENGINE_8_MAIN_BEARING_DAMAGE,         /// Main bearing damage level for radial engines, [0, 1]
+	
+	ED_FM_ENGINE_8_FLOW_SPEED,					/// Engine Jet fLow speed or Propeller slipstream for piston and turboprop [m/s]
 	/*RESERVED PLACE FOR OTHER ENGINE PARAMS*/
 
 
@@ -771,7 +818,7 @@ enum ed_fm_param_enum
 
 
 	ED_FM_OXYGEN_SUPPLY, // oxygen provided from on board oxygen system, pressure - pascal
-	ED_FM_FLOW_VELOCITY,
+	ED_FM_FLOW_VELOCITY, //common flow speed (Rotor's for helicpter or maximum engine's jet or prop flow speed for fixed-wing)
 
 	ED_FM_CAN_ACCEPT_FUEL_FROM_TANKER,// return positive value if all conditions are matched to connect to tanker and get fuel
 

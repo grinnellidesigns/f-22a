@@ -31,43 +31,27 @@ namespace FM_DATA
         0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4
     };
 
-    // Zero-lift side-force coefficient. Represents lateral force at zero AoA (small for symmetry)
     double Cy0 = 0.008;
 
-    // Pitch damping or elevator effectiveness coefficient.
     double Czbe = -0.028;
 
-    //Drag and Lift for external surfaces
     double cx_gear = 0.155;
     double cx_brk = 0.062;
     double cx_flap = 0.051;
     double cy_flap = 0.112;
 
-    // Zero-lift drag coefficient (parasitic drag) as a function of Mach.
     double cx0[] = { 0.013, 0.0135, 0.014, 0.021, 0.0378, 0.0505, 0.0455, 0.04175, 0.038, 0.037, 0.0368, 0.0362, 0.039 };
-
-    // Lift curve slope vs. Mach. Defines how much lift increases per degree of AoA.
     double Cya[] = { 0.08, 0.075, 0.07, 0.065, 0.06, 0.055, 0.05, 0.045, 0.04, 0.0375, 0.035, 0.0325, 0.03 };
-
-    // Maximum roll rate vs. Mach. Indicates roll agility.
     double OmxMax[] = { 1.65, 2.45, 3.25, 4.7, 3.98, 3.2, 2.5, 2.25, 2.0, 1.85, 1.7, 1.5, 1.3 };
-
-
-    // Critical angle of attack (degrees) vs. Mach. Beyond this AoA, the wing stalls (lift drops).
     double Aldop[] = { 60, 57.5, 55, 50, 45, 40, 35, 32.5, 30, 30, 30, 30, 30 };
-
-    // Maximum lift coefficient vs. Mach. Represents peak lift capability before stall
     double CyMax[] = { 1.8, 1.85, 1.9, 1.85, 1.75, 1.6, 1.45, 1.35, 1.25, 1.15, 1.1, 1.05, 1.0 };
 
-    //Reactions
     double AoA_table[] = { 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0 };
     double AoA_drag_factor[] = { 0.0, 0.006, 0.024, 0.10, 0.24, 0.375, 0.47, 0.60, 0.71, 1.0 };
 
-    //Misc.
-    double beta_table[] = { 0.0, 5.0, 10.0, 20.0, 30.0 }; 
+    double beta_table[] = { 0.0, 5.0, 10.0, 20.0, 30.0 };
     double Cy_beta[] = { 0.0, 0.05, 0.1, 0.2, 0.3 };
 
-    //Thrust - per engine
     static inline std::array<double, 13> idle_thrust = {
         6000, 5980, 5900, 6000, 6150, 6300, 7000, 7900, 9100, 9900, 10500, 11000, 11600
     };
@@ -80,19 +64,11 @@ namespace FM_DATA
     197000, 215300, 232600, 256500, 275000, 298000, 325000, 355000, 405000, 470000, 535000, 536500, 0
     };
 
-    //FBW Limits
-    //Elevator
     double elevator_rate_table[] = { 1.396, 1.396, 1.30, 1.016, 0.912, 0.912, 0.912, 0.942, 0.942, 0.989, 0.989, 0.989, 0.989 };
     double max_elevator_deflection[] = { 30.0, 28.0, 21.5, 13.8, 11.5, 11.0, 11.0, 11.0, 11.0, 11.0, 12.0, 12.0, 12.0 };
-
-    //Aileron
     const double max_aileron_rate = 15.55;
-
-    //Thrust Vectoring Nozzles
     double max_thrust_vector_deflection[] = { 20.0, 20.0, 17.0, 11.5, 6.0, 4.0, 2.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0 };
     double thrust_vector_rate[] = { 1.396, 1.3905, 1.189, 0.855, 0.759, 0.737, 0.601, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-
-    // Damping tables
     double Kd_pitch[] = { 0.635, 0.662, 0.654, 0.80, 1.25, 1.95, 2.2, 2.5, 2.8, 2.8, 2.8, 2.8, 2.8 };
     double Kd_roll[] = { 0.50, 0.39, 0.35, 0.31, 0.33, 0.37, 0.42, 0.52, 0.62, 0.74, 0.85, 0.88, 0.81 };
     double Kd_yaw[] = { 2.0, 2.0, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0 };
@@ -144,7 +120,7 @@ namespace RAPTOR {
     double gear_pos = 0;
     double wheel_brake = 0;
 
-    const double max_internal_fuel = 8165.0; 
+    const double max_internal_fuel = 8165.0;
     const double ground_refuel_rate = 45.36;
     const double min_usable_fuel = 25.0;
     double internal_fuel = 0, external_fuel = 0, total_fuel = internal_fuel + external_fuel;
@@ -174,7 +150,6 @@ namespace RAPTOR {
     double shake_amplitude = 0, fm_clock = 0;
     bool sim_initialised = false;
 
-    // FBW state variables
     double ref_roll = 0, ref_heading = 0;
     double roll_error_i = 0, yaw_error_i = 0;
     double last_aileron_cmd = 0, last_elevator_cmd = 0, last_rudder_cmd = 0;
@@ -189,33 +164,29 @@ namespace RAPTOR {
     double tv_angle = 0.0;
     double g_assist_pos = 0;
 
-    // Global variables for state persistence
     double last_yaw_input = 0.0;
     double last_tv_cmd = 0.0;
     double last_pitch_input = 0.0;
     double ground_speed_knots = 0.0;
 
-    //Engine Start Sequence
     enum EngineState { OFF, STARTING, RUNNING, SHUTDOWN };
     EngineState left_engine_state = OFF;
     EngineState right_engine_state = OFF;
     double left_engine_start_timer = 0.0;
     double right_engine_start_timer = 0.0;
 
-    // Engine parameters
-    const double engine_start_time = 30.0;
-    const double starter_phase_duration = 8.0;
-    const double ignition_phase_duration = 12.0;
-    const double spool_up_phase_duration = 10.0;
+    const double engine_start_time = 44.0;
+    const double starter_phase_duration = 11.0;
+    const double ignition_phase_duration = 18.0;
+    const double spool_up_phase_duration = 15.0;
     const double starter_rpm = 0.2;
     const double ignition_rpm = 0.4;
     const double starter_rate = starter_rpm / starter_phase_duration;
     const double ignition_rate = (ignition_rpm - starter_rpm) / ignition_phase_duration;
     const double spool_up_rate = (idle_rpm - ignition_rpm) / spool_up_phase_duration;
-    double left_engine_phase = 0.0; 
+    double left_engine_phase = 0.0;
     double right_engine_phase = 0.0;
 
-    //Lights
     bool taxi_lights = false;
     bool landing_lights = false;
     bool form_light = false;
@@ -382,27 +353,22 @@ public:
     CockpitManager();
     ~CockpitManager() = default;
 
-    // Initialize parameter handles and states for cold/hot start
     void initialize();
 
-    // Update logic at 0.006s intervals (ed_fm_simulate rate)
     void update(double dt);
 
-    // Set cockpit draw arguments (lighting, switches)
     void updateDrawArgs(float* drawargs, size_t size);
 
 private:
-    EDPARAM param_api_; // Parameter API
-    std::unordered_map<std::string, void*> param_handles_; // Handles for APU_POWER, AAR, AAR_READY, etc.
-    std::unordered_map<int, float> draw_args_; // Input args (709, 712-715), output args (604-613)
+    EDPARAM param_api_;
+    std::unordered_map<std::string, void*> param_handles_;
+    std::unordered_map<int, float> draw_args_; 
 
-    // Helper functions for light logic
     void updateGearLights(double dt);
     void updateTaxiLandingLights(double dt);
     void updateAARLight(double dt);
     void updateFormationLights(double dt);
     void updateNavAntiCollisionLights(double dt);
 
-    // Utility to get parameter with fallback
     double getParameter(const std::string& name, double fallback_value = 0.0);
 };

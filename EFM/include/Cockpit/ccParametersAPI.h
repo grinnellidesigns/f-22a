@@ -1,13 +1,6 @@
 #pragma once
 #include <windows.h>
 #include <cinttypes>
-
-/*
-	Stuff that links this dll with others.
-	This is how it accesses DCS' Lua environment.
-	Don't edit this unless you REALLY know what you're doing!
-*/
-
 #ifdef COCKPITBASE_EXPORTS
 #include "CockpitBase.h"
 
@@ -32,24 +25,23 @@ typedef int    (*PFN_ED_COCKPIT_COMPARE_PARAMETERS			)  (void		  * handle_1,void
 
 struct cockpit_param_api
 {
-	PFN_ED_COCKPIT_GET_PARAMETER_HANDLE	pfn_ed_cockpit_get_parameter_handle;		
+	PFN_ED_COCKPIT_GET_PARAMETER_HANDLE			pfn_ed_cockpit_get_parameter_handle;		
 	PFN_ED_COCKPIT_UPDATE_PARAMETER_WITH_STRING	pfn_ed_cockpit_update_parameter_with_string;
 	PFN_ED_COCKPIT_UPDATE_PARAMETER_WITH_NUMBER	pfn_ed_cockpit_update_parameter_with_number;
 	PFN_ED_COCKPIT_PARAMETER_VALUE_TO_NUMBER	pfn_ed_cockpit_parameter_value_to_number;   
 	PFN_ED_COCKPIT_PARAMETER_VALUE_TO_STRING	pfn_ed_cockpit_parameter_value_to_string;
-	PFN_ED_COCKPIT_COMPARE_PARAMETERS	pfn_ed_cockpit_compare_parameters;
+	PFN_ED_COCKPIT_COMPARE_PARAMETERS			pfn_ed_cockpit_compare_parameters;
 };
 
 inline cockpit_param_api  ed_get_cockpit_param_api()
 {
 	HMODULE	cockpit_dll								= GetModuleHandleA("CockpitBase.dll"); //assume that we work inside same process
 	cockpit_param_api ret;
-
 	ret.pfn_ed_cockpit_get_parameter_handle			= (PFN_ED_COCKPIT_GET_PARAMETER_HANDLE)		   GetProcAddress(cockpit_dll,"ed_cockpit_get_parameter_handle");
 	ret.pfn_ed_cockpit_update_parameter_with_number = (PFN_ED_COCKPIT_UPDATE_PARAMETER_WITH_NUMBER)GetProcAddress(cockpit_dll,"ed_cockpit_update_parameter_with_number");
 	ret.pfn_ed_cockpit_update_parameter_with_string = (PFN_ED_COCKPIT_UPDATE_PARAMETER_WITH_STRING)GetProcAddress(cockpit_dll,"ed_cockpit_update_parameter_with_string");
 	ret.pfn_ed_cockpit_parameter_value_to_number    = (PFN_ED_COCKPIT_PARAMETER_VALUE_TO_NUMBER)   GetProcAddress(cockpit_dll,"ed_cockpit_parameter_value_to_number");
 	ret.pfn_ed_cockpit_parameter_value_to_string	= (PFN_ED_COCKPIT_PARAMETER_VALUE_TO_STRING)   GetProcAddress(cockpit_dll,"ed_cockpit_parameter_value_to_string");
-	ret.pfn_ed_cockpit_compare_parameters = (PFN_ED_COCKPIT_COMPARE_PARAMETERS)GetProcAddress(cockpit_dll, "ed_cockpit_compare_parameters");
+	ret.pfn_ed_cockpit_compare_parameters 			= (PFN_ED_COCKPIT_COMPARE_PARAMETERS)GetProcAddress(cockpit_dll, "ed_cockpit_compare_parameters");
 	return ret;
 }
