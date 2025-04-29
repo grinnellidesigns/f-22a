@@ -796,20 +796,25 @@ function update()
 -- end
 ------------------------------------------------------------------ENGINE PAGE UPDATE---------------------------------------------------------------------------------------------------
     local hyd_light      = get_cockpit_draw_argument_value(208)
-    local nozzle_pos_r   = get_aircraft_draw_argument_value(89)
-    local nozzle_pos_l   = get_aircraft_draw_argument_value(90)
     local cabin_pressure = get_cockpit_draw_argument_value(114)
 
-    if nozzle_pos_r <= 0.5 then
-        parameters.R_NOZZLE_POS:set(50)
-    else
-        parameters.R_NOZZLE_POS:set(nozzle_pos_r*100)
-    end
-    if nozzle_pos_l <= 0.5 then
-        parameters.L_NOZZLE_POS:set(50)
-    else
-        parameters.L_NOZZLE_POS:set(nozzle_pos_l*100)
-    end    
+	local nozzle_pos_l = sensor_data.getEngineLeftRPM()
+	local left_nozzle = 50 + (nozzle_pos_l - 67) * (50 / 33)
+		if left_nozzle > 100 then
+		left_nozzle = 100
+		elseif left_nozzle < 50 then
+		left_nozzle = 50
+	end
+	parameters.L_NOZZLE_POS:set(left_nozzle)
+	
+	local nozzle_pos_r = sensor_data.getEngineRightRPM()
+	local right_nozzle = 50 + (nozzle_pos_r - 67) * (50 / 33)
+		if right_nozzle > 100 then
+		right_nozzle = 100
+		elseif right_nozzle < 50 then
+		right_nozzle = 50
+	end
+	parameters.R_NOZZLE_POS:set(right_nozzle)
 
     parameters.GROUND_ORIDE:set(ground_oride_state)
     parameters.BAY_STATION:set(bay_select)
