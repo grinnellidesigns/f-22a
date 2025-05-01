@@ -47,7 +47,7 @@ namespace FM_DATA
     double CyMax[] = { 1.8, 1.85, 1.9, 1.85, 1.75, 1.6, 1.45, 1.35, 1.25, 1.15, 1.1, 1.05, 1.0 };
 
     double AoA_table[] = { 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0 };
-    double AoA_drag_factor[] = { 0.0, 0.006, 0.024, 0.10, 0.24, 0.375, 0.47, 0.60, 0.71, 1.0 };
+    double AoA_drag_factor[] = { 0.0, 0.006, 0.02, 0.09, 0.20, 0.355, 0.47, 0.58, 0.7, 0.95 };
 
     double beta_table[] = { 0.0, 5.0, 10.0, 20.0, 30.0 };
     double Cy_beta[] = { 0.0, 0.05, 0.1, 0.2, 0.3 };
@@ -64,13 +64,13 @@ namespace FM_DATA
     197000, 215300, 232600, 256500, 275000, 298000, 325000, 355000, 405000, 470000, 535000, 536500, 0
     };
 
-    double elevator_rate_table[] = { 1.396, 1.396, 1.30, 1.016, 0.912, 0.912, 0.912, 0.942, 0.942, 0.989, 0.989, 0.989, 0.989 };
-    double max_elevator_deflection[] = { 30.0, 28.0, 21.5, 13.8, 11.5, 11.0, 11.0, 11.0, 11.0, 11.0, 12.0, 12.0, 12.0 };
+    double elevator_rate_table[] = { 1.396, 1.396, 1.30, 1.016, 0.912, 0.912, 0.912, 0.942, 1.105, 1.105, 1.105, 1.105, 1.105 };
+    double max_elevator_deflection[] = { 30.0, 28.0, 21.5, 13.8, 11.5, 11.0, 11.0, 11.0, 13.0, 13.0, 13.0, 13.0, 13.0 };
     const double max_aileron_rate = 15.55;
     double max_thrust_vector_deflection[] = { 20.0, 20.0, 17.0, 11.5, 6.0, 4.0, 2.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0 };
     double thrust_vector_rate[] = { 1.396, 1.3905, 1.189, 0.855, 0.759, 0.737, 0.601, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
     double Kd_pitch[] = { 0.635, 0.662, 0.654, 0.80, 1.25, 1.95, 2.2, 2.5, 2.8, 2.8, 2.8, 2.8, 2.8 };
-    double Kd_roll[] = { 0.50, 0.39, 0.35, 0.31, 0.33, 0.37, 0.42, 0.52, 0.62, 0.74, 0.85, 0.88, 0.81 };
+    double Kd_roll[] = { 0.50, 0.35, 0.33, 0.29, 0.33, 0.37, 0.42, 0.52, 0.62, 0.74, 0.85, 0.88, 0.81 };
     double Kd_yaw[] = { 2.0, 2.0, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0 };
 
 }
@@ -158,11 +158,11 @@ namespace RAPTOR {
     double autotrim_elevator_cmd = 0.0;
     bool manual_trim_applied = false;
     double takeoff_trim_cmd = 0.0;
-    double g_limit_positive = 12.0;
-    double g_limit_negative = -4.5;
-    double Kp_g = 0.1;
     double tv_angle = 0.0;
+    
     double g_assist_pos = 0;
+    double g_limit_positive = 11.0;
+    double g_limit_negative = -4.0;
 
     double last_yaw_input = 0.0;
     double last_tv_cmd = 0.0;
