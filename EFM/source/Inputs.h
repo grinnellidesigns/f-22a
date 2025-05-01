@@ -96,3 +96,5 @@ enum InputCommands
 
 	Reserved // Placeholder
 };
+
+/*This file is from the Basic EFM template from GitHub and covered by the MIT license found in the EFM folder*/

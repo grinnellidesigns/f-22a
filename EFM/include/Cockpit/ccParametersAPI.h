@@ -45,3 +45,4 @@ inline cockpit_param_api  ed_get_cockpit_param_api()
 	ret.pfn_ed_cockpit_compare_parameters 			= (PFN_ED_COCKPIT_COMPARE_PARAMETERS)GetProcAddress(cockpit_dll, "ed_cockpit_compare_parameters");
 	return ret;
 }
+/*This file is from the Basic EFM template from GitHub and covered by the MIT license found in the EFM folder*/
