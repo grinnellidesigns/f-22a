@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <iostream>
 #include <stack>
+#include <queue>
 
 #define EXPORT_ED_FM_PHYSICS_IMP extern "C" __declspec(dllexport)
 #include <FM/wHumanCustomPhysicsAPI_ImplementationDeclare.h>
@@ -43,7 +44,13 @@ struct MassChange
     Vec3 moi;
 };
 
+struct DamageEvent {
+    int element_number;
+    double integrity_factor;
+};
+
 std::stack<MassChange> g_mass_changes;
+std::queue<DamageEvent> g_damage_events;
 
 void add_local_force(const Vec3& Force, const Vec3& Force_pos) {
     RAPTOR::common_force.x += Force.x;
@@ -137,6 +144,7 @@ void reset_fm_state() {
     RAPTOR::last_elevator_cmd = RAPTOR::last_aileron_cmd = RAPTOR::last_rudder_cmd = 0.0;
     RAPTOR::tv_angle = 0.0;
     RAPTOR::pitch_trim = RAPTOR::roll_trim = RAPTOR::yaw_trim = 0.0;
+    RAPTOR::beta_integral = 0.0;
 
     RAPTOR::left_engine_state = RAPTOR::OFF;
     RAPTOR::right_engine_state = RAPTOR::OFF;
@@ -161,7 +169,7 @@ void reset_fm_state() {
     RAPTOR::V_scalar = 0.0;
     RAPTOR::mach = 0.0;
 
-    RAPTOR::left_wing_integrity = RAPTOR::right_wing_integrity = RAPTOR::tail_integrity = 1.0;
+    RAPTOR::left_wing_integrity = RAPTOR::right_wing_integrity = RAPTOR::tail_integrity = RAPTOR::left_elevon_integrity = RAPTOR::right_elevon_integrity = 1.0;
     RAPTOR::left_engine_integrity = RAPTOR::right_engine_integrity = 1.0;
     RAPTOR::fuel_consumption_since_last_time = 0.0;
 
@@ -182,7 +190,52 @@ void ed_fm_simulate(double dt) {
     RAPTOR::common_force = Vec3();
     RAPTOR::common_moment = Vec3();
 
-    static double last_g = 0.0;
+    const double ENGINE_INTEGRITY_SHUTDOWN_THRESHOLD = 0.30;
+    if (RAPTOR::left_engine_integrity <= ENGINE_INTEGRITY_SHUTDOWN_THRESHOLD &&
+        (RAPTOR::left_engine_state == RAPTOR::RUNNING || RAPTOR::left_engine_state == RAPTOR::STARTING)) {
+        RAPTOR::left_engine_state = RAPTOR::SHUTDOWN;
+        RAPTOR::left_engine_switch = false;
+    }
+    if (RAPTOR::right_engine_integrity <= ENGINE_INTEGRITY_SHUTDOWN_THRESHOLD &&
+        (RAPTOR::right_engine_state == RAPTOR::RUNNING || RAPTOR::right_engine_state == RAPTOR::STARTING)) {
+        RAPTOR::right_engine_state = RAPTOR::SHUTDOWN;
+        RAPTOR::right_engine_switch = false;
+    }
+
+    if (RAPTOR::is_destroyed) {
+        static bool destruction_events_pushed = false;
+        if (!destruction_events_pushed) {
+            g_damage_events.push({ static_cast<int>(DamageElement::WingOutLeft), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingOutLeft)] });
+            g_damage_events.push({ static_cast<int>(DamageElement::WingOutRight), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingOutRight)] });
+            g_damage_events.push({ static_cast<int>(DamageElement::Tail), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Tail)] });
+            g_damage_events.push({ static_cast<int>(DamageElement::Engine1), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Engine1)] });
+            g_damage_events.push({ static_cast<int>(DamageElement::Engine2), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Engine2)] });
+            g_damage_events.push({ static_cast<int>(DamageElement::WingInLeft), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingInLeft)] }); // Left elevon proxy
+            g_damage_events.push({ static_cast<int>(DamageElement::WingInRight), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingInRight)] }); // Right elevon proxy
+            destruction_events_pushed = true; 
+        }
+        RAPTOR::common_force = Vec3(0.0, 0.0, 0.0);
+        RAPTOR::common_moment = Vec3(0.0, 0.0, 0.0);
+        RAPTOR::left_engine_power_readout = 0.0;
+        RAPTOR::right_engine_power_readout = 0.0;
+        RAPTOR::left_engine_integrity = 0.0;
+        RAPTOR::right_engine_integrity = 0.0;
+        RAPTOR::left_thrust_force = 0.0;
+        RAPTOR::right_thrust_force = 0.0;
+        RAPTOR::left_throttle_input = 0.0;
+        RAPTOR::right_throttle_input = 0.0;
+        RAPTOR::left_engine_state = RAPTOR::SHUTDOWN;
+        RAPTOR::right_engine_state = RAPTOR::SHUTDOWN;
+        RAPTOR::left_engine_switch = false;
+        RAPTOR::right_engine_switch = false;
+        RAPTOR::pitch_input = RAPTOR::roll_input = RAPTOR::yaw_input = 0.0;
+        RAPTOR::left_elevon_command = RAPTOR::right_elevon_command = 0.0;
+        RAPTOR::aileron_command = RAPTOR::rudder_command = 0.0;
+        RAPTOR::left_ab_timer = 0.0;
+        RAPTOR::right_ab_timer = 0.0;
+        RAPTOR::V_scalar = 0.0;
+        RAPTOR::pitch_rate = RAPTOR::roll_rate = RAPTOR::yaw_rate = 0.0;
+    }
 
     cockpit_manager.update(dt);
 
@@ -474,7 +527,7 @@ void ed_fm_simulate(double dt) {
         }
 
         double tv_pitch_cmd = (pitch_cmd_source * fabs(pitch_cmd_source) * 1.1) * tv_sensitivity;
-        if (RAPTOR::alpha > 60.0) tv_pitch_cmd -= (RAPTOR::alpha - 60.0) * 0.022;
+        if (RAPTOR::alpha > 70.0) tv_pitch_cmd -= (RAPTOR::alpha - 70.0) * 0.022;
         if (RAPTOR::alpha < -40.0) tv_pitch_cmd += (-RAPTOR::alpha - 40.0) * 0.022;
 
         tv_pitch_cmd += -RAPTOR::pitch_rate;
@@ -492,9 +545,30 @@ void ed_fm_simulate(double dt) {
         }
 
         double yaw_cmd;
+        const double beta_integral_gain = 0.022;
+        const double beta_integral_limit = 0.08; 
+        const double beta_integral_decay = 0.2; 
+
+        double adverse_yaw_cmd = 0.0;
+        if (fabs(yaw_cmd_source) < 0.01) { 
+            double adverse_yaw_gain = 0.3 * (1.0 - std::min(RAPTOR::mach, 1.0)); 
+            adverse_yaw_cmd = RAPTOR::aileron_command * adverse_yaw_gain * (q / (q + 10000.0)); 
+            adverse_yaw_cmd = limit(adverse_yaw_cmd, -0.3, 0.3); 
+        }
         if (fabs(yaw_cmd_source) < 0.01) {
             yaw_cmd = -RAPTOR::yaw_rate * Kd_yaw - std::clamp(RAPTOR::beta, -3.0, 3.0) * std::clamp(RAPTOR::last_yaw_input, 0.0, 0.3);
             yaw_cmd -= beta_gain * RAPTOR::beta;
+            yaw_cmd += adverse_yaw_cmd;
+
+            if (fabs(RAPTOR::beta) < 3.0 && !RAPTOR::on_ground && fabs(RAPTOR::rudder_command) < 0.9) { 
+                RAPTOR::beta_integral += RAPTOR::beta * beta_integral_gain * dt;
+                RAPTOR::beta_integral = limit(RAPTOR::beta_integral, -beta_integral_limit, beta_integral_limit);
+            }
+            else {
+                RAPTOR::beta_integral *= std::exp(-beta_integral_decay * dt);
+            }
+            yaw_cmd -= RAPTOR::beta_integral;
+
             if (RAPTOR::alpha > 10.0) {
                 double pitch_yaw_coupling = -RAPTOR::pitch_rate * 0.11 * (RAPTOR::alpha / lerp(FM_DATA::mach_table.data(), FM_DATA::Aldop, FM_DATA::mach_table.size(), RAPTOR::mach));
                 yaw_cmd += limit(pitch_yaw_coupling, -0.5, 0.5);
@@ -505,8 +579,11 @@ void ed_fm_simulate(double dt) {
         else {
             yaw_cmd = 0.5 * yaw_cmd_source * sqrt(fabs(yaw_cmd_source)) - RAPTOR::yaw_rate * Kd_yaw;
             yaw_cmd -= beta_gain * RAPTOR::beta * 0.5;
+            yaw_cmd += adverse_yaw_cmd * 0.5;
+            RAPTOR::beta_integral *= std::exp(-beta_integral_decay * dt);
             RAPTOR::last_yaw_input = 0.5 * fabs(yaw_cmd_source);
         }
+
         RAPTOR::rudder_command = limit(RAPTOR::last_rudder_cmd + limit(yaw_cmd - RAPTOR::last_rudder_cmd, -max_rate * dt, max_rate * dt), -1.0, 1.0);
         RAPTOR::last_rudder_cmd = RAPTOR::rudder_command;
 
@@ -514,17 +591,19 @@ void ed_fm_simulate(double dt) {
         if (ias_knots < 50.0) {
             elevon_force_magnitude = 0.0;
         }
-        add_local_force(Vec3(0, RAPTOR::left_elevon_angle * elevon_force_magnitude, 0), RAPTOR::left_elevon_pos);
-        add_local_force(Vec3(0, RAPTOR::right_elevon_angle * elevon_force_magnitude, 0), RAPTOR::right_elevon_pos);
+        add_local_force(Vec3(0, RAPTOR::left_elevon_angle * elevon_force_magnitude* RAPTOR::left_elevon_integrity, 0), RAPTOR::left_elevon_pos);
+        add_local_force(Vec3(0, RAPTOR::right_elevon_angle * elevon_force_magnitude* RAPTOR::right_elevon_integrity, 0), RAPTOR::right_elevon_pos);
 
         double aileron_deflection = RAPTOR::aileron_command * RAPTOR::rad(30);
         add_local_force(Vec3(0, aileron_deflection * q * RAPTOR::S * 0.25, 0), RAPTOR::left_aileron_pos);
         add_local_force(Vec3(0, -aileron_deflection * q * RAPTOR::S * 0.25, 0), RAPTOR::right_aileron_pos);
         double rudder_deflection = RAPTOR::rudder_command * RAPTOR::rad(25 + (RAPTOR::mach < 0.5 ? 5.0 : 0.0));
+        if (RAPTOR::is_destroyed == true) {rudder_deflection = 0.0;}
         add_local_force(Vec3(0, 0, rudder_deflection * q * RAPTOR::S * 0.25), RAPTOR::rudder_pos);
 
         double left_tv_force = RAPTOR::left_thrust_force * RAPTOR::left_throttle_output * sin(RAPTOR::tv_angle);
         double right_tv_force = RAPTOR::right_thrust_force * RAPTOR::right_throttle_output * sin(RAPTOR::tv_angle);
+        if (RAPTOR::is_destroyed == true) {left_tv_force = right_tv_force = 0.0;}
         add_local_force(Vec3(RAPTOR::left_thrust_force * cos(RAPTOR::tv_angle), left_tv_force, 0), RAPTOR::left_engine_pos);
         add_local_force(Vec3(RAPTOR::right_thrust_force * cos(RAPTOR::tv_angle), right_tv_force, 0), RAPTOR::right_engine_pos);
     }
@@ -553,8 +632,6 @@ void ed_fm_simulate(double dt) {
     double ab_spool_time = RAPTOR::on_ground ? ab_spool_time_ground : ab_spool_time_air;
     double spool_up_rate = RAPTOR::on_ground ? spool_up_rate_ground : spool_up_rate_air;
     double spool_down_rate = RAPTOR::on_ground ? spool_down_rate_ground : spool_down_rate_air;
-
-
 
     RAPTOR::left_throttle_input = limit(RAPTOR::left_throttle_input, 0, 1);
     RAPTOR::right_throttle_input = limit(RAPTOR::right_throttle_input, 0, 1);
@@ -798,6 +875,15 @@ void ed_fm_simulate(double dt) {
         RAPTOR::left_engine_switch = false;
     }
     if (RAPTOR::internal_fuel <= 25 && (RAPTOR::right_engine_state == RAPTOR::RUNNING || RAPTOR::right_engine_state == RAPTOR::STARTING)) {
+        RAPTOR::right_engine_state = RAPTOR::SHUTDOWN;
+        RAPTOR::right_engine_switch = false;
+    }
+
+    if (RAPTOR::left_engine_integrity <= 0.25 && (RAPTOR::left_engine_state == RAPTOR::RUNNING || RAPTOR::left_engine_state == RAPTOR::STARTING)) {
+        RAPTOR::left_engine_state = RAPTOR::SHUTDOWN;
+        RAPTOR::left_engine_switch = false;
+    }
+    if (RAPTOR::right_engine_integrity <= 0.25 && (RAPTOR::right_engine_state == RAPTOR::RUNNING || RAPTOR::right_engine_state == RAPTOR::STARTING)) {
         RAPTOR::right_engine_state = RAPTOR::SHUTDOWN;
         RAPTOR::right_engine_switch = false;
     }
@@ -1175,7 +1261,6 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     else {
         data[28] = 0.0f;
     }
-
     if (RAPTOR::left_engine_state == RAPTOR::OFF) {
         data[611] = 1.0f;
     }
@@ -1257,7 +1342,6 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
             data[325] = static_cast<float>(RAPTOR::left_engine_phase);
         }
     }
-
     data[604] = RAPTOR::taxi_lights ? 1.0f : 0.0f;
     data[605] = RAPTOR::landing_lights ? 1.0f : 0.0f;
     data[606] = RAPTOR::form_light ? 1.0f : 0.0f;
@@ -1266,11 +1350,13 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     data[609] = RAPTOR::aar_light ? 1.0f : 0.0f;
     data[612] = RAPTOR::nav_lights ? 1.0f : 0.0f;
     data[613] = RAPTOR::nav_lights ? 1.0f : 0.0f;
-
     data[610] = static_cast<float>(limit(data[610], 0.0f, 1.0f));
-    data[619] = 0.5f;
+    data[619] = 0.0f;
     data[620] = 0.0f;
-    data[621] = 0.2f;
+    data[621] = 0.0f;
+    if (RAPTOR::is_destroyed == true) {
+        data[114] = 1.0f;
+    }
 }
 
 void ed_fm_configure(const char* cfg_path) {
@@ -1339,9 +1425,9 @@ double ed_fm_get_param(unsigned index) {
     case ED_FM_SUSPENSION_1_GEAR_POST_STATE:
     case ED_FM_SUSPENSION_2_GEAR_POST_STATE: return RAPTOR::gear_pos;
 
-    case ED_FM_ENGINE_0_RPM:
-    case ED_FM_ENGINE_0_RELATED_RPM:
-    case ED_FM_ENGINE_0_THRUST:
+    case ED_FM_ENGINE_0_RPM: return 0;
+    case ED_FM_ENGINE_0_RELATED_RPM: return 0;
+    case ED_FM_ENGINE_0_THRUST: return 0;
     case ED_FM_ENGINE_0_RELATED_THRUST: return 0;
 
     case ED_FM_ENGINE_1_CORE_RPM: return RAPTOR::left_throttle_input; 
@@ -1360,6 +1446,7 @@ double ed_fm_get_param(unsigned index) {
     case ED_FM_ENGINE_1_THRUST: return RAPTOR::left_thrust_force;
     case ED_FM_ENGINE_1_TEMPERATURE: return (pow(RAPTOR::left_engine_power_readout, 3) * 300) + RAPTOR::atmosphere_temperature;
 
+
     case ED_FM_ENGINE_2_CORE_RPM: return RAPTOR::right_throttle_input; 
     case ED_FM_ENGINE_2_RPM: return RAPTOR::right_engine_power_readout;
     case ED_FM_ENGINE_2_COMBUSTION: return RAPTOR::right_engine_integrity;
@@ -1372,7 +1459,7 @@ double ed_fm_get_param(unsigned index) {
     }
     case ED_FM_ENGINE_2_RELATED_RPM: return limit(RAPTOR::right_engine_power_readout * 0.35, 0.0, 0.9); 
     case ED_FM_ENGINE_2_CORE_RELATED_RPM: return RAPTOR::right_engine_power_readout;
-    case ED_FM_ENGINE_2_CORE_THRUST: return RAPTOR::right_thrust_force * (RAPTOR::left_throttle_output > 1.025 ? 0.6 : 0.7); 
+    case ED_FM_ENGINE_2_CORE_THRUST: return RAPTOR::right_thrust_force * (RAPTOR::right_throttle_output > 1.025 ? 0.6 : 0.7); 
     case ED_FM_ENGINE_2_THRUST: return RAPTOR::right_thrust_force;
     case ED_FM_ENGINE_2_TEMPERATURE: return (pow(RAPTOR::right_engine_power_readout, 3) * 300) + RAPTOR::atmosphere_temperature;
 
@@ -1380,6 +1467,7 @@ double ed_fm_get_param(unsigned index) {
     case ED_FM_STICK_FORCE_FACTOR_PITCH: return 1.0;
     case ED_FM_STICK_FORCE_CENTRAL_ROLL: return 0.0;
     case ED_FM_STICK_FORCE_FACTOR_ROLL: return 1.0;
+    case ED_FM_CAN_ACCEPT_FUEL_FROM_TANKER: return 1.0;
     }
     return 0;
 }
@@ -1408,6 +1496,7 @@ void ed_fm_on_damage(int Element, double element_integrity_factor) {
     if (Element >= 0 && Element < 111) {
         RAPTOR::element_integrity[Element] = element_integrity_factor;
     }
+    g_damage_events.push({ Element, element_integrity_factor });
     if (!RAPTOR::invincible) {
         RAPTOR::left_wing_integrity = RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingOutLeft)] *
             RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingCentreLeft)] *
@@ -1426,15 +1515,36 @@ void ed_fm_on_damage(int Element, double element_integrity_factor) {
         RAPTOR::right_engine_integrity = RAPTOR::element_integrity[static_cast<size_t>(DamageElement::NacelleRightBottom)] *
             RAPTOR::element_integrity[static_cast<size_t>(DamageElement::NacelleRight)] *
             RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Engine2)];
+
+        if (RAPTOR::left_engine_integrity <= 0.2 && 
+            RAPTOR::right_engine_integrity <= 0.2 && 
+            RAPTOR::left_wing_integrity <= 0.2 || 
+            RAPTOR::right_wing_integrity <= 0.2 && 
+            RAPTOR::tail_integrity <= 0.2) {
+            RAPTOR::is_destroyed = true; 
+        }
+        
     }
 }
 
 void ed_fm_repair() {
     for (int i = 0; i < 111; i++) RAPTOR::element_integrity[i] = 1;
+    while (!g_damage_events.empty()) g_damage_events.pop();
 }
 
 bool ed_fm_pop_simulation_event(ed_fm_simulation_event& out) {
 
+    if (!g_damage_events.empty()) {
+        DamageEvent event = g_damage_events.front();
+        g_damage_events.pop();
+        out.event_type = ED_FM_EVENT_STRUCTURE_DAMAGE;
+        out.event_params[0] = static_cast<double>(event.element_number);
+        out.event_params[1] = event.integrity_factor;
+        out.event_message[0] = '\0';
+
+        return true;
+    }
+    out.event_type = ED_FM_EVENT_INVALID;
     return false;
 }
 
@@ -1467,6 +1577,7 @@ void ed_fm_cold_start() {
     RAPTOR::left_engine_integrity = RAPTOR::right_engine_integrity = 1.0;
     RAPTOR::manual_trim_applied = false;
     ed_fm_repair();
+    while (!g_damage_events.empty()) g_damage_events.pop();
 }
 
 void ed_fm_hot_start() {
@@ -1493,6 +1604,7 @@ void ed_fm_hot_start() {
     RAPTOR::pitch = RAPTOR::roll = RAPTOR::heading = 0.0;
     RAPTOR::manual_trim_applied = false;
     ed_fm_repair();
+    while (!g_damage_events.empty()) g_damage_events.pop();
 }
 
 void ed_fm_hot_start_in_air() {
@@ -1520,6 +1632,7 @@ void ed_fm_hot_start_in_air() {
     RAPTOR::autotrim_active = true;
     RAPTOR::manual_trim_applied = false;
     ed_fm_repair();
+    while (!g_damage_events.empty()) g_damage_events.pop();
 }
 
 void ed_fm_release() {

@@ -40,7 +40,7 @@ namespace FM_DATA
     double cx_flap = 0.051;
     double cy_flap = 0.112;
 
-    double cx0[] = { 0.013, 0.0135, 0.014, 0.021, 0.0378, 0.0505, 0.0455, 0.04175, 0.038, 0.037, 0.0368, 0.0362, 0.039 };
+    double cx0[] = { 0.013, 0.0135, 0.014, 0.021, 0.0358, 0.0505, 0.0455, 0.04175, 0.038, 0.037, 0.0368, 0.0362, 0.039 };
     double Cya[] = { 0.08, 0.075, 0.07, 0.065, 0.06, 0.055, 0.05, 0.045, 0.04, 0.0375, 0.035, 0.0325, 0.03 };
     double OmxMax[] = { 1.65, 2.45, 3.25, 4.7, 3.98, 3.2, 2.5, 2.25, 2.0, 1.85, 1.7, 1.5, 1.3 };
     double Aldop[] = { 60, 57.5, 55, 50, 45, 40, 35, 32.5, 30, 30, 30, 30, 30 };
@@ -53,7 +53,7 @@ namespace FM_DATA
     double Cy_beta[] = { 0.0, 0.05, 0.1, 0.2, 0.3 };
 
     static inline std::array<double, 13> idle_thrust = {
-        6000, 5980, 5900, 6000, 6150, 6300, 7000, 7900, 9100, 9900, 10500, 11000, 11600
+        6000, 8500, 10500, 11500, 12000, 12500, 13000, 13000, 13000, 13000, 13000, 13000, 13000
     };
 
     static inline std::array<double, 13> max_thrust = {
@@ -106,6 +106,7 @@ namespace RAPTOR {
     bool roll_analog = true;
     double yaw_input = 0, yaw_discrete = 0, yaw_trim = 0, rudder_command = 0;
     bool yaw_analog = true;
+    static double beta_integral = 0.0;
 
     bool left_engine_switch = false;
     double left_throttle_input = 0, left_throttle_output = 0, left_engine_power_readout = 0, left_thrust_force = 0;
@@ -141,10 +142,10 @@ namespace RAPTOR {
     double pitch = 0, pitch_rate = 0, roll = 0, roll_rate = 0, heading = 0, yaw_rate = 0;
 
     double element_integrity[111];
-    double left_wing_integrity = 1.0, right_wing_integrity = 1.0, tail_integrity = 1.0;
+    double left_wing_integrity = 1.0, right_wing_integrity = 1.0, tail_integrity = 1.0, left_elevon_integrity = 1.0, right_elevon_integrity = 1.0;
     double left_engine_integrity = 1.0, right_engine_integrity = 1.0;
     double total_damage = 1 - (left_wing_integrity + right_wing_integrity + tail_integrity +
-        left_engine_integrity + right_engine_integrity) / 5;
+        left_engine_integrity + right_engine_integrity + left_elevon_integrity + right_elevon_integrity) / 7;
 
     bool invincible = true, infinite_fuel = false, easy_flight = false;
     double shake_amplitude = 0, fm_clock = 0;
@@ -203,6 +204,9 @@ namespace RAPTOR {
     const double blink_on_time = 0.5;
     const double blink_off_time = 0.75;
     const double blink_period = blink_on_time + blink_off_time;
+
+    bool is_destroyed = false;
+
 }
 
 // ----- Damage Elements -----
