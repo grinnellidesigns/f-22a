@@ -201,8 +201,8 @@ namespace RAPTOR {
     bool nav_white_blink = false;
     double nav_lights_timer = 0.0;
     bool nav_lights_blink = false;
-    const double blink_on_time = 0.5;
-    const double blink_off_time = 0.75;
+    const double blink_on_time = 0.10;
+    const double blink_off_time = 1.50;
     const double blink_period = blink_on_time + blink_off_time;
 
     bool is_destroyed = false;

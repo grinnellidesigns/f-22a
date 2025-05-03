@@ -183,6 +183,7 @@ void reset_fm_state() {
     RAPTOR::last_pitch_input = 0.0;
 
     RAPTOR::autotrim_elevator_cmd = 0.0;
+    RAPTOR::is_destroyed = false;
 }
 
 void ed_fm_simulate(double dt) {
@@ -295,7 +296,7 @@ void ed_fm_simulate(double dt) {
         }
     }
 
-    if (RAPTOR::g >= 6) {
+    if (RAPTOR::g >= 5) {
         RAPTOR::g_assist_pos = limit(actuator(RAPTOR::g_assist_pos, 1.0, -0.008, 0.007), 0.0, 1.0);
     }
     else {
@@ -309,7 +310,7 @@ void ed_fm_simulate(double dt) {
 
     if (fabs(RAPTOR::alpha) >= 15.0) {
         double vortex_boost = 0.75 * exp(-pow((fabs(RAPTOR::alpha) - 35.0), 2) / (2 * 600.0));
-        if (fabs(RAPTOR::alpha) > 77.0) vortex_boost = 0;
+        if (fabs(RAPTOR::alpha) > 65.0) vortex_boost = 0;
         CyMax_ += vortex_boost;
     }
 
