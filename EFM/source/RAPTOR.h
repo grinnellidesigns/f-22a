@@ -146,6 +146,7 @@ namespace RAPTOR {
     double left_engine_integrity = 1.0, right_engine_integrity = 1.0;
     double total_damage = 1 - (left_wing_integrity + right_wing_integrity + tail_integrity +
         left_engine_integrity + right_engine_integrity + left_elevon_integrity + right_elevon_integrity) / 7;
+    bool is_destroyed = false;
 
     bool invincible = true, infinite_fuel = false, easy_flight = false;
     double shake_amplitude = 0, fm_clock = 0;
@@ -160,7 +161,7 @@ namespace RAPTOR {
     bool manual_trim_applied = false;
     double takeoff_trim_cmd = 0.0;
     double tv_angle = 0.0;
-    
+
     double g_assist_pos = 0;
     double g_limit_positive = 11.0;
     double g_limit_negative = -4.0;
@@ -204,8 +205,6 @@ namespace RAPTOR {
     const double blink_on_time = 0.10;
     const double blink_off_time = 1.50;
     const double blink_period = blink_on_time + blink_off_time;
-
-    bool is_destroyed = false;
 
 }
 
@@ -366,7 +365,7 @@ public:
 private:
     EDPARAM param_api_;
     std::unordered_map<std::string, void*> param_handles_;
-    std::unordered_map<int, float> draw_args_; 
+    std::unordered_map<int, float> draw_args_;
 
     void updateGearLights(double dt);
     void updateTaxiLandingLights(double dt);
