@@ -55,11 +55,11 @@ F_22A =
 	attribute  			= {wsType_Air, wsType_Airplane, wsType_Fighter, F_22A, "Fighters", "Refuelable",},--AG WSTYPE_PLACEHOLDER
 	Categories= {"{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}", "Interceptor",},
 	
-		M_empty						=	19650,--19700	-- kg  with pilot and nose load, F15
-		M_nominal					=	27814,--27637	-- kg (Empty Plus Full Internal Fuel)    --was 27637
-		M_max						=	37875,--38000	-- kg (Maximum Take Off Weight)
-		M_fuel_max					=	8164,--7937		-- kg (Internal Fuel Only)
-		H_max						=	22000,--20000	-- m  (Maximum Operational Ceiling)
+		M_empty						=	19700,--19700	-- kg Updated to reflect real F-22 values
+		M_nominal					=	27900,--27637	-- kg Updated to reflect real F-22 values
+		M_max						=	38000,--38000	-- kg Updated to reflect real F-22 values
+		M_fuel_max					=	8200,--7937		-- kg Updated to reflect real F-22 values
+		H_max						=	22000,--20000	-- m  Updated to reflect real F-22 values
 		average_fuel_consumption	=	0.271,
 		CAS_min						=	58,		-- Minimum CAS speed (m/s) (for AI)
 		V_opt						=	220,	-- Cruise speed (m/s) (for AI)
