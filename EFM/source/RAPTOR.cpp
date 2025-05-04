@@ -122,15 +122,27 @@ void simulate_fuel_consumption(double dt)
     RAPTOR::fuel_consumption_since_last_time = (RAPTOR::left_fuel_rate + RAPTOR::right_fuel_rate) * dt;
 
     if (RAPTOR::fuel_consumption_since_last_time > 0) {
-        RAPTOR::internal_fuel = std::max(0.0, RAPTOR::internal_fuel - limit(RAPTOR::fuel_consumption_since_last_time, 0, RAPTOR::internal_fuel));
-        RAPTOR::total_fuel = RAPTOR::internal_fuel;
-        double fuel_fraction = std::min(1.0, std::max(0.0, RAPTOR::internal_fuel / RAPTOR::max_internal_fuel));
-        g_mass_changes.push({
-            RAPTOR::fuel_consumption_since_last_time,
-            {-0.32 * (1.0 - fuel_fraction), 0.0, 0.0},
-            {0.0, 0.0, 0.0}
-            });
+        double fuel_to_consume = RAPTOR::fuel_consumption_since_last_time;
+
+        if (RAPTOR::external_fuel > 0) {
+            double external_consumed = std::min(fuel_to_consume, RAPTOR::external_fuel);
+            RAPTOR::external_fuel = std::max(0.0, RAPTOR::external_fuel - external_consumed);
+            fuel_to_consume -= external_consumed;
+        }
+
+        if (fuel_to_consume > 0) {
+            RAPTOR::internal_fuel = std::max(0.0, RAPTOR::internal_fuel - fuel_to_consume);
+            double fuel_fraction = std::min(1.0, std::max(0.0, RAPTOR::internal_fuel / RAPTOR::max_internal_fuel));
+            g_mass_changes.push({
+                fuel_to_consume,
+                {-0.32 * (1.0 - fuel_fraction), 0.0, 0.0},
+                {0.0, 0.0, 0.0}
+                });
+        }
+
+        RAPTOR::total_fuel = RAPTOR::internal_fuel + RAPTOR::external_fuel;
     }
+
     RAPTOR::left_fuel_rate_kg_s = left_fuel_rate_kg_s;
     RAPTOR::right_fuel_rate_kg_s = right_fuel_rate_kg_s;
 }
@@ -547,7 +559,7 @@ void ed_fm_simulate(double dt) {
 
         double yaw_cmd;
         const double beta_integral_gain = 0.016;
-        const double beta_integral_limit = 0.05;
+        const double beta_integral_limit = 0.005;
         const double beta_integral_decay = 0.2;
 
         double adverse_yaw_cmd = 0.0;
