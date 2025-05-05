@@ -315,7 +315,6 @@ void ed_fm_simulate(double dt) {
         RAPTOR::g_assist_pos = limit(actuator(RAPTOR::g_assist_pos, 0.0, -0.007, 0.006), 0.0, 1.0);
     }
 
-
     double drag_direction = (fabs(RAPTOR::alpha) < 100.0) ? 1.0 : -1.0;
     double CyAlpha_ = lerp(FM_DATA::mach_table.data(), FM_DATA::Cya, FM_DATA::mach_table.size(), RAPTOR::mach);
     double CyMax_ = lerp(FM_DATA::mach_table.data(), FM_DATA::CyMax, FM_DATA::mach_table.size(), RAPTOR::mach);
@@ -358,6 +357,16 @@ void ed_fm_simulate(double dt) {
     double q = 0.5 * RAPTOR::atmosphere_density * RAPTOR::V_scalar * RAPTOR::V_scalar;
     double Lift = Cy + FM_DATA::Cy0 + (FM_DATA::cy_flap * RAPTOR::flaps_pos);
     double aos_effect = (fabs(RAPTOR::aos) < 0.05) ? 0 : sin(RAPTOR::aos / 2);
+
+    if (RAPTOR::on_ground && RAPTOR::ground_speed_knots > 30.0 && RAPTOR::wheel_brake > 0.7) {
+        RAPTOR::landing_brake_assist = limit(actuator(RAPTOR::landing_brake_assist, 1.0, -0.008, 0.007), 0.0, 1.0);
+        Lift = Lift * 0.85;
+        Drag += 0.85;
+    }
+    else {
+        RAPTOR::landing_brake_assist = limit(actuator(RAPTOR::landing_brake_assist, 0.0, -0.008, 0.007), 0.0, 1.0);
+    }
+
 
     Vec3 left_wing_forces(-Drag * drag_direction * (-aos_effect + 1) * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity,
         Lift * (-aos_effect / 2 + 1) * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity,
@@ -1202,7 +1211,25 @@ double ed_fm_get_internal_fuel() {
 }
 
 void ed_fm_set_external_fuel(int station, double fuel, double x, double y, double z) {
-    RAPTOR::external_fuel = fuel;
+    if (fuel > 0 && RAPTOR::external_fuel_stations.find(station) == RAPTOR::external_fuel_stations.end()) {
+        RAPTOR::external_fuel_stations[station] = 1850.0;
+        RAPTOR::external_tanks_equipped = true;
+    }
+    else if (fuel <= 0) {
+        RAPTOR::external_fuel_stations.erase(station);
+        RAPTOR::external_tanks_equipped = !RAPTOR::external_fuel_stations.empty();
+    }
+    else {
+        RAPTOR::external_fuel_stations[station] = fuel;
+        RAPTOR::external_tanks_equipped = true;
+    }
+
+    RAPTOR::external_fuel = 0.0;
+    for (const auto& [s, fuel_qty] : RAPTOR::external_fuel_stations) {
+        RAPTOR::external_fuel += fuel_qty;
+    }
+
+    RAPTOR::total_fuel = RAPTOR::internal_fuel + RAPTOR::external_fuel;
 }
 
 double ed_fm_get_external_fuel() {
@@ -1233,7 +1260,7 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     data[17] = (float)limit(RAPTOR::rudder_command, -1, 1);
     data[18] = (float)limit(RAPTOR::rudder_command, -1, 1);
     data[21] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
-    data[182] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
+    data[182] = (float)limit(std::max(RAPTOR::airbrake_pos, RAPTOR::landing_brake_assist), 0, 1);
     data[184] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
     static float current_left_aileron = 0.0f;
     static float current_right_aileron = 0.0f;
@@ -1490,16 +1517,49 @@ void ed_fm_refueling_add_fuel(double fuel)
     if (fuel > 0) {
         double dt = 0.006;
         double fuel_to_add = std::min(fuel, 100.0 * dt);
-        RAPTOR::internal_fuel = std::min(RAPTOR::max_internal_fuel, RAPTOR::internal_fuel + fuel_to_add);
-        RAPTOR::total_fuel = RAPTOR::internal_fuel;
-        double fuel_fraction = std::min(1.0, std::max(0.0, RAPTOR::internal_fuel / RAPTOR::max_internal_fuel));
-        g_mass_changes.push({
-            -fuel_to_add,
-            {-0.32 * (1.0 - fuel_fraction), 0.0, 0.0},
-            {0.0, 0.0, 0.0}
-            });
+
+        double internal_space = RAPTOR::max_internal_fuel - RAPTOR::internal_fuel;
+        double internal_added = std::min(fuel_to_add, internal_space);
+        if (internal_added > 0) {
+            RAPTOR::internal_fuel += internal_added * 10;
+            double fuel_fraction = std::min(1.0, std::max(0.0, RAPTOR::internal_fuel / RAPTOR::max_internal_fuel));
+            g_mass_changes.push({
+                -internal_added,
+                {-0.32 * (1.0 - fuel_fraction), 0.0, 0.0},
+                {0.0, 0.0, 0.0}
+                });
+        }
+
+        double remaining_fuel = fuel_to_add - internal_added;
+        if (remaining_fuel > 0 && !RAPTOR::external_fuel_stations.empty()) {
+            size_t num_refuelable_stations = 0;
+            for (const auto& [station, fuel_qty] : RAPTOR::external_fuel_stations) {
+                if ((station == 2 || station == 10) && fuel_qty > 0 && fuel_qty < 1850.0) {
+                    num_refuelable_stations++;
+                }
+            }
+            if (num_refuelable_stations > 0) {
+                double fuel_per_station = remaining_fuel / num_refuelable_stations;
+                for (auto& [station, fuel_qty] : RAPTOR::external_fuel_stations) {
+                    if ((station == 2 || station == 10) && fuel_qty > 0 && fuel_qty < 1850.0) {
+                        double space = 1850.0 - fuel_qty;
+                        double added = std::min(fuel_per_station, space);
+                        fuel_qty += added;
+                    }
+                }
+                RAPTOR::external_fuel = 0.0;
+                for (const auto& [station, fuel_qty] : RAPTOR::external_fuel_stations) {
+                    if (station == 2 || station == 10) {
+                        RAPTOR::external_fuel += fuel_qty;
+                    }
+                }
+            }
+        }
+
+        RAPTOR::total_fuel = RAPTOR::internal_fuel + RAPTOR::external_fuel;
     }
 }
+
 
 void ed_fm_unlimited_fuel(bool value) { RAPTOR::infinite_fuel = value; }
 void ed_fm_set_easy_flight(bool value) { RAPTOR::easy_flight = value; }

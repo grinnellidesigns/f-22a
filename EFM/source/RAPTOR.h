@@ -23,6 +23,7 @@
 #include <string>
 #include <cstddef> 
 #include <array>
+#include <map>
 
     // ----- Aerodynamics, etc. -----
 namespace FM_DATA
@@ -120,8 +121,10 @@ namespace RAPTOR {
     bool gear_switch = false;
     double gear_pos = 0;
     double wheel_brake = 0;
+    double landing_brake_assist = 0;
 
-    const double max_internal_fuel = 8165.0;
+    const double max_internal_fuel = 8200.0;
+    const double max_external_fuel = 3700.0;
     const double ground_refuel_rate = 45.36;
     const double min_usable_fuel = 25.0;
     double internal_fuel = 0, external_fuel = 0, total_fuel = internal_fuel + external_fuel;
@@ -133,6 +136,8 @@ namespace RAPTOR {
     double right_fuel_rate = 0.0;
     double left_fuel_rate_kg_s;
     double right_fuel_rate_kg_s;
+    bool external_tanks_equipped = false;
+    std::map<int, double> external_fuel_stations;
 
     double atmosphere_density = 1.225, altitude_ASL = 0, altitude_AGL = 0, V_scalar = 0;
     double speed_of_sound = 320, mach = 0;
