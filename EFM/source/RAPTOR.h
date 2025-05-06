@@ -26,6 +26,7 @@
 #include <map>
 
     // ----- Aerodynamics, etc. -----
+
 namespace FM_DATA
 {
     static inline std::array<double, 13> mach_table = {
@@ -77,6 +78,7 @@ namespace FM_DATA
 }
 
 // ----- EFM Data -----
+
 namespace RAPTOR {
     Vec3 common_force, common_moment, center_of_mass, wind, velocity_world, airspeed;
     double const pi = 3.1415926535897932384626433832795;
