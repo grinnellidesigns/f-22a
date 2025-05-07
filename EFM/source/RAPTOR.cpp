@@ -320,7 +320,7 @@ void ed_fm_simulate(double dt) {
     double CyMax_ = lerp(FM_DATA::mach_table.data(), FM_DATA::CyMax, FM_DATA::mach_table.size(), RAPTOR::mach);
 
     if (fabs(RAPTOR::alpha) >= 15.0) {
-        double vortex_boost = 0.75 * exp(-pow((fabs(RAPTOR::alpha) - 35.0), 2) / (2 * 600.0));
+        double vortex_boost = 0.72 * exp(-pow((fabs(RAPTOR::alpha) - 35.0), 2) / (2 * 600.0)); //.75
         if (fabs(RAPTOR::alpha) > 65.0) vortex_boost = 0;
         CyMax_ += vortex_boost;
     }
@@ -365,7 +365,6 @@ void ed_fm_simulate(double dt) {
     else {
         RAPTOR::landing_brake_assist = limit(actuator(RAPTOR::landing_brake_assist, 0.0, -0.008, 0.007), 0.0, 1.0);
     }
-
 
     Vec3 left_wing_forces(-Drag * drag_direction * (-aos_effect + 1) * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity,
         Lift * (-aos_effect / 2 + 1) * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity,
@@ -548,8 +547,9 @@ void ed_fm_simulate(double dt) {
         }
 
         double tv_pitch_cmd = (pitch_cmd_source * fabs(pitch_cmd_source) * 1.1) * tv_sensitivity;
-        if (RAPTOR::alpha > 70.0) tv_pitch_cmd -= (RAPTOR::alpha - 70.0) * 0.022;
-        if (RAPTOR::alpha < -40.0) tv_pitch_cmd += (-RAPTOR::alpha - 40.0) * 0.022;
+
+        if (RAPTOR::alpha > 70.0) tv_pitch_cmd -= (RAPTOR::alpha - 70.0) * 0.0285;
+        if (RAPTOR::alpha < -40.0) tv_pitch_cmd += (-RAPTOR::alpha - 40.0) * 0.033;
 
         tv_pitch_cmd += -RAPTOR::pitch_rate;
 
