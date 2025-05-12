@@ -145,6 +145,8 @@ function post_initialize()
 		--dispatch_action(nil,Battery)
 		dev:performClickableAction(UFD_KNOB_mouse, 1, false)
 		dev:performClickableAction(MFD_KNOB_mouse, 1, false)
+		dev:performClickableAction(device_commands.Button_5, 0.25, false)
+        dev:performClickableAction(device_commands.Button_6, 0.3, false)
 		--dev:performClickableAction(right_UFD_swap, 1, false)
 		--print_message_to_user("HOT START")
 	end
