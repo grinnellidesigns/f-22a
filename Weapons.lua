@@ -14,8 +14,14 @@
     
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses.
+	
+	CONTRIBUTORS:
+
+	Copyright (c) 2025: Ash Blythe	
 --]]
 dofile(current_mod_path.."/Weapons/AIM_9X_BLKII.lua")
 dofile(current_mod_path.."/Weapons/AIM_120_C7.lua")
 dofile(current_mod_path.."/Weapons/AIM_120_C8.lua")
 dofile(current_mod_path.."/Weapons/AIM_120_D3.lua")
+dofile(current_mod_path.."/Weapons/AIM_260A.lua")
+dofile(current_mod_path.."/Weapons/MAKO_A2A_C.lua")
