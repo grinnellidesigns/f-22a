@@ -22,7 +22,7 @@ local AIM_120_D3 =
 {
 	category		= CAT_AIR_TO_AIR,
 	name			= "AIM_120D3",
-	displayName		= _("AIM-120D3 AMRAAM - Active Radar AAM"),
+	displayName		= _("AIM-120D3 - Active Radar AAM"),
 	user_name		= _("AIM-120D3"),
 	display_name_short = "AIM-120D3",
 	scheme			= "aa_missile_amraam2",
@@ -284,7 +284,7 @@ declare_loadout({
     category    	= CAT_AIR_TO_AIR,
     CLSID       	= "{AIM-120D-3}",
     Picture     	= 'AIM-120D.png',
-    displayName 	= _("AIM-120D3 - AMRAAM - Active Radar AAM"),
+    displayName 	= _("AIM-120D3 - Active Radar AAM"),
 	attribute		= AIM_120_D3.wsTypeOfWeapon, 
     Count       	= 1,
     Weight      	= 165.0,
@@ -308,7 +308,7 @@ declare_loadout({
 	attribute		= {4,4,32,WSTYPE_PLACEHOLDER},	
     Count           = 2,
     Picture         = "AIM-120D.png",
-    displayName     = _("2x AIM-120D3 AMRAAM - Active Radar AAM"),
+    displayName     = _("2x AIM-120D3 - Active Radar AAM"),
     Weight          = 165 * 2 + 50,
 	Elements = {
 	
@@ -335,3 +335,59 @@ declare_loadout({
     
     JettisonSubmunitionOnly = false,
 })
+
+declare_loadout({
+    category        = CAT_AIR_TO_AIR,
+    CLSID           = "{AIM_120D-3_IRST_LEFT}",  --BAY 4
+    wsTypeOfWeapon  = AIM_120_D3.wsTypeOfWeapon,
+    attribute       = {4,4,32,WSTYPE_PLACEHOLDER},
+    Count           = 1,
+    Picture         = "AIM-120D+IRST.png",
+    displayName     = _("AIM-120D3 - Active Radar AAM + IRST POD"),
+    Weight          = 165 * 1 + 105,
+    Elements = {
+
+        {
+            ShapeName    =    "F22_IRST",
+            IsAdapter = true,
+        },
+
+        {
+            DrawArgs = {[1] = {1,1},[2] = {2,1},},
+            Position    =    {2.825,  -0.360, 3.90}, 
+            ShapeName    =    "AIM-120D3",
+            Rotation = {0,0,0},
+        },
+
+    },
+
+    JettisonSubmunitionOnly = true,
+})
+
+declare_loadout({
+    category        = CAT_AIR_TO_AIR,
+    CLSID           = "{AIM_120D-3_IRST_RIGHT}", --BAY 8
+    wsTypeOfWeapon    = AIM_120_D3.wsTypeOfWeapon,
+    attribute        = {4,4,32,WSTYPE_PLACEHOLDER},
+    Count           = 1,
+    Picture         = "AIM-120D+IRST.png",
+    displayName     = _("AIM-120D3 - Active Radar AAM + IRST POD"),
+    Weight          = 165 * 1 + 105,
+    Elements = {
+
+        {
+            ShapeName    =    "F22_IRST",
+            IsAdapter = true,
+        },
+
+        {
+            DrawArgs = {[1] = {1,1},[2] = {2,1},},
+            Position    =    {2.795,  -0.360, -3.90},
+            ShapeName    =    "AIM-120D3",
+            Rotation = {0,0,0},
+        },
+
+    },
+
+    JettisonSubmunitionOnly = true,
+})	

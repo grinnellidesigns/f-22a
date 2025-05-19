@@ -22,7 +22,7 @@ local AIM_120_C7 =
 {
 	category		= CAT_AIR_TO_AIR,
 	name			= "AIM_120C7",
-	displayName		= _("AIM-120C7 AMRAAM - Active Radar AAM"),
+	displayName		= _("AIM-120C7 - Active Radar AAM"),
 	user_name		= _("AIM-120C7"),
 	display_name_short = "AIM-120C7",
 	scheme			= "aa_missile_amraam2",
@@ -284,7 +284,7 @@ declare_loadout({
     category    	= CAT_AIR_TO_AIR,
     CLSID       	= "{AIM-120C-7}",
     Picture     	= 'AIM-120C7.png',
-    displayName 	= _("AIM-120C7 AMRAAM - Active Radar AAM"),
+    displayName 	= _("AIM-120C7 - Active Radar AAM"),
 	attribute		= AIM_120_C7.wsTypeOfWeapon,
     Count       	= 1,
     Weight      	= 161.48,
@@ -308,7 +308,7 @@ declare_loadout({
 	attribute		= {4,4,32,WSTYPE_PLACEHOLDER},	
     Count           = 2,
     Picture         = "AIM-120C7.png",
-    displayName     = _("2x AIM-120C7 AMRAAM - Active Radar AAM"),
+    displayName     = _("2x AIM-120C7 - Active Radar AAM"),
     Weight          = 161.48 * 2 + 50,
 	Elements = {
 	
@@ -335,3 +335,59 @@ declare_loadout({
     
     JettisonSubmunitionOnly = false,
 })
+
+declare_loadout({
+    category        = CAT_AIR_TO_AIR,
+    CLSID           = "{AIM_120C-7_IRST_LEFT}",  --BAY 4
+    wsTypeOfWeapon  = AIM_120_C7.wsTypeOfWeapon,
+    attribute       = {4,4,32,WSTYPE_PLACEHOLDER},
+    Count           = 1,
+    Picture         = "AIM-120C7+IRST.png",
+    displayName     = _("AIM-120C7 - Active Radar AAM + IRST POD"),
+    Weight          = 161.48 * 1 + 105,
+    Elements = {
+
+        {
+            ShapeName    =    "F22_IRST",
+            IsAdapter = true,
+        },
+
+        {
+            DrawArgs = {[1] = {1,1},[2] = {2,1},},
+            Position    =    {2.825,  -0.360, 3.90}, 
+            ShapeName    =    "AIM-120C7",
+            Rotation = {0,0,0},
+        },
+
+    },
+
+    JettisonSubmunitionOnly = true,
+})
+
+declare_loadout({
+    category        = CAT_AIR_TO_AIR,
+    CLSID           = "{AIM_120C-7_IRST_RIGHT}", --BAY 8
+    wsTypeOfWeapon    = AIM_120_C7.wsTypeOfWeapon,
+    attribute        = {4,4,32,WSTYPE_PLACEHOLDER},
+    Count           = 1,
+    Picture         = "AIM-120C7+IRST.png",
+    displayName     = _("AIM-120C7 - Active Radar AAM + IRST POD"),
+    Weight          = 161.48 * 1 + 105,
+    Elements = {
+
+        {
+            ShapeName    =    "F22_IRST",
+            IsAdapter = true,
+        },
+
+        {
+            DrawArgs = {[1] = {1,1},[2] = {2,1},},
+            Position    =    {2.795,  -0.360, -3.90},
+            ShapeName    =    "AIM-120C7",
+            Rotation = {0,0,0},
+        },
+
+    },
+
+    JettisonSubmunitionOnly = true,
+})	
