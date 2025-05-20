@@ -34,14 +34,14 @@ declare_pod({
 	shape_table_data =
 	{
 		{
-			file	= "F22_IRST";
+			file	= "F22_Sensor_Pod";
 			life = 1,
 			fire = { 0, 1},
-			username	= "F22_IRST";
+			username	= "F22_Sensor_Pod";
 			index = WSTYPE_PLACEHOLDER,
 		},
 	},
-	ShapeName	=	"F22_IRST",
+	ShapeName	=	"F22_Sensor_Pod",
 
 	Sensors	 = 
 	{
