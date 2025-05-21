@@ -69,17 +69,17 @@ F_22A =
 		has_speedbrake				=	true,
 		radar_can_see_ground		=	true,
 		
-		nose_gear_pos 				                = {5.981,	-1.85,	0.0},  -- = {5.981,	-1.907,	0.0},
+		nose_gear_pos 				                = {5.981,	-1.8,	0.0},  -- = {5.981,	-1.906,	0.0}
 	    nose_gear_amortizer_direct_stroke   		=  0,      -- down from nose_gear_pos !!!
 	    nose_gear_amortizer_reversal_stroke  		= -0.317,  -- up 
 	    nose_gear_amortizer_normal_weight_stroke 	= -0.199,  -- down from nose_gear_pos
 	    nose_gear_wheel_diameter 	                =  0.587,  -- in m
 		
-		main_gear_pos 						 	    = {-0.472,	-1.655,	-1.678}, --1.678
+		main_gear_pos 						 	    = {-0.472,	-1.74,	-1.676}, --{-0.472,	-1.6,	-1.676}
 		main_gear_amortizer_direct_stroke	 	    =  -0.4,     -- 
 	    main_gear_amortizer_reversal_stroke  	    =  -0.2,     --  up 
 	    main_gear_amortizer_normal_weight_stroke  	=  -0.2,     --  down from main_gear_pos .2
-	    main_gear_wheel_diameter 				    =   0.841, --  in m 841
+	    main_gear_wheel_diameter 				    =   0.822, --  in m 841
 
 --[[
 		main_gear_pos 						 	    = {-0.472,	-1.655,	-1.678}, --1.678

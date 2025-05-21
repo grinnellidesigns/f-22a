@@ -289,7 +289,7 @@ end
 end
 ------------------------------------------------------------------FUNCTION-UPDATE---------------------------------------------------------------------------------------------------
 function update()
-	--print_message_to_user(parameters.WoW:get()) --0 no weight 1 weight on wheel
+	-- print_message_to_user(parameters.WoW:get()) --0 no weight 1 weight on wheel
 	-- print_message_to_user(canon_rotate)
 
 	local bay_door_pos   = get_aircraft_draw_argument_value(600)
@@ -310,14 +310,14 @@ function update()
 --parameters.BAY_OPTION:get() == 1
 	--parameters.BAY_STATION:set(hotas_station) --had to remove
 	--GROUND BAY OVERRIDE
-	if sensor_data.getWOW_NoseLandingGear() == 1 and parameters.GROUND_ORIDE:get() == 1 and parameters.MAIN_POWER:get() == 1 and bay_door_pos <= 1 then --and parameters.BAY_OPTION:get() == 0 then
+	if sensor_data.getNoseLandingGearDown() == 1 and parameters.GROUND_ORIDE:get() == 1 and parameters.MAIN_POWER:get() == 1 and bay_door_pos <= 1 then --and parameters.BAY_OPTION:get() == 0 then
 		bay_door_pos = bay_door_pos + 0.0022
 		left_door_pos = left_door_pos + 0.0022
 		right_door_pos = right_door_pos + 0.0022
 		set_aircraft_draw_argument_value(600,bay_door_pos)
 		set_aircraft_draw_argument_value(601,left_door_pos)
 		set_aircraft_draw_argument_value(602,right_door_pos)
-	elseif sensor_data.getWOW_NoseLandingGear() == 1 and parameters.GROUND_ORIDE:get() == 0 and parameters.MAIN_POWER:get() == 1 and bay_door_pos >= 0 then --and parameters.BAY_OPTION:get() == 0 then
+	elseif sensor_data.getNoseLandingGearDown() == 1 and parameters.GROUND_ORIDE:get() == 0 and parameters.MAIN_POWER:get() == 1 and bay_door_pos >= 0 then --and parameters.BAY_OPTION:get() == 0 then
 		bay_door_pos = bay_door_pos - 0.0022
 		left_door_pos = left_door_pos - 0.0022
 		right_door_pos = right_door_pos - 0.0022
@@ -328,28 +328,28 @@ function update()
 
 	
 	--ORIDE X
-	if sensor_data.getWOW_NoseLandingGear() == 0 then --not on the ground...
+	if sensor_data.getNoseLandingGearDown() == 0 then --not on the ground...
 		parameters.ORIDE_X:set(1)
 	else
 		parameters.ORIDE_X:set(0)
 	end
 	--ORIDE TEXT
-	if sensor_data.getWOW_NoseLandingGear() == 1 and bay_door_pos >= 0.01 then
+	if sensor_data.getNoseLandingGearDown() == 1 and bay_door_pos >= 0.01 then
 		parameters.ORIDE_TEXT:set(1)
-	elseif sensor_data.getWOW_NoseLandingGear() == 1 and bay_door_pos < 0.01 then
+	elseif sensor_data.getNoseLandingGearDown() == 1 and bay_door_pos < 0.01 then
 		parameters.ORIDE_TEXT:set(0)
 	end
 	-- ARMED TEXT
-	if sensor_data.getWOW_NoseLandingGear() == 1 and sensor_data.getWOW_RightMainLandingGear() == 1 and sensor_data.getWOW_LeftMainLandingGear() == 1 then
+	if sensor_data.getNoseLandingGearDown() == 1 and sensor_data.getRightMainLandingGearDown() == 1 and sensor_data.getLeftMainLandingGearDown() == 1 then
 		parameters.ARM_STATUS:set(2)
-	elseif master_arm_state == 1 and sensor_data.getWOW_NoseLandingGear() == 0 and sensor_data.getWOW_RightMainLandingGear() == 0 and sensor_data.getWOW_LeftMainLandingGear() == 0 then
+	elseif master_arm_state == 1 and sensor_data.getNoseLandingGearDown() == 0 and sensor_data.getRightMainLandingGearDown() == 0 and sensor_data.getLeftMainLandingGearDown() == 0 then
 		parameters.ARM_STATUS:set(1)
-	elseif master_arm_state == 0 and sensor_data.getWOW_NoseLandingGear() == 0 and sensor_data.getWOW_RightMainLandingGear() == 0 and sensor_data.getWOW_LeftMainLandingGear() == 0 then
+	elseif master_arm_state == 0 and sensor_data.getNoseLandingGearDown() == 0 and sensor_data.getRightMainLandingGearDown() == 0 and sensor_data.getLeftMainLandingGearDown() == 0 then
 		parameters.ARM_STATUS:set(0)
 	end
 	--WEAPON BAY FIRE ANIMATIONS BAY STATION 1-left 2-center 3-right 4-all
 		--ALL BAY ORIDE
-		if air_oride == 1 and parameters.BAY_STATION:get() == 4 and master_arm_state == 1 and bay_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		if air_oride == 1 and parameters.BAY_STATION:get() == 4 and master_arm_state == 1 and bay_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() == 0 then
 			left_door_pos = left_door_pos + 0.05
 			right_door_pos = right_door_pos + 0.05
 			bay_door_pos = bay_door_pos + 0.05
@@ -358,7 +358,7 @@ function update()
 			set_aircraft_draw_argument_value(602, right_door_pos)
 		end
 		--ALL BAY
-		if weapon_release_state == 1 and air_oride == 0 and parameters.BAY_STATION:get() == 4 and master_arm_state == 1 and right_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		if weapon_release_state == 1 and air_oride == 0 and parameters.BAY_STATION:get() == 4 and master_arm_state == 1 and right_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() == 0 then
 			left_door_pos = left_door_pos + 0.05
 			right_door_pos = right_door_pos + 0.05
 			bay_door_pos = bay_door_pos + 0.05
@@ -367,65 +367,65 @@ function update()
 			set_aircraft_draw_argument_value(602, right_door_pos)
 		end
 		--CENTER BAY AIR ORIDE
-		if air_oride == 1 and parameters.BAY_STATION:get() == 2 and master_arm_state == 1 and bay_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		if air_oride == 1 and parameters.BAY_STATION:get() == 2 and master_arm_state == 1 and bay_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() == 0 then
 			bay_door_pos = bay_door_pos + 0.05
 			set_aircraft_draw_argument_value(600, bay_door_pos)
-		elseif air_oride == 0 and parameters.MAIN_POWER:get() == 1 and bay_door_pos >= 0 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		elseif air_oride == 0 and parameters.MAIN_POWER:get() == 1 and bay_door_pos >= 0 and sensor_data.getNoseLandingGearDown() == 0 then
 			bay_door_pos = bay_door_pos
 			set_aircraft_draw_argument_value(600, bay_door_pos)
 		end
 		--CENTER BAY
-		if weapon_release_state == 1 and air_oride == 0 and parameters.BAY_STATION:get() == 2 and master_arm_state == 1 and bay_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		if weapon_release_state == 1 and air_oride == 0 and parameters.BAY_STATION:get() == 2 and master_arm_state == 1 and bay_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() == 0 then
 			bay_door_pos = bay_door_pos + 0.05
 			set_aircraft_draw_argument_value(600, bay_door_pos)
-		elseif weapon_release_state == 0 and air_oride == 0 and parameters.MAIN_POWER:get() == 1 and bay_door_pos >= 0 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		elseif weapon_release_state == 0 and air_oride == 0 and parameters.MAIN_POWER:get() == 1 and bay_door_pos >= 0 and sensor_data.getNoseLandingGearDown() == 0 then
 			bay_door_pos = bay_door_pos - 0.05
 			set_aircraft_draw_argument_value(600, bay_door_pos)
 		end
 		--LEFT BAY ORIDE
-		if air_oride == 1 and parameters.BAY_STATION:get() == 1 and master_arm_state == 1 and left_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() then
+		if air_oride == 1 and parameters.BAY_STATION:get() == 1 and master_arm_state == 1 and left_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() then
 			left_door_pos = left_door_pos + 0.05
 			set_aircraft_draw_argument_value(601, left_door_pos)
-		elseif air_oride == 0 and parameters.MAIN_POWER:get() == 1 and left_door_pos >= 0 and sensor_data.getWOW_NoseLandingGear() == 0 and parameters.GROUND_POWER:get() == 0 then
+		elseif air_oride == 0 and parameters.MAIN_POWER:get() == 1 and left_door_pos >= 0 and sensor_data.getNoseLandingGearDown() == 0 and parameters.GROUND_POWER:get() == 0 then
 			left_door_pos = left_door_pos
 			set_aircraft_draw_argument_value(601, left_door_pos)
 		end
 		--LEFT BAY
-		if weapon_release_state == 1 and air_oride == 0 and parameters.BAY_STATION:get() == 1 and master_arm_state == 1 and left_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		if weapon_release_state == 1 and air_oride == 0 and parameters.BAY_STATION:get() == 1 and master_arm_state == 1 and left_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() == 0 then
 			left_door_pos = left_door_pos + 0.05
 			set_aircraft_draw_argument_value(601, left_door_pos)
-		elseif weapon_release_state == 0 and air_oride == 0 and parameters.MAIN_POWER:get() == 1 and left_door_pos >= 0 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		elseif weapon_release_state == 0 and air_oride == 0 and parameters.MAIN_POWER:get() == 1 and left_door_pos >= 0 and sensor_data.getNoseLandingGearDown() == 0 then
 			left_door_pos = left_door_pos - 0.05
 			set_aircraft_draw_argument_value(601, left_door_pos)
 		end
 		--RIGHT BAY ORIDE
-		if air_oride == 1 and parameters.BAY_STATION:get() == 3 and master_arm_state == 1 and right_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		if air_oride == 1 and parameters.BAY_STATION:get() == 3 and master_arm_state == 1 and right_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() == 0 then
 			right_door_pos = right_door_pos + 0.05
 			set_aircraft_draw_argument_value(602, right_door_pos)
-		elseif air_oride == 0 and parameters.MAIN_POWER:get() == 1 and right_door_pos >= 0 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		elseif air_oride == 0 and parameters.MAIN_POWER:get() == 1 and right_door_pos >= 0 and sensor_data.getNoseLandingGearDown() == 0 then
 			right_door_pos = right_door_pos
 			set_aircraft_draw_argument_value(602, right_door_pos)
 		end
 		--RIGHT BAY
-		if weapon_release_state == 1 and air_oride == 0 and parameters.BAY_STATION:get() == 3 and master_arm_state == 1 and right_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		if weapon_release_state == 1 and air_oride == 0 and parameters.BAY_STATION:get() == 3 and master_arm_state == 1 and right_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() == 0 then
 			right_door_pos = right_door_pos + 0.05
 			set_aircraft_draw_argument_value(602, right_door_pos)
-		elseif weapon_release_state == 0 and air_oride == 0 and parameters.MAIN_POWER:get() == 1 and right_door_pos >= 0 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		elseif weapon_release_state == 0 and air_oride == 0 and parameters.MAIN_POWER:get() == 1 and right_door_pos >= 0 and sensor_data.getNoseLandingGearDown() == 0 then
 			right_door_pos = right_door_pos - 0.05
 			set_aircraft_draw_argument_value(602, right_door_pos)
 		end
 		--First Detent CAnon Door
-		if first_state == 1 and master_arm_state == 1 and canon_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		if first_state == 1 and master_arm_state == 1 and canon_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() == 0 then
 			canon_door_pos = canon_door_pos + 0.0900
 			set_aircraft_draw_argument_value(614, canon_door_pos)
-		elseif first_state == 0 and master_arm_state == 1 and canon_door_pos >= 0 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		elseif first_state == 0 and master_arm_state == 1 and canon_door_pos >= 0 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() == 0 then
 			canon_door_pos = canon_door_pos - 0.0900
 			set_aircraft_draw_argument_value(614, canon_door_pos)
 		end
-		if fire_z_weapons == 1 and master_arm_state == 1 and canon_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		if fire_z_weapons == 1 and master_arm_state == 1 and canon_door_pos <= 1 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() == 0 then
 			canon_door_pos = canon_door_pos + 1--0.0900
 			set_aircraft_draw_argument_value(614, canon_door_pos)
-		-- elseif fire_z_weapons == 0 and master_arm_state == 1 and canon_door_pos >= 0 and parameters.MAIN_POWER:get() == 1 and sensor_data.getWOW_NoseLandingGear() == 0 then
+		-- elseif fire_z_weapons == 0 and master_arm_state == 1 and canon_door_pos >= 0 and parameters.MAIN_POWER:get() == 1 and sensor_data.getNoseLandingGearDown() == 0 then
 		-- 	canon_door_pos = canon_door_pos - 0.0900
 		-- 	set_aircraft_draw_argument_value(614, canon_door_pos)	
 		end
@@ -527,7 +527,7 @@ getTotalFuelWeight
 getTrueAirSpeed
 getVerticalAcceleration
 getVerticalVelocity
-getWOW_LeftMainLandingGear
-getWOW_NoseLandingGear
-getWOW_RightMainLandingGear
+getLeftMainLandingGearDown
+getNoseLandingGearDown
+getRightMainLandingGearDown
 ]]

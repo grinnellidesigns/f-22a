@@ -427,7 +427,7 @@ void ed_fm_simulate(double dt) {
             max_tv_deflection = 0;
         }
 
-        const double takeoff_trim_value = 0.245;
+        const double takeoff_trim_value = 0.110;
         const double takeoff_trim_rate = 0.05;
 
         double ias_ms = RAPTOR::V_scalar * sqrt(RAPTOR::atmosphere_density / 1.225);
@@ -435,7 +435,7 @@ void ed_fm_simulate(double dt) {
 
         double pitch_cmd_source = RAPTOR::pitch_analog ? RAPTOR::pitch_input : RAPTOR::pitch_discrete;
         bool takeoff_trim_enabled = RAPTOR::on_ground &&
-            ias_knots < 250.0 &&
+            ias_knots < 160.0 && 
             RAPTOR::pitch_trim == 0.0 &&
             fabs(pitch_cmd_source) < 0.05;
 
