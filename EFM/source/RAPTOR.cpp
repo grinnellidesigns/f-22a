@@ -427,7 +427,7 @@ void ed_fm_simulate(double dt) {
             max_tv_deflection = 0;
         }
 
-        const double takeoff_trim_value = 0.110;
+        const double takeoff_trim_value = 0.17;
         const double takeoff_trim_rate = 0.05;
 
         double ias_ms = RAPTOR::V_scalar * sqrt(RAPTOR::atmosphere_density / 1.225);

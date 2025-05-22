@@ -23,17 +23,17 @@
 
 -- NOSEGEAR
 local nose_amortizer_min_length                 = 0.0
-local nose_amortizer_max_length                 = 0.587 
+local nose_amortizer_max_length                 = 0.57 
 local nose_amortizer_basic_length               = 0.50
 local nose_amortizer_reduce_length              = 0.317
 
 local nose_amortizer_spring_force_factor        = 4000000
 local nose_amortizer_spring_force_factor_rate   = 9
 
-local nose_amortizer_static_force               = 125000--240000--may need higher -- higher number moves wheel above ground - too high flips plane
+local nose_amortizer_static_force               = 129000
 
-local nose_amortizer_direct_damper_force_factor = 19000--29250 strength of shock
-local nose_amortizer_back_damper_force_factor   = 38000--39000 shock absorber
+local nose_amortizer_direct_damper_force_factor = 19000
+local nose_amortizer_back_damper_force_factor   = 38000
 
 local nose_wheel_moment_of_inertia              = 1.1
 
@@ -52,22 +52,22 @@ local main_amortizer_spring_force_factor_rate   = 3.0
 
 local main_amortizer_static_force               = 102500
 
-local main_amortizer_direct_damper_force_factor = 42000 --35000
-local main_amortizer_back_damper_force_factor   = 52000 --45000
+local main_amortizer_direct_damper_force_factor = 42000 
+local main_amortizer_back_damper_force_factor   = 52000 
 
 local main_damper_coeff                         = 150.0
 
 local main_wheel_moment_of_inertia              = 3.2  
 
-local wheel_static_friction_factor_COMMON       = 1.0 --0.34
+local wheel_static_friction_factor_COMMON       = 1.0 
 local wheel_side_friction_factor_COMMON         = 1.1
 local wheel_roll_friction_factor_COMMON         = 0.153
-local wheel_glide_friction_factor_COMMON        = 0.22--0.30
+local wheel_glide_friction_factor_COMMON        = 0.22
 
-local wheel_static_friction_factor_NOSE         = 0.6 --0.33
+local wheel_static_friction_factor_NOSE         = 0.6 
 local wheel_side_friction_factor_NOSE           = 1.1
-local wheel_roll_friction_factor_NOSE           = 0.08--0.15
-local wheel_glide_friction_factor_NOSE          = 0.04--0.28
+local wheel_roll_friction_factor_NOSE           = 0.08
+local wheel_glide_friction_factor_NOSE          = 0.04
 
 local brake_moment_main                         = 16000
 
