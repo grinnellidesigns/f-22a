@@ -1426,9 +1426,6 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     data[612] = RAPTOR::nav_lights ? 1.0f : 0.0f;
     data[613] = RAPTOR::nav_lights ? 1.0f : 0.0f;
     data[610] = static_cast<float>(limit(data[610], 0.0f, 1.0f));
-    data[619] = 0.0f;
-    data[620] = 0.0f;
-    data[621] = 0.0f;
     if (RAPTOR::is_destroyed == true) {
         data[114] = 1.0f;
     }
