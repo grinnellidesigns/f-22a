@@ -427,7 +427,7 @@ void ed_fm_simulate(double dt) {
             max_tv_deflection = 0;
         }
 
-        const double takeoff_trim_value = 0.17;
+        const double takeoff_trim_value = 0.18;
         const double takeoff_trim_rate = 0.05;
 
         double ias_ms = RAPTOR::V_scalar * sqrt(RAPTOR::atmosphere_density / 1.225);
@@ -1163,8 +1163,14 @@ void ed_fm_set_command(int command, float value) {
     case flapsDown: RAPTOR::flaps_switch = false; break;
     case flapsUp: RAPTOR::flaps_switch = true; break;
     case gearToggle:
-        if (!RAPTOR::on_ground && ias_knots_local <= 275.0) {
-            RAPTOR::gear_switch = !RAPTOR::gear_switch;
+        if (!RAPTOR::on_ground) {
+            if (RAPTOR::gear_switch) {
+                RAPTOR::gear_switch = false;
+            }
+            else if (ias_knots_local <= 275.0) {
+
+                RAPTOR::gear_switch = true;
+            }
         }
         break;
     case gearDown:
@@ -1517,7 +1523,7 @@ double ed_fm_get_param(unsigned index) {
     case ED_FM_ENGINE_1_CORE_THRUST: return RAPTOR::left_thrust_force * (RAPTOR::left_throttle_output > 1.025 ? 0.6 : 0.7);
     case ED_FM_ENGINE_1_THRUST: return RAPTOR::left_thrust_force;
     case ED_FM_ENGINE_1_TEMPERATURE: return (pow(RAPTOR::left_engine_power_readout, 3) * 300) + RAPTOR::atmosphere_temperature;
-
+    case ED_FM_ENGINE_1_FUEL_FLOW: return (RAPTOR::left_fuel_rate_kg_s);
 
     case ED_FM_ENGINE_2_CORE_RPM: return RAPTOR::right_throttle_input;
     case ED_FM_ENGINE_2_RPM: return RAPTOR::right_engine_power_readout;
@@ -1534,6 +1540,7 @@ double ed_fm_get_param(unsigned index) {
     case ED_FM_ENGINE_2_CORE_THRUST: return RAPTOR::right_thrust_force * (RAPTOR::right_throttle_output > 1.025 ? 0.6 : 0.7);
     case ED_FM_ENGINE_2_THRUST: return RAPTOR::right_thrust_force;
     case ED_FM_ENGINE_2_TEMPERATURE: return (pow(RAPTOR::right_engine_power_readout, 3) * 300) + RAPTOR::atmosphere_temperature;
+    case ED_FM_ENGINE_2_FUEL_FLOW: return (RAPTOR::right_fuel_rate_kg_s);
 
     case ED_FM_STICK_FORCE_CENTRAL_PITCH: return 0.0;
     case ED_FM_STICK_FORCE_FACTOR_PITCH: return 1.0;

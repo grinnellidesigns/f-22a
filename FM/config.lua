@@ -30,7 +30,7 @@ local nose_amortizer_reduce_length              = 0.317
 local nose_amortizer_spring_force_factor        = 4000000
 local nose_amortizer_spring_force_factor_rate   = 9
 
-local nose_amortizer_static_force               = 129000
+local nose_amortizer_static_force               = 136000
 
 local nose_amortizer_direct_damper_force_factor = 19000
 local nose_amortizer_back_damper_force_factor   = 38000
