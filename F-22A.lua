@@ -291,8 +291,8 @@ F_22A =
             {
 			    { CLSID = "{E1F29B21-F291-4589-9FD8-3272EEC69506}",arg_value = 0, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --F-15C Fuel Tank 600 Gallons
 				{ CLSID = "{LDTP_FUEL_Tank}",arg_value = 1,attach_point_position = {1.36,  -0.220, 0.00}, Cx_gain_empty = 0.0, Cx_gain_item = 1.5},					
-				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM9X
-                { CLSID = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM9M	
+				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",attach_point_position = {0.22, -0.11,  0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM9X
+                { CLSID = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",attach_point_position = {0.22, -0.11,  0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM9M	
 				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM_120C
 				{ CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM_120B			
 		        { CLSID = "{AIM-120C-7}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},	
