@@ -145,6 +145,8 @@ function post_initialize()
 		--dispatch_action(nil,Battery)
 		dev:performClickableAction(UFD_KNOB_mouse, 1, false)
 		dev:performClickableAction(MFD_KNOB_mouse, 1, false)
+		dev:performClickableAction(device_commands.Button_5, 0.25, false)
+        dev:performClickableAction(device_commands.Button_6, 0.3, false)
 		--dev:performClickableAction(right_UFD_swap, 1, false)
 		--print_message_to_user("HOT START")
 	end
@@ -195,7 +197,7 @@ function update()
 	if parameters.FUELT:get() <= 0 then
 		parameters.FUELTANK:set(0)
 	else
-		parameters.FUELTANK:set(sensor_data.getTotalFuelWeight() * 2.20462 - 13454) -- Working, don't chage: 0.36622 
+		parameters.FUELTANK:set(sensor_data.getTotalFuelWeight() * 2.20462 - 18078) -- Working, don't chage: 0.36622 
 	end
 	
 	local MFD_KNOB          = get_cockpit_draw_argument_value(704)
@@ -246,7 +248,7 @@ function update()
 	parameters.RPM_R        :set(sensor_data.getEngineRightRPM())
 	parameters.FUELL        :set(sensor_data.getTotalFuelWeight() * 0.01 ) -- Working, don't change: 0.36622 
 	parameters.FUEL         :set(sensor_data.getTotalFuelWeight() * 2.20462 ) -- Working, don't change: 0.36622
-	parameters.FUELT        :set(sensor_data.getTotalFuelWeight() * 2.20462 - 13454) -- Working, don't change: 0.36622 **25725 - 17500 = 8225**
+	parameters.FUELT        :set(sensor_data.getTotalFuelWeight() * 2.20462 - 18078) -- Working, don't change: 0.36622 **25725 - 17500 = 8225**
 	parameters.EGT_L        :set(sensor_data.getEngineLeftTemperatureBeforeTurbine())
 	parameters.EGT_R        :set(sensor_data.getEngineRightTemperatureBeforeTurbine())
 

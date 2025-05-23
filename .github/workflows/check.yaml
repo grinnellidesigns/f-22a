@@ -1,0 +1,24 @@
+name: EFM Build Check
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  build:
+    name: Check Build
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    
+    - name: Configure CMake Project
+      run: cmake --preset x64-release -G "Visual Studio 17 2022"
+
+    - name: Build CMake Project
+      run: cmake --build --preset x64-release

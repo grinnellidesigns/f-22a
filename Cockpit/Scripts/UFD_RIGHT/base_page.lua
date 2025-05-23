@@ -14,8 +14,14 @@
     
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses.
---]]
+	
+	CONTRIBUTORS:
 
+	Copyright (c) 2025: Branden Hooper
+	Changes:
+	Added AOA, MACH and G to UFD Screen
+	
+]]
 
 dofile(LockOn_Options.script_path.."UFD_RIGHT/definitions.lua")
 dofile(LockOn_Options.script_path.."fonts.lua")
@@ -64,7 +70,7 @@ local GreenColor 		    = {0, 255, 0, 255}--RGBA
 local WhiteColor 			= {255, 255, 255, 255}--RGBA
 local RedColor 				= {255, 0, 0, 255}--RGBA
 local BlackColor 			= {0, 0, 0, 255}--RGBA
-local ScreenColor			= {3, 3, 12, 255}--RGBA 5-5-5
+local ScreenColor			= {3, 3, 3, 255}--RGBA 5-5-5
 local ADIbottom				= {8, 8, 8, 255}--RGBA
 local TealColor				= {0, 255, 255, 255}--RGBA
 local TrimColor				= {255, 255, 255, 255}--RGBA
@@ -958,7 +964,7 @@ IAS.name				= "Indicated Airspeed"
 IAS.material			= UFD_FONT
 IAS.init_pos			= {-60, 4.4, 0} --L-R,U-D,F-B
 IAS.alignment			= "LeftCenter"
-IAS.stringdefs			= {0.007, 0.007, 0, 0.0} --either 004 or 005
+IAS.stringdefs			= {0.006, 0.006, 0, 0.0} --either 004 or 005
 IAS.additive_alpha		= true
 IAS.collimated			= false
 IAS.isdraw				= true	
@@ -1638,80 +1644,129 @@ G_NUM.controllers		=   {
                                 
 Add(G_NUM)
 ------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------- AUTO G
-INFO_FCS_AUTO 					        = CreateElement "ceStringPoly"
-INFO_FCS_AUTO.name 				        = "menu"
-INFO_FCS_AUTO.material 			        = UFD_GRN
-INFO_FCS_AUTO.value 				    = "FCS"
-INFO_FCS_AUTO.stringdefs 		        = {0.0040, 0.0040, 0.0004, 0.001}
-INFO_FCS_AUTO.alignment 			    = "LeftCenter"
-INFO_FCS_AUTO.formats 			        = {"%s"}
-INFO_FCS_AUTO.h_clip_relation           = h_clip_relations.COMPARE
-INFO_FCS_AUTO.level 				    = 10
-INFO_FCS_AUTO.init_pos 			        = {-58, -19, 0}
-INFO_FCS_AUTO.init_rot 			        = {0, 0, 0}
-INFO_FCS_AUTO.element_params 	        = {"UFD_OPACITY","R_WAR_OPACITY","HUD_MODE","FCS_MODE"}
-INFO_FCS_AUTO.controllers		        = {{"opacity_using_parameter",0},{"parameter_in_range",1,0.9,1.1},{"parameter_in_range",2,0.9,1.1},{"parameter_in_range",3,-0.1,0.1}}
-Add(INFO_FCS_AUTO)
---------------------------------------------------------------------------------------------------- AUTO G
-INFO_FCS_AUTO 					        = CreateElement "ceStringPoly"
-INFO_FCS_AUTO.name 				        = "menu"
-INFO_FCS_AUTO.material 			        = UFD_GRN
-INFO_FCS_AUTO.value 				    = "AUTO AOA"
-INFO_FCS_AUTO.stringdefs 		        = {0.0040, 0.0040, 0.0004, 0.001}
-INFO_FCS_AUTO.alignment 			    = "LeftCenter"
-INFO_FCS_AUTO.formats 			        = {"%s"}
-INFO_FCS_AUTO.h_clip_relation           = h_clip_relations.COMPARE
-INFO_FCS_AUTO.level 				     = 10
-INFO_FCS_AUTO.init_pos 			        = {-58, -19, 0}
-INFO_FCS_AUTO.init_rot 			        = {0, 0, 0}
-INFO_FCS_AUTO.element_params 	        = {"UFD_OPACITY","R_WAR_OPACITY","HUD_MODE","FCS_MODE"}
-INFO_FCS_AUTO.controllers		        =   {{"opacity_using_parameter",0},{"parameter_in_range",1,0.9,1.1},{"parameter_in_range",2,1.1,9},{"parameter_in_range",3,-0.1,0.1}}
-Add(INFO_FCS_AUTO)
+-------------------------------------------------------------
+GTXT 					= CreateElement "ceStringPoly"
+GTXT.name 				= "gtext"
+GTXT.material 			= UFD_GRN --FONT_RPM--
+GTXT.value 				= "G:  "
+GTXT.stringdefs 		= {0.0050, 0.0050, 0.0005, 0.001}
+GTXT.alignment 			= "CenterCenter"
+GTXT.formats 			= {"%s"}
+GTXT.h_clip_relation  	= h_clip_relations.COMPARE
+GTXT.level 				= 10
+GTXT.init_rot 			= {0, 0, 0}
+GTXT.init_pos 			= {-55.5, -25, 0}
+GTXT.element_params 	= {"R_WAR_OPACITY","UFD_OPACITY"} --get_param_handle
+GTXT.controllers		= 	{	{"parameter_in_range",0,0.9,1.1},
+								--{"parameter_in_range",1,0.9,1.1}, 
+								{"opacity_using_parameter",1}
+							}
+Add(GTXT)
+--------------
+--------------
+G_NUM				    = CreateElement "ceStringPoly"
+G_NUM.name				= "G_NUM"
+G_NUM.material			= UFD_GRN
+G_NUM.init_pos			= {-42, -25, 0} --L-R,U-D,F-B
+G_NUM.alignment			= "RightCenter"
+G_NUM.stringdefs		= {0.005, 0.005, 0, 0.0} --either 004 or 005
+G_NUM.additive_alpha	= true
+G_NUM.collimated		= false
+G_NUM.isdraw			= true	
+G_NUM.use_mipfilter		= true
+G_NUM.h_clip_relation	= h_clip_relations.COMPARE
+G_NUM.level				= 10
+G_NUM.element_params	= {"UFD_OPACITY","GFORCE","R_WAR_OPACITY"}
+G_NUM.formats			= {"%02.1f"}--= {"%02.0f"}
+G_NUM.controllers		=   {
+                                        {"opacity_using_parameter",0},
+                                        {"text_using_parameter",1,0},
+                                        {"parameter_in_range",2,0.9,1.1}
+                                    }
+                                
+Add(G_NUM)
+------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
+AOATXT 					= CreateElement "ceStringPoly"
+AOATXT.name 				= "gtext"
+AOATXT.material 			= UFD_GRN --FONT_RPM--
+AOATXT.value 				= "A:  "
+AOATXT.stringdefs 		= {0.005, 0.005, 0.0005, 0.001}
+AOATXT.alignment 			= "CenterCenter"
+AOATXT.formats 			= {"%s"}
+AOATXT.h_clip_relation  	= h_clip_relations.COMPARE
+AOATXT.level 				= 10
+AOATXT.init_rot 			= {0, 0, 0}
+AOATXT.init_pos 			= {-55.5, -13, 0}
+AOATXT.element_params 	= {"R_WAR_OPACITY","UFD_OPACITY"} --get_param_handle
+AOATXT.controllers		= 	{	{"parameter_in_range",0,0.9,1.1},
+								--{"parameter_in_range",1,0.9,1.1}, 
+								{"opacity_using_parameter",1}
+							}
+Add(AOATXT)
+--------------
+--------------
+AOA_NUM				    = CreateElement "ceStringPoly"
+AOA_NUM.name				= "G_NUM"
+AOA_NUM.material			= UFD_GRN
+AOA_NUM.init_pos			= {-42, -13, 0} --L-R,U-D,F-B
+AOA_NUM.alignment			= "RightCenter"
+AOA_NUM.stringdefs		= {0.005, 0.005, 0, 0.0} --either 004 or 005
+AOA_NUM.additive_alpha	= true
+AOA_NUM.collimated		= false
+AOA_NUM.isdraw			= true	
+AOA_NUM.use_mipfilter		= true
+AOA_NUM.h_clip_relation	= h_clip_relations.COMPARE
+AOA_NUM.level				= 10
+AOA_NUM.element_params	= {"UFD_OPACITY","AOA","R_WAR_OPACITY"}
+AOA_NUM.formats			= {"%02.2f"}--= {"%02.0f"}
+AOA_NUM.controllers		=   {
+                                        {"opacity_using_parameter",0},
+                                        {"text_using_parameter",1,0},
+                                        {"parameter_in_range",2,0.9,1.1}
+                                    }
+                                
+Add(AOA_NUM)
+------------------------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------------------------- ORIDE
-INFO_FCS_ORIDE 					        = CreateElement "ceStringPoly"
-INFO_FCS_ORIDE.name 				    = "menu"
-INFO_FCS_ORIDE.material 			    = UFD_RED
-INFO_FCS_ORIDE.value 				    = "FCS ORIDE"
-INFO_FCS_ORIDE.stringdefs 		        = {0.0040, 0.0040, 0.0004, 0.001}
-INFO_FCS_ORIDE.alignment 			    = "LeftCenter"
-INFO_FCS_ORIDE.formats 			        = {"%s"}
-INFO_FCS_ORIDE.h_clip_relation          = h_clip_relations.COMPARE
-INFO_FCS_ORIDE.level 				    = 10
-INFO_FCS_ORIDE.init_pos 			    = {-58, -19, 0}
-INFO_FCS_ORIDE.init_rot 			    = {0, 0, 0}
-INFO_FCS_ORIDE.element_params 	        = {"UFD_OPACITY","R_WAR_OPACITY","FCS_MODE"}
-INFO_FCS_ORIDE.controllers		        =   {{"opacity_using_parameter",0},{"parameter_in_range",1,0.9,1.1},{"parameter_in_range",2,2.9,3.1}}
-Add(INFO_FCS_ORIDE)
---------------------------------------------------------------------------------------------------- AOA
-INFO_FCS_G 					        = CreateElement "ceStringPoly"
-INFO_FCS_G.name 				    = "menu"
-INFO_FCS_G.material 			    = UFD_YEL
-INFO_FCS_G.value 				    = "FCS AOA"
-INFO_FCS_G.stringdefs 		        = {0.0040, 0.0040, 0.0004, 0.001}
-INFO_FCS_G.alignment 			    = "LeftCenter"
-INFO_FCS_G.formats 			        = {"%s"}
-INFO_FCS_G.h_clip_relation          = h_clip_relations.COMPARE
-INFO_FCS_G.level 				    = 10
-INFO_FCS_G.init_pos 			    = {-58, -19, 0}
-INFO_FCS_G.init_rot 			    = {0, 0, 0}
-INFO_FCS_G.element_params 	        = {"UFD_OPACITY","R_WAR_OPACITY","FCS_MODE"}
-INFO_FCS_G.controllers		        =   {{"opacity_using_parameter",0},{"parameter_in_range",1,0.9,1.1},{"parameter_in_range",2,0.9,1.1}}
-Add(INFO_FCS_G)
---------------------------------------------------------------------------------------------------- ACL
-INFO_FCS_A 					        = CreateElement "ceStringPoly"
-INFO_FCS_A.name 				    = "menu"
-INFO_FCS_A.material 			    = UFD_YEL
-INFO_FCS_A.value 				    = "FCS G"
-INFO_FCS_A.stringdefs 		        = {0.0040, 0.0040, 0.0004, 0.001}
-INFO_FCS_A.alignment 			    = "LeftCenter"
-INFO_FCS_A.formats 			        = {"%s"}
-INFO_FCS_A.h_clip_relation          = h_clip_relations.COMPARE
-INFO_FCS_A.level 				    = 10
-INFO_FCS_A.init_pos 			    = {-58, -19, 0}
-INFO_FCS_A.init_rot 			    = {0, 0, 0}
-INFO_FCS_A.element_params 	        = {"UFD_OPACITY","R_WAR_OPACITY","FCS_MODE"}
-INFO_FCS_A.controllers		        =   {{"opacity_using_parameter",0},{"parameter_in_range",1,0.9,1.1},{"parameter_in_range",2,1.9,2.1}}
-Add(INFO_FCS_A)
---888888888888888888888888888888888888888888888888888888
+-------------------------------------------------------------
+MACHTXT 					= CreateElement "ceStringPoly"
+MACHTXT.name 				= "gtext"
+MACHTXT.material 			= UFD_GRN --FONT_RPM--
+MACHTXT.value 				= "M:  "
+MACHTXT.stringdefs 		= {0.005, 0.005, 0.0005, 0.001}
+MACHTXT.alignment 			= "CenterCenter"
+MACHTXT.formats 			= {"%s"}
+MACHTXT.h_clip_relation  	= h_clip_relations.COMPARE
+MACHTXT.level 				= 10
+MACHTXT.init_rot 			= {0, 0, 0}
+MACHTXT.init_pos 			= {-55.5, -19, 0}
+MACHTXT.element_params 	= {"R_WAR_OPACITY","UFD_OPACITY"} --get_param_handle
+MACHTXT.controllers		= 	{	{"parameter_in_range",0,0.9,1.1},
+								--{"parameter_in_range",1,0.9,1.1}, 
+								{"opacity_using_parameter",1}
+							}
+Add(MACHTXT)
+--------------
+--------------
+MACH_NUM				    = CreateElement "ceStringPoly"
+MACH_NUM.name				= "G_NUM"
+MACH_NUM.material			= UFD_GRN
+MACH_NUM.init_pos			= {-42, -19, 0} --L-R,U-D,F-B
+MACH_NUM.alignment			= "RightCenter"
+MACH_NUM.stringdefs		= {0.005, 0.005, 0, 0.0} --either 004 or 005
+MACH_NUM.additive_alpha	= true
+MACH_NUM.collimated		= false
+MACH_NUM.isdraw			= true	
+MACH_NUM.use_mipfilter		= true
+MACH_NUM.h_clip_relation	= h_clip_relations.COMPARE
+MACH_NUM.level				= 10
+MACH_NUM.element_params	= {"UFD_OPACITY","MACH","R_WAR_OPACITY"}
+MACH_NUM.formats			= {"%02.2f"}--= {"%02.0f"}
+MACH_NUM.controllers		=   {
+                                        {"opacity_using_parameter",0},
+                                        {"text_using_parameter",1,0},
+                                        {"parameter_in_range",2,0.9,1.1}
+                                    }
+                                
+Add(MACH_NUM)

@@ -170,7 +170,24 @@ local LIGHT_TAXI_T    = 10152
 local LIGHT_LANDING   = 10153
 local LIGHT_LANDING_T = 10154
 
-join(res.keyCommands,{      
+join(res.keyCommands,{    
+
+		{down = iCommandPlaneTrimUp, name = "F-22: Trim Up", category = "Flight Control"},
+        {down = iCommandPlaneTrimDown, name = "F-22: Trim Down", category = "Flight Control"},
+        {down = iCommandPlaneTrimCancel, name = "F-22: Reset Trim", category = "Flight Control"},
+        {down = 10500, value_down = 1.0, name = _('F-22: Altitude Hold Toggle'), category = _('F-22 EFM Commands')},
+        {down = 10501, value_down = 1.0, name = _('F-22: Attitude Hold Toggle'), category = _('F-22 EFM Commands')},
+        {down = 10502, value_down = 1.0, name = _('F-22: Auto Throttle Toggle'), category = _('F-22 EFM Commands')},
+        {down = 10503, value_down = 1.0, name = _('F-22: Autopilot Disengage'), category = _('F-22 EFM Commands')},
+		{ down = 10505, name = _("Taxi Lights Toggle"), category = _("External Lights") },
+		{ down = 10506, name = _("Landing Lights Toggle"), category = _("External Lights") },
+		{ down = 10507, name = _("Formation Light Toggle"), category = _("External Lights") },
+		{ down = 10508, name = _("Navigation White Light Toggle"), category = _("External Lights") },
+		{ down = 10509, name = _("Anti-Collision Light Toggle"), category = _("External Lights") },
+		{ down = 10510, name = _("AAR Light Toggle"), category = _("External Lights") },
+		{ down = 10511, name = _("Navigation Lights Toggle"), category = _("External Lights") },
+		{ down = 10512, name = _("Master External Lights Toggle"), category = _("External Lights") },
+
 --SMFD Both    
     {down = SMFD_Swap,                  name = _('SMFD Page Swap'),                       category = _('F-22A Systems')},    
 --MFD LEFT    
@@ -312,9 +329,6 @@ join(res.keyCommands,{
     {down = LIGHT_LANDING_T,            name = _('Landing Light Toggle'),               category = _('F-22A Systems')},   
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Autopilot
-    {down = iCommandPlaneAutopilot,     name = _('Autopilot - Attitude Hold'),          category = _('Autopilot')},
-    {down = iCommandPlaneStabHbar,      name = _('Autopilot - Altitude Hold'),          category = _('Autopilot')},
-    {down = iCommandPlaneStabCancel,    name = _('Autopilot Disengage'),                category = _('Autopilot')},
 -- Flight Control
     {down = iCommandPlaneTrimOn, up = iCommandPlaneTrimOff, name = _('T/O Trim'), category = _('Flight Control')},
 -- Systems
