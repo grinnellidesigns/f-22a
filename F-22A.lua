@@ -110,7 +110,7 @@ F_22A =
 		range						=	2540,	-- Max range in km (for AI)
 		RCS							=	0.00001,   -- Radar Cross Section m2 was 0.0001
 		Ny_max_e					=	8,		-- Max G (for AI)
-		detection_range_max			=	550,
+		detection_range_max			=	800,
 		IR_emission_coeff			=	0.15,	-- Normal engine -- IR_emission_coeff = 1 is Su-27 without afterburner. It is reference. was /25
 		IR_emission_coeff_ab		=	0.3,		-- With afterburner
 		tanker_type					=	1,		--F14=2/S33=4/M29=0/S27=0/F15=1/F16=1/To=0/F18=2/A10A=1/M29K=4/M2000=2/F4=0/F5=0/
