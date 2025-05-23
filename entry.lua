@@ -46,16 +46,20 @@ mount_vfs_texture_path(current_mod_path .. "/Textures/F-22A.zip")
 mount_vfs_texture_path(current_mod_path .. "/Textures/F-22A_Cockpit.zip")
 mount_vfs_texture_path(current_mod_path .. "/Textures/Clipboards")
 mount_vfs_texture_path(current_mod_path .. "/Textures/Cockpit Photo")
+mount_vfs_texture_path(current_mod_path .. "/Textures/Weapons.zip")
 
 -------------------
 
 mount_vfs_model_path(current_mod_path .. "/Shapes")
 
+dofile(current_mod_path.."/VLO Fuel Tank.lua")
+dofile(current_mod_path.."/IRST Sensor.lua")
+dofile(current_mod_path.."/IRST Pod.lua")
 dofile(current_mod_path .. "/Views.lua")
-dofile(current_mod_path .. "/Sounds.lua") 
-make_view_settings('F-22A', ViewSettings, SnapViews)
 dofile(current_mod_path .. "/F-22A.lua")
 dofile(current_mod_path .. "/Weapons.lua")
+make_view_settings('F-22A', ViewSettings, SnapViews)
+
 
 local cfg_path = current_mod_path .. "/FM/config.lua"
 dofile(cfg_path)
@@ -74,12 +78,3 @@ MAC_flyable('F-22A', current_mod_path..'/Cockpit/Scripts/', FM, current_mod_path
 
 
 plugin_done()
-----------------------------------------------------------------------------------------
---this is needed in the F15C entry.lua file: 
-
---binaries =
---{
---'F15CCWS',
---'F15'
---},
---load_immediately = true,

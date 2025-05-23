@@ -290,7 +290,9 @@ F_22A =
 				use_full_connector_position = true,
             },
             {
-				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}", Cx_gain = 0 }, --aim 9X
+				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}", attach_point_position = {-0.02, -0.043, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM9X
+				{ CLSID = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}", attach_point_position = {-0.07, -0.038, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM9M		
+				{ CLSID = "{AIM9X-BLKII}", attach_point_position = {0.14, 0.02, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
             }
         ),
         pylon(2, 0, -0.210, -0.9, -1.487,--Left Wing Pylon
@@ -300,7 +302,20 @@ F_22A =
 				arg_increment = 1,
             },
             {
-			    { CLSID = "{E1F29B21-F291-4589-9FD8-3272EEC69506}" ,arg_value = 0,Cx_gain = 1/2.2},--F-15C Fuel Tank 600 Gallons
+			    { CLSID = "{E1F29B21-F291-4589-9FD8-3272EEC69506}",arg_value = 0, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --F-15C Fuel Tank 600 Gallons
+				{ CLSID = "{LDTP_FUEL_Tank}",arg_value = 1,attach_point_position = {1.36,  -0.220, 0.00}, Cx_gain_empty = 0.0, Cx_gain_item = 1.5},					
+				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",attach_point_position = {0.22, -0.11,  0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM9X
+                { CLSID = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",attach_point_position = {0.22, -0.11,  0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM9M		
+				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM_120C
+				{ CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM_120B			
+		        { CLSID = "{AIM-120C-7}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},	
+				{ CLSID = "{AIM-120C-8}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},
+				{ CLSID = "{AIM-120D-3}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},			
+				{ CLSID = "{LAU_115_2xAIM9X-II}}"  ,attach_point_position = {-0.3, -0.16, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},
+		        { CLSID = "{LAU_115_2xAIM-120C-7}" ,attach_point_position = {-0.7, -0.16, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},
+				{ CLSID = "{LAU_115_2xAIM-120C-8}" ,attach_point_position = {-0.7, -0.16, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},
+				{ CLSID = "{LAU_115_2xAIM-120D-3}" ,attach_point_position = {-0.7, -0.16, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},
+				{ CLSID = "{LAU_115_2xAIM-260A}"   ,attach_point_position = {-0.75,-0.16, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},				
             }
         ),
         pylon(3, 1, 1.2, -0.1, -2.95,--Weapons Bay Left 1
@@ -308,8 +323,12 @@ F_22A =
 				use_full_connector_position = true,
             },
             {
-				{ CLSID = "{AIM-120D}", Cx_gain = 0 },
-
+				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}", attach_point_position = {0.18, -0.10, -0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120C
+			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, -0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120B
+			    { CLSID = "{AIM-120C-7}", attach_point_position = {0.18, -0.10, -0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
+				{ CLSID = "{AIM-120C-8}", attach_point_position = {0.18, -0.10, -0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
+				{ CLSID = "{AIM-120D-3}", attach_point_position = {0.18, -0.10, -0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
+				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11, -0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
             }
         ),
         pylon(4, 1, 2.649, -0.48, -0.37,--Weapons Bay Left 2
@@ -319,7 +338,18 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{AIM-120D}", Cx_gain = 0},
+                { CLSID = "{IRST_SENSOR_Pod}",arg_value = 1,attach_point_position = {-2.84,  0.358, -4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 1.0},			
+				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}", attach_point_position = {0.18, -0.11, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120C
+			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120B
+			    { CLSID = "{AIM-120C-7}", attach_point_position = {0.18, -0.11, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
+				{ CLSID = "{AIM-120C-8}", attach_point_position = {0.18, -0.11, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
+				{ CLSID = "{AIM-120D-3}", attach_point_position = {0.18, -0.11, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},	
+                { CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},		
+                { CLSID = "{MAKO_A2A_C}", attach_point_position = {-0.03,-0.08, -0.20}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},
+                { CLSID = "{AIM_120C-7_IRST_LEFT}", attach_point_position = {-2.84, 0.358, -4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
+                { CLSID = "{AIM_120C-8_IRST_LEFT}", attach_point_position = {-2.84, 0.358, -4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
+                { CLSID = "{AIM_120D-3_IRST_LEFT}", attach_point_position = {-2.84, 0.358, -4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},					
+                { CLSID = "{AIM_260A_IRST_LEFT}"  , attach_point_position = {-2.84, 0.358, -4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
             }
         ),
         pylon(5, 1, -2.083, -0.30, -0.37,--Weapons Bay Left 3
@@ -329,10 +359,16 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{AIM-120D}", Cx_gain = 0},
+				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",	Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120C
+			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120B
+			    { CLSID = "{AIM-120C-7}", Cx_gain_empty = 0.0, Cx_gain_item = 0},				
+				{ CLSID = "{AIM-120C-8}", Cx_gain_empty = 0.0, Cx_gain_item = 0},
+				{ CLSID = "{AIM-120D-3}", Cx_gain_empty = 0.0, Cx_gain_item = 0},	
+				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11,  0.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
+                { CLSID = "{MAKO_A2A_C}", attach_point_position = {0.03, -0.08, -0.05}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},											
             }
         ),
-        pylon(6, 1, 1.6, -0.31, 0,--SMOKE POD CENTER REAR HIDDEN
+        pylon(6, 1, 1.6, -0.31, 0,
             {
 				use_full_connector_position = true,
             },
@@ -351,7 +387,13 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{AIM-120D}", Cx_gain = 0},
+				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",	Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120C
+			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120B
+			    { CLSID = "{AIM-120C-7}", Cx_gain_empty = 0.0, Cx_gain_item = 0},
+				{ CLSID = "{AIM-120C-8}", Cx_gain_empty = 0.0, Cx_gain_item = 0},
+				{ CLSID = "{AIM-120D-3}", Cx_gain_empty = 0.0, Cx_gain_item = 0},	
+				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11, 0.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},	
+                { CLSID = "{MAKO_A2A_C}", attach_point_position = {0.03, -0.08, 0.05}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},										
             }
         ),
         pylon(8, 1, 2.649, -0.48, 0.37,--Weapons Bay Right 2
@@ -361,7 +403,18 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{AIM-120D}", Cx_gain = 0},
+			    { CLSID = "{IRST_SENSOR_Pod}",arg_value = 1,attach_point_position = {-2.81,  0.350, 4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 1.0},
+				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}", attach_point_position = {0.18, -0.11, 0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120C
+			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, 0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120B
+			    { CLSID = "{AIM-120C-7}", attach_point_position = {0.18, -0.11,  0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
+				{ CLSID = "{AIM-120C-8}", attach_point_position = {0.18, -0.11,  0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
+				{ CLSID = "{AIM-120D-3}", attach_point_position = {0.18, -0.11,  0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
+				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11,  0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},		
+                { CLSID = "{MAKO_A2A_C}", attach_point_position = {-0.03,-0.08,  0.20}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},
+                { CLSID = "{AIM_120C-7_IRST_RIGHT}", attach_point_position = {-2.81, 0.350, 4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},					
+                { CLSID = "{AIM_120C-8_IRST_RIGHT}", attach_point_position = {-2.81, 0.350, 4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
+                { CLSID = "{AIM_120D-3_IRST_RIGHT}", attach_point_position = {-2.81, 0.350, 4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},					
+                { CLSID = "{AIM_260A_IRST_RIGHT}"  , attach_point_position = {-2.81, 0.350, 4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
             }
         ),
 		pylon(9, 1, 1.2, -0.1, 2.95,--Weapons Bay Right 1
@@ -369,9 +422,13 @@ F_22A =
 				use_full_connector_position = true,
             },
             {
-            
-				{ CLSID = "{AIM-120D}", Cx_gain = 0 },
-				
+			
+				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}", attach_point_position = {0.18, -0.10, 0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120C
+			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, 0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120B
+			    { CLSID = "{AIM-120C-7}", attach_point_position = {0.18, -0.10, 0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},					
+				{ CLSID = "{AIM-120C-8}", attach_point_position = {0.18, -0.10, 0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},					
+				{ CLSID = "{AIM-120D-3}", attach_point_position = {0.18, -0.10, 0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
+				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11, 0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
             }
         ),
 		pylon(10, 0, -0.210, -0.9, 1.487,--Right Wing Pylon
@@ -381,7 +438,20 @@ F_22A =
 				arg_increment = 1,
             },
             {
-                { CLSID = "{E1F29B21-F291-4589-9FD8-3272EEC69506}" ,arg_value = 0,Cx_gain = 1/2.2},--F-15C Fuel Tank			
+			    { CLSID = "{E1F29B21-F291-4589-9FD8-3272EEC69506}",arg_value = 0, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --F-15C Fuel Tank 600 Gallons
+				{ CLSID = "{LDTP_FUEL_Tank}",arg_value = 1,attach_point_position = {1.36,  -0.227, 0.00}, Cx_gain_empty = 0.0, Cx_gain_item = 1.5},				
+				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",attach_point_position = {0.22, -0.11,  0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM9X
+                { CLSID = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",attach_point_position = {0.22, -0.11,  0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM9M			
+				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",attach_point_position = {0.1,  -0.14,  0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM_120C
+				{ CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}",attach_point_position = {0.1,  -0.14,  0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM_120B				
+		        { CLSID = "{AIM-120C-7}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},		
+				{ CLSID = "{AIM-120C-8}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},
+				{ CLSID = "{AIM-120D-3}",attach_point_position = {0.1, -0.14, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},					
+				{ CLSID = "{LAU_115_2xAIM9X-II}"  ,attach_point_position = {-0.3, -0.16, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},
+		        { CLSID = "{LAU_115_2xAIM-120C-7}",attach_point_position = {-0.7, -0.16, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},
+				{ CLSID = "{LAU_115_2xAIM-120C-8}",attach_point_position = {-0.7, -0.16, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},
+				{ CLSID = "{LAU_115_2xAIM-120D-3}",attach_point_position = {-0.7, -0.16, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},
+				{ CLSID = "{LAU_115_2xAIM-260A}"  ,attach_point_position = {-0.75,-0.16, 0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5},					
             }
         ),
 		pylon(11, 0, 1.342000, 0.183859, 3.17000,--Right Side Bay
@@ -389,9 +459,11 @@ F_22A =
 				use_full_connector_position = true,
             },
             {
-				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}", Cx_gain = 0 }, --Aim 9X
+				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}", attach_point_position = {-0.02, -0.047, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM9X
+				{ CLSID = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}", attach_point_position = {-0.07, -0.043, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM9M		
+				{ CLSID = "{AIM9X-BLKII}", attach_point_position = {0.14, 0.01, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0},			
             }
-        ),
+        ),	
 },
 
 	Tasks = {
