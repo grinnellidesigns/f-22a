@@ -2,6 +2,8 @@
 
 ## Community Contributors
  - [Branden Hooper](https://github.com/bhoop19) - Lead developer of external flight model, update LUA files to enable EFM to function properly.
+ - [Ash Blythe] - Weapons flight model, shapes and textures
+ - [David McMasters] - Weapons flight model, shapes and textures
  
  
 ## How to Contribute
