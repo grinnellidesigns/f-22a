@@ -16,6 +16,15 @@ jobs:
               with:
                 path: f-22a
                 lfs: true
+                submodules: 'recursive'
+
+            - name: Configure CMake
+              working-directory: f-22a
+              run: cmake --preset x64-release -G "Visual Studio 17 2022"
+
+            - name: Build EFM
+              working-directory: f-22a
+              run: cmake --build --preset x64-release
 
             - name: Clean Project
               working-directory: f-22a
@@ -27,6 +36,11 @@ jobs:
                 Remove-Item -Path .gitattributes -Force -ErrorAction SilentlyContinue
                 Remove-Item -Path README.md -Force -ErrorAction SilentlyContinue
                 Remove-Item -Path CONTRIBUTING.md -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path EFM - Force -ErrorAction SilentlyContinue
+                Remove-Item -Path *.pdb -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path CMakePresets.json -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path CMakeLists.txt -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path out -Force -ErrorAction SilentlyContinue
 
             - name: Compress Files
               run: Compress-Archive -Path f-22a -DestinationPath f-22a.zip
