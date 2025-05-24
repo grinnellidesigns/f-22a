@@ -36,11 +36,11 @@ jobs:
                 Remove-Item -Path .gitattributes -Force -ErrorAction SilentlyContinue
                 Remove-Item -Path README.md -Force -ErrorAction SilentlyContinue
                 Remove-Item -Path CONTRIBUTING.md -Force -ErrorAction SilentlyContinue
-                Remove-Item -Path EFM - Force -ErrorAction SilentlyContinue
+                Remove-Item -Path EFM -Force -ErrorAction SilentlyContinue -Recurse
                 Remove-Item -Path *.pdb -Force -ErrorAction SilentlyContinue
                 Remove-Item -Path CMakePresets.json -Force -ErrorAction SilentlyContinue
                 Remove-Item -Path CMakeLists.txt -Force -ErrorAction SilentlyContinue
-                Remove-Item -Path out -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path out -Force -ErrorAction SilentlyContinue -Recurse
 
             - name: Compress Files
               run: Compress-Archive -Path f-22a -DestinationPath f-22a.zip
