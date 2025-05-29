@@ -98,7 +98,7 @@ struct wind_vector_field_component
 	double wind[3]; // x,y,z components in DCS coordinates system (x positive forward ,y positive up , z positive to the right)
 };
 
-const unsigned wind_vector_field_component_size = sizeof(wind_vector_field_component);
+constexpr unsigned wind_vector_field_component_size = sizeof(wind_vector_field_component);
 
 
 struct wind_vector_field
@@ -1209,7 +1209,7 @@ struct LERX_vortex_spline_point
 	
 };
 
-const unsigned LERX_vortex_spline_point_size = sizeof(LERX_vortex_spline_point);
+constexpr unsigned LERX_vortex_spline_point_size = sizeof(LERX_vortex_spline_point);
 
 struct LERX_vortex
 {	

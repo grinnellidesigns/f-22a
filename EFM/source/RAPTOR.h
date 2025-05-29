@@ -19,9 +19,9 @@
 
 #pragma once
 
+#include <numbers>
 #include <unordered_map>
 #include <string>
-#include <cstddef> 
 #include <array>
 #include <map>
 
@@ -29,30 +29,30 @@
 
 namespace FM_DATA
 {
-    static inline std::array<double, 13> mach_table = {
+    static inline std::array mach_table = {
         0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4
     };
 
-    double Cy0 = 0.008;
+    inline double Cy0 = 0.008;
 
-    double Czbe = -0.028;
+    inline double Czbe = -0.028;
 
-    double cx_gear = 0.14;
-    double cx_brk = 0.062;
-    double cx_flap = 0.051;
-    double cy_flap = 0.082;
+    inline double cx_gear = 0.14;
+    inline double cx_brk = 0.062;
+    inline double cx_flap = 0.051;
+    inline double cy_flap = 0.082;
 
-    double cx0[] = { 0.013, 0.0135, 0.014, 0.021, 0.0358, 0.0505, 0.0455, 0.04175, 0.038, 0.037, 0.0368, 0.0362, 0.039 };
-    double Cya[] = { 0.015, 0.075, 0.07, 0.065, 0.06, 0.055, 0.05, 0.045, 0.04, 0.0375, 0.035, 0.0325, 0.03 };
-    double OmxMax[] = { 1.65, 2.45, 3.25, 4.7, 3.98, 3.2, 2.5, 2.25, 2.0, 1.85, 1.7, 1.5, 1.3 };
-    double Aldop[] = { 60, 57.5, 55, 50, 45, 40, 35, 32.5, 30, 30, 30, 30, 30 };
-    double CyMax[] = { 1.8, 1.85, 1.9, 1.85, 1.75, 1.6, 1.45, 1.35, 1.25, 1.15, 1.1, 1.05, 1.0 };
+    inline double cx0[] = { 0.013, 0.0135, 0.014, 0.021, 0.0358, 0.0505, 0.0455, 0.04175, 0.038, 0.037, 0.0368, 0.0362, 0.039 };
+    inline double Cya[] = { 0.015, 0.075, 0.07, 0.065, 0.06, 0.055, 0.05, 0.045, 0.04, 0.0375, 0.035, 0.0325, 0.03 };
+    inline double OmxMax[] = { 1.65, 2.45, 3.25, 4.7, 3.98, 3.2, 2.5, 2.25, 2.0, 1.85, 1.7, 1.5, 1.3 };
+    inline double Aldop[] = { 60, 57.5, 55, 50, 45, 40, 35, 32.5, 30, 30, 30, 30, 30 };
+    inline double CyMax[] = { 1.8, 1.85, 1.9, 1.85, 1.75, 1.6, 1.45, 1.35, 1.25, 1.15, 1.1, 1.05, 1.0 };
 
-    double AoA_table[] = { 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0 };
-    double AoA_drag_factor[] = { 0.0, 0.005, 0.02, 0.082, 0.17, 0.275, 0.41, 0.58, 0.7, 0.81 };
+    inline double AoA_table[] = { 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0 };
+    inline double AoA_drag_factor[] = { 0.0, 0.005, 0.02, 0.082, 0.17, 0.275, 0.41, 0.58, 0.7, 0.81 };
 
-    double beta_table[] = { 0.0, 5.0, 10.0, 20.0, 30.0 };
-    double Cy_beta[] = { 0.0, 0.05, 0.1, 0.2, 0.3 };
+    inline double beta_table[] = { 0.0, 5.0, 10.0, 20.0, 30.0 };
+    inline double Cy_beta[] = { 0.0, 0.05, 0.1, 0.2, 0.3 };
 
     static inline std::array<double, 13> idle_thrust = {
         6000, 8500, 10500, 11500, 12000, 12500, 13000, 13000, 13000, 13000, 13000, 13000, 13000
@@ -63,155 +63,160 @@ namespace FM_DATA
     };
 
     static inline std::array<double, 13> ab_thrust = {
-    197000, 215300, 232600, 256500, 275000, 298000, 325000, 355000, 405000, 470000, 535000, 536500, 0
+		197000, 215300, 232600, 256500, 275000, 298000, 325000, 355000, 405000, 470000, 535000, 536500, 0
     };
 
-    double elevator_rate_table[] = { 1.396, 1.396, 1.30, 1.016, 0.912, 0.912, 0.912, 0.942, 1.105, 1.105, 1.105, 1.105, 1.105 };
-    double max_elevator_deflection[] = { 30.0, 28.0, 21.5, 13.8, 11.5, 11.0, 11.0, 11.0, 13.0, 13.0, 13.0, 13.0, 13.0 };
-    const double max_aileron_rate = 15.55;
-    double max_thrust_vector_deflection[] = { 20.0, 20.0, 17.0, 11.5, 6.0, 4.0, 2.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0 };
-    double thrust_vector_rate[] = { 1.396, 1.3905, 1.189, 0.855, 0.759, 0.737, 0.601, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-    double Kd_pitch[] = { 0.635, 0.662, 0.654, 0.80, 1.25, 1.95, 2.2, 2.5, 2.8, 2.8, 2.8, 2.8, 2.8 };
-    double Kd_roll[] = { 0.50, 0.35, 0.33, 0.29, 0.33, 0.37, 0.42, 0.52, 0.62, 0.74, 0.85, 0.88, 0.81 };
-    double Kd_yaw[] = { 2.0, 2.0, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0 };
-
+    inline double elevator_rate_table[] = { 1.396, 1.396, 1.30, 1.016, 0.912, 0.912, 0.912, 0.942, 1.105, 1.105, 1.105, 1.105, 1.105 };
+    inline double max_elevator_deflection[] = { 30.0, 28.0, 21.5, 13.8, 11.5, 11.0, 11.0, 11.0, 13.0, 13.0, 13.0, 13.0, 13.0 };
+    constexpr double max_aileron_rate = 15.55;
+    inline double max_thrust_vector_pitch_deflection[] = { 20.0, 20.0, 17.0, 11.5, 6.0, 4.0, 2.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    inline double thrust_vector_pitch_rate[] = { 1.396, 1.3905, 1.189, 0.855, 0.759, 0.737, 0.601, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    inline double max_thrust_vector_roll_assist_deflection[] = { 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0 };
+    inline double thrust_vector_roll_assist_rate[]{ 3.396, 3.396, 3.396, 3.396, 3.396, 3.396, 3.396, 3.396, 3.396, 3.396, 3.396, 3.396, 3.396 };
+    inline double Kd_pitch[] = { 0.635, 0.662, 0.654, 0.80, 1.25, 1.95, 2.2, 2.5, 2.8, 2.8, 2.8, 2.8, 2.8 };
+    inline double Kd_roll[] = { 0.50, 0.35, 0.33, 0.29, 0.33, 0.37, 0.42, 0.52, 0.62, 0.74, 0.85, 0.88, 0.81 };
+    inline double Kd_yaw[] = { 2.0, 2.0, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0 };
 }
 
 // ----- EFM Data -----
 
 namespace RAPTOR {
-    Vec3 common_force, common_moment, center_of_mass, wind, velocity_world, airspeed;
-    double const pi = 3.1415926535897932384626433832795;
-    double const rad_to_deg = 180.0 / pi;
-    inline double rad(double deg) { return deg * pi / 180.0; }
+    inline Vec3 common_force, common_moment, center_of_mass, wind, velocity_world, airspeed;
+    constexpr double rad_to_deg = 180.0 / std::numbers::pi;
+    inline double rad(const double deg) { return deg * std::numbers::pi / 180.0; }
 
-    double const S = 78.06;
-    double const wingspan = 13.56, length = 18.92, height = 5.08;
-    double idle_rpm = 0.675;
-    double const empty_mass = 19700;
+    constexpr double S = 78.06;
+    constexpr double wingspan = 13.56, length = 18.92, height = 5.08;
+    inline double idle_rpm = 0.675;
+    constexpr double empty_mass = 19700;
 
-    Vec3 left_wing_pos(center_of_mass.x - 0.8, center_of_mass.y + 0.5, -wingspan / 2);
-    Vec3 right_wing_pos(center_of_mass.x - 0.8, center_of_mass.y + 0.5, wingspan / 2);
-    Vec3 tail_pos(center_of_mass.x - 0.9, center_of_mass.y, 0);
-    Vec3 left_elevon_pos(-length / 2, center_of_mass.y, -wingspan * 0.25);
-    Vec3 right_elevon_pos(-length / 2, center_of_mass.y, wingspan * 0.25);
-    Vec3 left_aileron_pos(center_of_mass.x, center_of_mass.y, -wingspan * 0.5);
-    Vec3 right_aileron_pos(center_of_mass.x, center_of_mass.y, wingspan * 0.5);
-    Vec3 rudder_pos(-length / 2, height / 2, 0);
-    Vec3 left_engine_pos(-3.793, 0, -0.716);
-    Vec3 right_engine_pos(-3.793, 0, 0.716);
+    inline double element_integrity[111];
+    inline double left_wing_integrity = 1.0, right_wing_integrity = 1.0, left_tail_integrity = 1.0, right_tail_integrity = 1.0, left_elevon_integrity = 1.0, right_elevon_integrity = 1.0;
+    inline double left_aileron_integrity = 1.0, right_aileron_integrity = 1.0, left_flap_integrity = 1.0, right_flap_integrity = 1.0, left_rudder_integrity = 1.0, right_rudder_integrity = 1.0;
+    inline double left_engine_integrity = 1.0, right_engine_integrity = 1.0;
 
-    double pitch_input = 0, pitch_discrete = 0, pitch_trim = 0;
-    double left_elevon_command = 0, right_elevon_command = 0;
-    double left_elevon_angle = 0.0, right_elevon_angle = 0.0;
-    bool pitch_analog = true;
-    double roll_input = 0, roll_discrete = 0, roll_trim = 0, aileron_command = 0;
-    bool roll_analog = true;
-    double yaw_input = 0, yaw_discrete = 0, yaw_trim = 0, rudder_command = 0;
-    bool yaw_analog = true;
+    inline Vec3 left_wing_pos(center_of_mass.x - 0.8, center_of_mass.y + 0.5, -wingspan / 2 * left_wing_integrity);
+    inline Vec3 right_wing_pos(center_of_mass.x - 0.8, center_of_mass.y + 0.5, wingspan / 2 * right_wing_integrity);
+    inline Vec3 fuselage_pos(center_of_mass.x - 0.5, center_of_mass.y + 0.2, 0);
+    inline Vec3 left_tail_pos(-length / 2 * 0.9, center_of_mass.y + 1.2, -wingspan / 8);
+    inline Vec3 right_tail_pos(-length / 2 * 0.9, center_of_mass.y + 1.2, wingspan / 8);
+    inline Vec3 left_elevon_pos(-length / 2, center_of_mass.y, -wingspan / 4);
+    inline Vec3 right_elevon_pos(-length / 2, center_of_mass.y, wingspan / 4);
+    inline Vec3 left_aileron_pos(center_of_mass.x, center_of_mass.y, -wingspan / 2);
+    inline Vec3 right_aileron_pos(center_of_mass.x, center_of_mass.y, wingspan / 2);
+    inline Vec3 left_rudder_pos(-length / 2 * 0.95, height / 2, -wingspan / 8);
+    inline Vec3 right_rudder_pos(-length / 2 * 0.95, height / 2, wingspan / 8);
+    inline Vec3 left_engine_pos(-3.793, 0, -0.716);
+    inline Vec3 right_engine_pos(-3.793, 0, 0.716);
+
+    inline double pitch_input = 0, pitch_discrete = 0, pitch_trim = 0;
+    inline double left_elevon_command = 0, right_elevon_command = 0;
+    inline double left_elevon_angle = 0.0, right_elevon_angle = 0.0;
+    inline bool pitch_analog = true;
+    inline double roll_input = 0, roll_discrete = 0, roll_trim = 0, aileron_command = 0;
+    inline bool roll_analog = true;
+    inline double yaw_input = 0, yaw_discrete = 0, yaw_trim = 0, rudder_command = 0;
+    inline bool yaw_analog = true;
     static double beta_integral = 0.0;
 
-    bool left_engine_switch = false;
-    double left_throttle_input = 0, left_throttle_output = 0, left_engine_power_readout = 0, left_thrust_force = 0;
-    double left_ab_timer = 0;
-    bool right_engine_switch = false;
-    double right_throttle_input = 0, right_throttle_output = 0, right_engine_power_readout = 0, right_thrust_force = 0;
-    double right_ab_timer = 0;
+    inline bool left_engine_switch = false;
+    inline double left_throttle_input = 0, left_throttle_output = 0, left_engine_power_readout = 0, left_thrust_force = 0;
+    inline double left_ab_timer = 0;
+    inline bool right_engine_switch = false;
+    inline double right_throttle_input = 0, right_throttle_output = 0, right_engine_power_readout = 0, right_thrust_force = 0;
+    inline double right_ab_timer = 0;
 
-    bool airbrake_switch = false, flaps_switch = false;
-    double airbrake_pos = 0, flaps_pos = 0, slats_pos = 0;
-    bool gear_switch = false;
-    double gear_pos = 0;
-    double wheel_brake = 0;
-    double landing_brake_assist = 0;
+    inline bool airbrake_switch = false, flaps_switch = false;
+    inline double airbrake_pos = 0, flaps_pos = 0, slats_pos = 0;
+    inline bool gear_switch = false;
+    inline double gear_pos = 0;
+    inline double wheel_brake = 0;
+    inline double landing_brake_assist = 0;
 
-    const double max_internal_fuel = 8200.0;
-    const double max_external_fuel = 3700.0;
-    const double ground_refuel_rate = 45.36;
-    const double min_usable_fuel = 25.0;
-    double internal_fuel = 0, external_fuel = 0, total_fuel = internal_fuel + external_fuel;
-    double fuel_consumption_since_last_time = 0;
-    const double fuel_rate_idle = 0.108;
-    const double fuel_rate_mil = 2.2;
-    const double fuel_rate_ab = 6.5;
-    double left_fuel_rate = 0.0;
-    double right_fuel_rate = 0.0;
-    double left_fuel_rate_kg_s;
-    double right_fuel_rate_kg_s;
-    bool external_tanks_equipped = false;
-    std::map<int, double> external_fuel_stations;
+    constexpr double max_internal_fuel = 8200.0;
+    constexpr double max_external_fuel = 3700.0;
+    constexpr double ground_refuel_rate = 45.36;
+    constexpr double min_usable_fuel = 25.0;
+    inline double internal_fuel = 0, external_fuel = 0, total_fuel = internal_fuel + external_fuel;
+    inline double fuel_consumption_since_last_time = 0;
+    constexpr double fuel_rate_idle = 0.108;
+    constexpr double fuel_rate_mil = 2.2;
+    constexpr double fuel_rate_ab = 6.5;
+    inline double left_fuel_rate = 0.0;
+    inline double right_fuel_rate = 0.0;
+    inline double left_fuel_rate_kg_s;
+    inline double right_fuel_rate_kg_s;
+    inline bool external_tanks_equipped = false;
+    inline std::map<int, double> external_fuel_stations;
 
-    double atmosphere_density = 1.225, altitude_ASL = 0, altitude_AGL = 0, V_scalar = 0;
-    double speed_of_sound = 320, mach = 0;
-    double engine_alt_effect = 1, atmosphere_temperature = 273;
-    double aoa = 0, alpha = 0, aos = 0, beta = 0, g = 0;
-    bool on_ground = false;
-    double pitch = 0, pitch_rate = 0, roll = 0, roll_rate = 0, heading = 0, yaw_rate = 0;
+    inline double atmosphere_density = 1.225, altitude_ASL = 0, altitude_AGL = 0, V_scalar = 0;
+    inline double speed_of_sound = 320, mach = 0;
+    inline double engine_alt_effect = 1, atmosphere_temperature = 273;
+    inline double aoa = 0, alpha = 0, aos = 0, beta = 0, g = 0;
+    inline bool on_ground = false;
+    inline double pitch = 0, pitch_rate = 0, roll = 0, roll_rate = 0, heading = 0, yaw_rate = 0;
 
-    double element_integrity[111];
-    double left_wing_integrity = 1.0, right_wing_integrity = 1.0, tail_integrity = 1.0, left_elevon_integrity = 1.0, right_elevon_integrity = 1.0;
-    double left_engine_integrity = 1.0, right_engine_integrity = 1.0;
-    double total_damage = 1 - (left_wing_integrity + right_wing_integrity + tail_integrity +
-        left_engine_integrity + right_engine_integrity + left_elevon_integrity + right_elevon_integrity) / 7;
-    bool is_destroyed = false;
+    inline bool invincible = true, infinite_fuel = false, easy_flight = false;
+    inline double shake_amplitude = 0, fm_clock = 0;
+    inline bool sim_initialised = false;
 
-    bool invincible = true, infinite_fuel = false, easy_flight = false;
-    double shake_amplitude = 0, fm_clock = 0;
-    bool sim_initialised = false;
+    inline double ref_roll = 0, ref_heading = 0;
+    inline double roll_error_i = 0, yaw_error_i = 0;
+    inline double last_aileron_cmd = 0, last_elevator_cmd = 0, last_rudder_cmd = 0;
+    inline bool autotrim_active = false;
+    inline double last_g = 0.0;
+    inline double autotrim_elevator_cmd = 0.0;
+    inline bool manual_trim_applied = false;
+    inline double takeoff_trim_cmd = 0.0;
+    inline double tv_pitch_angle = 0.0;
+    inline double tv_roll_assist_angle = 0.0;
+    inline double left_tv_angle = 0.0;
+    inline double right_tv_angle = 0.0;
 
-    double ref_roll = 0, ref_heading = 0;
-    double roll_error_i = 0, yaw_error_i = 0;
-    double last_aileron_cmd = 0, last_elevator_cmd = 0, last_rudder_cmd = 0;
-    bool autotrim_active = false;
-    double last_g = 0.0;
-    double autotrim_elevator_cmd = 0.0;
-    bool manual_trim_applied = false;
-    double takeoff_trim_cmd = 0.0;
-    double tv_angle = 0.0;
+    inline double g_assist_pos = 0;
+    inline double g_limit_positive = 11.0;
+    inline double g_limit_negative = -4.0;
 
-    double g_assist_pos = 0;
-    double g_limit_positive = 11.0;
-    double g_limit_negative = -4.0;
-
-    double last_yaw_input = 0.0;
-    double last_tv_cmd = 0.0;
-    double last_pitch_input = 0.0;
-    double ground_speed_knots = 0.0;
+    inline double last_yaw_input = 0.0;
+    inline double last_tv_pitch_cmd = 0.0;
+    inline double last_tv_roll_assist_cmd = 0.0;
+    inline double last_pitch_input = 0.0;
+    inline double ground_speed_knots = 0.0;
 
     enum EngineState { OFF, STARTING, RUNNING, SHUTDOWN };
-    EngineState left_engine_state = OFF;
-    EngineState right_engine_state = OFF;
-    double left_engine_start_timer = 0.0;
-    double right_engine_start_timer = 0.0;
+    inline EngineState left_engine_state = OFF;
+    inline EngineState right_engine_state = OFF;
+    inline double left_engine_start_timer = 0.0;
+    inline double right_engine_start_timer = 0.0;
 
-    const double engine_start_time = 44.0;
-    const double starter_phase_duration = 11.0;
-    const double ignition_phase_duration = 18.0;
-    const double spool_up_phase_duration = 15.0;
-    const double starter_rpm = 0.2;
-    const double ignition_rpm = 0.4;
-    const double starter_rate = starter_rpm / starter_phase_duration;
-    const double ignition_rate = (ignition_rpm - starter_rpm) / ignition_phase_duration;
+    constexpr double engine_start_time = 44.0;
+    constexpr double starter_phase_duration = 11.0;
+    constexpr double ignition_phase_duration = 18.0;
+    constexpr double spool_up_phase_duration = 15.0;
+    constexpr double starter_rpm = 0.2;
+    constexpr double ignition_rpm = 0.4;
+    constexpr double starter_rate = starter_rpm / starter_phase_duration;
+    constexpr double ignition_rate = (ignition_rpm - starter_rpm) / ignition_phase_duration;
     const double spool_up_rate = (idle_rpm - ignition_rpm) / spool_up_phase_duration;
-    double left_engine_phase = 0.0;
-    double right_engine_phase = 0.0;
+    inline double left_engine_phase = 0.0;
+    inline double right_engine_phase = 0.0;
 
-    bool taxi_lights = false;
-    bool landing_lights = false;
-    bool form_light = false;
-    bool nav_white = false;
-    bool anti_collision = false;
-    bool aar_light = false;
-    bool nav_lights = false;
-    double anti_collision_timer = 0.0;
-    bool anti_collision_blink = false;
-    double nav_white_timer = 0.0;
-    bool nav_white_blink = false;
-    double nav_lights_timer = 0.0;
-    bool nav_lights_blink = false;
-    const double blink_on_time = 0.10;
-    const double blink_off_time = 1.50;
-    const double blink_period = blink_on_time + blink_off_time;
+    inline bool taxi_lights = false;
+    inline bool landing_lights = false;
+    inline bool form_light = false;
+    inline bool nav_white = false;
+    inline bool anti_collision = false;
+    inline bool aar_light = false;
+    inline bool nav_lights = false;
+    inline double anti_collision_timer = 0.0;
+    inline bool anti_collision_blink = false;
+    inline double nav_white_timer = 0.0;
+    inline bool nav_white_blink = false;
+    inline double nav_lights_timer = 0.0;
+    inline bool nav_lights_blink = false;
+    constexpr double blink_on_time = 0.10;
+    constexpr double blink_off_time = 1.50;
+    constexpr double blink_period = blink_on_time + blink_off_time;
 
 }
 

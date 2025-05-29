@@ -1,8 +1,5 @@
 #pragma once
 //#include "stdafx.h"
-#include <math.h>
-#include <stdio.h>
-#include <string>
 // This file contains useful functions, mostly math.
 
 // Convert number from degrees to radians
@@ -152,7 +149,7 @@ inline double lerp(const double* x, const double* f, size_t sz, double t)
 		{
 			if (i > 0)
 			{
-				double dx = x[i] - x[i - 1];
+				const double dx = x[i] - x[i - 1];
 				if (dx == 0.0) return f[i - 1];
 				return ((f[i] - f[i - 1]) / dx * t +
 					(x[i] * f[i - 1] - x[i - 1] * f[i]) / dx);
