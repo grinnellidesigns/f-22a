@@ -19,7 +19,7 @@
 
 Presets = 
 {
-	F_22A =
+	F22A =
 	{
 		{
 			Type = "overwingVapor",
@@ -33,15 +33,15 @@ Presets =
 
 			SpawnLocationsFile = "F-22A_Vapor.owv",
 
-			ParticlesCount = 300,
-			ParticleSize = 2.7,
+			ParticlesCount = 786,
+			ParticleSize = 3.7,
 			ScaleOverAgeFactor = 1.8, -- scale = ParticleSize * (1 + (normalized age) * ScaleOverAgeFactor)
 			
-			VaporLengthMax = 7.0, -- meters
+			VaporLengthMax = 12.0, -- meters
 			
 			AlbedoSRGB = 0.86,
 			
-			OpacityMax = 0.25,
+			OpacityMax = 0.5,
 			OpacityOverPower = {-- vapor power -> normalized opacity. In this case opacity = sqrt(vapor power)
 				{0.0,	0.0},
 				{0.125,	0.35355339059327376220042218105242},

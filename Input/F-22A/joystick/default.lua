@@ -50,17 +50,17 @@ local PICKLE        = 10026
 local SMFD_Swap     = 10027  
 local L_cutoff      = 10028
 local R_cutoff      = 10029    
-local FCSCenter     = 10030
-local FCSNoseUp     = 10031
-local FCSNoseDn     = 10032
-local FCSRel        = 10033
-local FCSMode       = 10034
-local FCSAOA        = 10035
-local FCSG          = 10036
-local FCSStep       = 10037
+--local FCSCenter     = 10030
+--local FCSNoseUp     = 10031
+--local FCSNoseDn     = 10032
+--local FCSRel        = 10033
+--local FCSMode       = 10034
+--local FCSAOA        = 10035
+--local FCSG          = 10036
+--local FCSStep       = 10037
 local BrakesON      = 10038
 local BrakesOFF     = 10039
-local FCSpitch      = 10040
+--local FCSpitch      = 10040
 local ICP_COM1      = 10041
 local ICP_COM2      = 10042
 local ICP_NAV       = 10043
@@ -175,10 +175,10 @@ join(res.keyCommands,{
 		{down = iCommandPlaneTrimUp, name = "F-22: Trim Up", category = "Flight Control"},
         {down = iCommandPlaneTrimDown, name = "F-22: Trim Down", category = "Flight Control"},
         {down = iCommandPlaneTrimCancel, name = "F-22: Reset Trim", category = "Flight Control"},
-        {down = 10500, value_down = 1.0, name = _('F-22: Altitude Hold Toggle'), category = _('F-22 EFM Commands')},
-        {down = 10501, value_down = 1.0, name = _('F-22: Attitude Hold Toggle'), category = _('F-22 EFM Commands')},
-        {down = 10502, value_down = 1.0, name = _('F-22: Auto Throttle Toggle'), category = _('F-22 EFM Commands')},
-        {down = 10503, value_down = 1.0, name = _('F-22: Autopilot Disengage'), category = _('F-22 EFM Commands')},
+  --      {down = 10500, value_down = 1.0, name = _('F-22: Altitude Hold Toggle'), category = _('F-22 EFM Commands')},
+    --    {down = 10501, value_down = 1.0, name = _('F-22: Attitude Hold Toggle'), category = _('F-22 EFM Commands')},
+     --   {down = 10502, value_down = 1.0, name = _('F-22: Auto Throttle Toggle'), category = _('F-22 EFM Commands')},
+     --   {down = 10503, value_down = 1.0, name = _('F-22: Autopilot Disengage'), category = _('F-22 EFM Commands')},
 		{ down = 10505, name = _("Taxi Lights Toggle"), category = _("External Lights") },
 		{ down = 10506, name = _("Landing Lights Toggle"), category = _("External Lights") },
 		{ down = 10507, name = _("Formation Light Toggle"), category = _("External Lights") },
@@ -330,7 +330,7 @@ join(res.keyCommands,{
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Autopilot
 -- Flight Control
-    {down = iCommandPlaneTrimOn, up = iCommandPlaneTrimOff, name = _('T/O Trim'), category = _('Flight Control')},
+    --{down = iCommandPlaneTrimOn, up = iCommandPlaneTrimOff, name = _('T/O Trim'), category = _('Flight Control')},
 -- Systems
     {down = iCommandPlaneAirRefuel,                                                                                 name = _('Refueling Boom'), category = _('Systems')},
     {down = iCommandPlaneJettisonFuelTanks,                                                                         name = _('Jettison Fuel Tanks'), category = _('Systems')},
