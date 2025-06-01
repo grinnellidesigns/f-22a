@@ -16,11 +16,9 @@
 */
 
 // RAPTOR.cpp : External flight model for Grinnelli Designs F-22A 
-#include <math.h>
-#include <cmath>
-#include <stdio.h>
-#include <string>
 #include <algorithm>
+#include <cmath>
+#include <string>
 #include <iostream>
 #include <stack>
 #include <queue>
@@ -32,6 +30,9 @@
 #include "Utility.h"
 #include "Inputs.h"
 #include "RAPTOR.h"
+
+#include <ranges>
+#include <utility>
 
 #define EXPORT __declspec(dllexport)
 
@@ -56,8 +57,8 @@ void add_local_force(const Vec3& Force, const Vec3& Force_pos) {
     RAPTOR::common_force.x += Force.x;
     RAPTOR::common_force.y += Force.y;
     RAPTOR::common_force.z += Force.z;
-    Vec3 delta_pos(Force_pos.x - RAPTOR::center_of_mass.x, Force_pos.y - RAPTOR::center_of_mass.y, Force_pos.z - RAPTOR::center_of_mass.z);
-    Vec3 delta_moment = cross(delta_pos, Force);
+    const Vec3 delta_pos(Force_pos.x - RAPTOR::center_of_mass.x, Force_pos.y - RAPTOR::center_of_mass.y, Force_pos.z - RAPTOR::center_of_mass.z);
+    const Vec3 delta_moment = cross(delta_pos, Force);
     RAPTOR::common_moment.x += delta_moment.x;
     RAPTOR::common_moment.y += delta_moment.y;
     RAPTOR::common_moment.z += delta_moment.z;
@@ -84,7 +85,7 @@ void ed_fm_add_local_moment(double& x, double& y, double& z) {
     z = RAPTOR::common_moment.z;
 }
 
-void simulate_fuel_consumption(double dt)
+void simulate_fuel_consumption(const double dt)
 {
     RAPTOR::left_fuel_rate = 0.0;
     RAPTOR::right_fuel_rate = 0.0;
@@ -92,16 +93,16 @@ void simulate_fuel_consumption(double dt)
     double left_fuel_rate_kg_s = 0.0;
     double right_fuel_rate_kg_s = 0.0;
 
-    double fuel_alt_factor = RAPTOR::atmosphere_density / 1.225;
-    double mach_factor = 1.0 + 0.5 * RAPTOR::mach;
+    const double fuel_alt_factor = RAPTOR::atmosphere_density / 1.225;
+    const double mach_factor = 1.0 + 0.5 * RAPTOR::mach;
 
     if (RAPTOR::left_engine_state == RAPTOR::RUNNING) {
         if (RAPTOR::left_throttle_output <= 1.025) {
-            double throttle_factor = (RAPTOR::left_throttle_output - 0.67) / (1.025 - 0.67);
+            const double throttle_factor = (RAPTOR::left_throttle_output - 0.67) / (1.025 - 0.67);
             RAPTOR::left_fuel_rate = (0.126 + (1.5 - 0.126) * throttle_factor) * fuel_alt_factor * mach_factor;
         }
         else {
-            double ab_factor = (RAPTOR::left_throttle_output - 1.025) / (1.1 - 1.025);
+            const double ab_factor = (RAPTOR::left_throttle_output - 1.025) / (1.1 - 1.025);
             RAPTOR::left_fuel_rate = (1.5 + (6.5 - 1.5) * ab_factor) * fuel_alt_factor * mach_factor;
         }
         left_fuel_rate_kg_s = RAPTOR::left_fuel_rate;
@@ -109,11 +110,11 @@ void simulate_fuel_consumption(double dt)
 
     if (RAPTOR::right_engine_state == RAPTOR::RUNNING) {
         if (RAPTOR::right_throttle_output <= 1.025) {
-            double throttle_factor = (RAPTOR::right_throttle_output - 0.67) / (1.025 - 0.67);
+            const double throttle_factor = (RAPTOR::right_throttle_output - 0.67) / (1.025 - 0.67);
             RAPTOR::right_fuel_rate = (0.126 + (1.5 - 0.126) * throttle_factor) * fuel_alt_factor * mach_factor;
         }
         else {
-            double ab_factor = (RAPTOR::right_throttle_output - 1.025) / (1.1 - 1.025);
+            const double ab_factor = (RAPTOR::right_throttle_output - 1.025) / (1.1 - 1.025);
             RAPTOR::right_fuel_rate = (1.5 + (6.5 - 1.5) * ab_factor) * fuel_alt_factor * mach_factor;
         }
         right_fuel_rate_kg_s = RAPTOR::right_fuel_rate;
@@ -125,14 +126,14 @@ void simulate_fuel_consumption(double dt)
         double fuel_to_consume = RAPTOR::fuel_consumption_since_last_time;
 
         if (RAPTOR::external_fuel > 0) {
-            double external_consumed = std::min(fuel_to_consume, RAPTOR::external_fuel);
+            const double external_consumed = std::min(fuel_to_consume, RAPTOR::external_fuel);
             RAPTOR::external_fuel = std::max(0.0, RAPTOR::external_fuel - external_consumed);
             fuel_to_consume -= external_consumed;
         }
 
         if (fuel_to_consume > 0) {
             RAPTOR::internal_fuel = std::max(0.0, RAPTOR::internal_fuel - fuel_to_consume);
-            double fuel_fraction = std::min(1.0, std::max(0.0, RAPTOR::internal_fuel / RAPTOR::max_internal_fuel));
+            const double fuel_fraction = std::min(1.0, std::max(0.0, RAPTOR::internal_fuel / RAPTOR::max_internal_fuel));
             g_mass_changes.push({
                 fuel_to_consume,
                 {-0.32 * (1.0 - fuel_fraction), 0.0, 0.0},
@@ -154,7 +155,8 @@ void reset_fm_state() {
     RAPTOR::left_elevon_command = RAPTOR::right_elevon_command = 0.0;
     RAPTOR::left_elevon_angle = RAPTOR::right_elevon_angle = 0.0;
     RAPTOR::last_elevator_cmd = RAPTOR::last_aileron_cmd = RAPTOR::last_rudder_cmd = 0.0;
-    RAPTOR::tv_angle = 0.0;
+    RAPTOR::left_tv_angle = 0.0;
+    RAPTOR::right_tv_angle = 0.0;
     RAPTOR::pitch_trim = RAPTOR::roll_trim = RAPTOR::yaw_trim = 0.0;
     RAPTOR::beta_integral = 0.0;
 
@@ -181,7 +183,8 @@ void reset_fm_state() {
     RAPTOR::V_scalar = 0.0;
     RAPTOR::mach = 0.0;
 
-    RAPTOR::left_wing_integrity = RAPTOR::right_wing_integrity = RAPTOR::tail_integrity = RAPTOR::left_elevon_integrity = RAPTOR::right_elevon_integrity = 1.0;
+    RAPTOR::left_wing_integrity = RAPTOR::right_wing_integrity = RAPTOR::left_tail_integrity = RAPTOR::right_tail_integrity = RAPTOR::left_elevon_integrity = RAPTOR::right_elevon_integrity = 1.0;
+    RAPTOR::left_aileron_integrity = RAPTOR::right_aileron_integrity = RAPTOR::left_flap_integrity = RAPTOR::right_flap_integrity = RAPTOR::left_rudder_integrity = RAPTOR::right_rudder_integrity = 1.0;
     RAPTOR::left_engine_integrity = RAPTOR::right_engine_integrity = 1.0;
     RAPTOR::fuel_consumption_since_last_time = 0.0;
 
@@ -191,11 +194,11 @@ void reset_fm_state() {
     RAPTOR::on_ground = false;
 
     RAPTOR::last_yaw_input = 0.0;
-    RAPTOR::last_tv_cmd = 0.0;
+    RAPTOR::last_tv_pitch_cmd = 0.0;
+    RAPTOR::last_tv_roll_assist_cmd = 0.0;
     RAPTOR::last_pitch_input = 0.0;
 
     RAPTOR::autotrim_elevator_cmd = 0.0;
-    RAPTOR::is_destroyed = false;
 }
 
 void ed_fm_simulate(double dt) {
@@ -203,7 +206,7 @@ void ed_fm_simulate(double dt) {
     RAPTOR::common_force = Vec3();
     RAPTOR::common_moment = Vec3();
 
-    const double ENGINE_INTEGRITY_SHUTDOWN_THRESHOLD = 0.30;
+    constexpr double ENGINE_INTEGRITY_SHUTDOWN_THRESHOLD = 0.30;
     if (RAPTOR::left_engine_integrity <= ENGINE_INTEGRITY_SHUTDOWN_THRESHOLD &&
         (RAPTOR::left_engine_state == RAPTOR::RUNNING || RAPTOR::left_engine_state == RAPTOR::STARTING)) {
         RAPTOR::left_engine_state = RAPTOR::SHUTDOWN;
@@ -213,41 +216,6 @@ void ed_fm_simulate(double dt) {
         (RAPTOR::right_engine_state == RAPTOR::RUNNING || RAPTOR::right_engine_state == RAPTOR::STARTING)) {
         RAPTOR::right_engine_state = RAPTOR::SHUTDOWN;
         RAPTOR::right_engine_switch = false;
-    }
-
-    if (RAPTOR::is_destroyed) {
-        static bool destruction_events_pushed = false;
-        if (!destruction_events_pushed) {
-            g_damage_events.push({ static_cast<int>(DamageElement::WingOutLeft), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingOutLeft)] });
-            g_damage_events.push({ static_cast<int>(DamageElement::WingOutRight), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingOutRight)] });
-            g_damage_events.push({ static_cast<int>(DamageElement::Tail), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Tail)] });
-            g_damage_events.push({ static_cast<int>(DamageElement::Engine1), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Engine1)] });
-            g_damage_events.push({ static_cast<int>(DamageElement::Engine2), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Engine2)] });
-            g_damage_events.push({ static_cast<int>(DamageElement::WingInLeft), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingInLeft)] }); // Left elevon proxy
-            g_damage_events.push({ static_cast<int>(DamageElement::WingInRight), RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingInRight)] }); // Right elevon proxy
-            destruction_events_pushed = true;
-        }
-        RAPTOR::common_force = Vec3(0.0, 0.0, 0.0);
-        RAPTOR::common_moment = Vec3(0.0, 0.0, 0.0);
-        RAPTOR::left_engine_power_readout = 0.0;
-        RAPTOR::right_engine_power_readout = 0.0;
-        RAPTOR::left_engine_integrity = 0.0;
-        RAPTOR::right_engine_integrity = 0.0;
-        RAPTOR::left_thrust_force = 0.0;
-        RAPTOR::right_thrust_force = 0.0;
-        RAPTOR::left_throttle_input = 0.0;
-        RAPTOR::right_throttle_input = 0.0;
-        RAPTOR::left_engine_state = RAPTOR::SHUTDOWN;
-        RAPTOR::right_engine_state = RAPTOR::SHUTDOWN;
-        RAPTOR::left_engine_switch = false;
-        RAPTOR::right_engine_switch = false;
-        RAPTOR::pitch_input = RAPTOR::roll_input = RAPTOR::yaw_input = 0.0;
-        RAPTOR::left_elevon_command = RAPTOR::right_elevon_command = 0.0;
-        RAPTOR::aileron_command = RAPTOR::rudder_command = 0.0;
-        RAPTOR::left_ab_timer = 0.0;
-        RAPTOR::right_ab_timer = 0.0;
-        RAPTOR::V_scalar = 0.0;
-        RAPTOR::pitch_rate = RAPTOR::roll_rate = RAPTOR::yaw_rate = 0.0;
     }
 
     cockpit_manager.update(dt);
@@ -285,8 +253,8 @@ void ed_fm_simulate(double dt) {
         x_offset = x_offset_normal;
     }
 
-    RAPTOR::left_wing_pos = Vec3(RAPTOR::center_of_mass.x + x_offset, RAPTOR::center_of_mass.y + 0.5, -RAPTOR::wingspan / 2);
-    RAPTOR::right_wing_pos = Vec3(RAPTOR::center_of_mass.x + x_offset, RAPTOR::center_of_mass.y + 0.5, RAPTOR::wingspan / 2);
+    RAPTOR::left_wing_pos = Vec3(RAPTOR::center_of_mass.x + x_offset, RAPTOR::center_of_mass.y + 0.5, -RAPTOR::wingspan / 2 * RAPTOR::left_wing_integrity);
+    RAPTOR::right_wing_pos = Vec3(RAPTOR::center_of_mass.x + x_offset, RAPTOR::center_of_mass.y + 0.5, RAPTOR::wingspan / 2 * RAPTOR::right_wing_integrity);
 
     double ias_ms = RAPTOR::V_scalar * sqrt(RAPTOR::atmosphere_density / 1.225);
     double ias_knots = ias_ms * 1.94384;
@@ -327,8 +295,8 @@ void ed_fm_simulate(double dt) {
 
     CyMax_ += (FM_DATA::cy_flap * RAPTOR::slats_pos);
     double Cy = CyAlpha_ * RAPTOR::alpha;
-    if (Cy > CyMax_) Cy = CyMax_;
-    if (Cy < -CyMax_) Cy = -CyMax_;
+    Cy = std::min(Cy, CyMax_);
+    Cy = std::max(Cy, -CyMax_);
 
     if (fabs(RAPTOR::alpha) >= 90.0) {
         double aoa_excess = fabs(RAPTOR::alpha) - 90.0;
@@ -366,22 +334,32 @@ void ed_fm_simulate(double dt) {
         RAPTOR::landing_brake_assist = limit(actuator(RAPTOR::landing_brake_assist, 0.0, -0.008, 0.007), 0.0, 1.0);
     }
 
-    Vec3 left_wing_forces(-Drag * drag_direction * (-aos_effect + 1) * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity,
-        Lift * (-aos_effect / 2 + 1) * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity,
+    Vec3 left_wing_forces(-Drag * 0.8 * drag_direction * (-aos_effect + 1) * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity,
+        Lift * 0.8 * (-aos_effect / 2 + 1) * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity,
+        //0);
         Cy_tail * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity);
-    Vec3 right_wing_forces(-Drag * drag_direction * (aos_effect + 1) * q * (RAPTOR::S / 2) * RAPTOR::right_wing_integrity,
-        Lift * (aos_effect / 2 + 1) * q * (RAPTOR::S / 2) * RAPTOR::right_wing_integrity,
+    Vec3 right_wing_forces(-Drag * 0.8 * drag_direction * (aos_effect + 1) * q * (RAPTOR::S / 2) * RAPTOR::right_wing_integrity,
+        Lift * 0.8 * (aos_effect / 2 + 1) * q * (RAPTOR::S / 2) * RAPTOR::right_wing_integrity,
+        //0);
         -Cy_tail * q * (RAPTOR::S / 2) * RAPTOR::right_wing_integrity);
+    Vec3 fuselage_forces(-Drag * 0.3 * drag_direction * q * (RAPTOR::S / 2),
+        Lift * 0.4 * q * (RAPTOR::S / 2),
+        0);
 
     add_local_force(left_wing_forces, RAPTOR::left_wing_pos);
     add_local_force(right_wing_forces, RAPTOR::right_wing_pos);
+    add_local_force(fuselage_forces, RAPTOR::fuselage_pos);
 
-    Vec3 tail_force(-Cy_tail * sin(RAPTOR::aoa) * (RAPTOR::S / 2) * q * RAPTOR::tail_integrity,
-        0, -Cy_tail * cos(RAPTOR::aoa) * q * (RAPTOR::S / 2) * RAPTOR::tail_integrity);
-    add_local_force(tail_force, RAPTOR::tail_pos);
+    Vec3 left_tail_force(-Cy_tail * sin(RAPTOR::aoa) * (RAPTOR::S / 4) * q * RAPTOR::left_tail_integrity,
+        -Cy_tail * cos(RAPTOR::aoa) * q * (RAPTOR::S / 4) * RAPTOR::left_tail_integrity * cos(rad(110)),
+        -Cy_tail * cos(RAPTOR::aoa) * q * (RAPTOR::S / 4) * RAPTOR::left_tail_integrity * sin(rad(110)));
+    Vec3 right_tail_force(-Cy_tail * sin(RAPTOR::aoa) * (RAPTOR::S / 4) * q * RAPTOR::right_tail_integrity,
+        -Cy_tail * cos(RAPTOR::aoa) * q * (RAPTOR::S / 4) * RAPTOR::right_tail_integrity * cos(rad(70)),
+        -Cy_tail * cos(RAPTOR::aoa) * q * (RAPTOR::S / 4) * RAPTOR::right_tail_integrity * sin(rad(70)));
+    add_local_force(left_tail_force, RAPTOR::left_tail_pos);
+    add_local_force(right_tail_force, RAPTOR::right_tail_pos);
 
-    const double fbw_scale = 1.0;
-    const double max_rate = 40.0;
+    constexpr double fbw_scale = 1.0;
     double beta_gain = (RAPTOR::mach > 0.9) ? std::clamp(0.1 * (RAPTOR::mach - 0.9) / 0.3, 0.0, 0.1) : 0.0;
     double pitch_cmd_source = RAPTOR::pitch_analog ? RAPTOR::pitch_input : RAPTOR::pitch_discrete;
     double roll_cmd_source = RAPTOR::roll_analog ? RAPTOR::roll_input : RAPTOR::roll_discrete;
@@ -392,12 +370,13 @@ void ed_fm_simulate(double dt) {
         RAPTOR::aileron_command = RAPTOR::rudder_command = 0.0;
     }
     else {
-        double Kd_pitch = lerp(FM_DATA::mach_table.data(), FM_DATA::Kd_pitch, FM_DATA::mach_table.size(), RAPTOR::mach);
+	    constexpr double max_rate = 40.0;
+	    double Kd_pitch = lerp(FM_DATA::mach_table.data(), FM_DATA::Kd_pitch, FM_DATA::mach_table.size(), RAPTOR::mach);
         double Kd_roll = lerp(FM_DATA::mach_table.data(), FM_DATA::Kd_roll, FM_DATA::mach_table.size(), RAPTOR::mach);
         double Kd_yaw = lerp(FM_DATA::mach_table.data(), FM_DATA::Kd_yaw, FM_DATA::mach_table.size(), RAPTOR::mach);
 
         double pitch_sensitivity = 1.0;
-        double tv_sensitivity = 1.2;
+        double tv_pitch_sensitivity = 1.2;
         double max_deflection_rate = 2.27;
 
         if (RAPTOR::mach >= 0.67) {
@@ -409,31 +388,30 @@ void ed_fm_simulate(double dt) {
         if (RAPTOR::mach >= 0.67) {
             double mach_diff = RAPTOR::mach - 0.67;
             if (RAPTOR::mach >= 1.2) {
-                tv_sensitivity = 0.0;
+                tv_pitch_sensitivity = 0.0;
             }
             else {
                 double range = 1.2 - 0.67;
-                tv_sensitivity = 1.0 - (1.0 / (range * range)) * mach_diff * mach_diff;
-                tv_sensitivity = limit(tv_sensitivity, 0.0, 1.0);
+                tv_pitch_sensitivity = 1.0 - (1.0 / (range * range)) * mach_diff * mach_diff;
+                tv_pitch_sensitivity = limit(tv_pitch_sensitivity, 0.0, 1.0);
             }
         }
 
         double elevator_rate = lerp(FM_DATA::mach_table.data(), FM_DATA::elevator_rate_table, FM_DATA::mach_table.size(), RAPTOR::mach);
-        double tv_rate = lerp(FM_DATA::mach_table.data(), FM_DATA::thrust_vector_rate, FM_DATA::mach_table.size(), RAPTOR::mach);
+        double tv_pitch_rate = lerp(FM_DATA::mach_table.data(), FM_DATA::thrust_vector_pitch_rate, FM_DATA::mach_table.size(), RAPTOR::mach);
+        double tv_roll_assist_rate = lerp(FM_DATA::mach_table.data(), FM_DATA::thrust_vector_roll_assist_rate, FM_DATA::mach_table.size(), RAPTOR::mach);
 
         double max_elevator_deflection = lerp(FM_DATA::mach_table.data(), FM_DATA::max_elevator_deflection, FM_DATA::mach_table.size(), RAPTOR::mach);
-        double max_tv_deflection = lerp(FM_DATA::mach_table.data(), FM_DATA::max_thrust_vector_deflection, FM_DATA::mach_table.size(), RAPTOR::mach);
+        double max_tv_pitch_deflection = lerp(FM_DATA::mach_table.data(), FM_DATA::max_thrust_vector_pitch_deflection, FM_DATA::mach_table.size(), RAPTOR::mach);
+        double max_tv_roll_assist_deflection = lerp(FM_DATA::mach_table.data(), FM_DATA::max_thrust_vector_roll_assist_deflection, FM_DATA::mach_table.size(), RAPTOR::mach);
         if (RAPTOR::on_ground == true) {
-            max_tv_deflection = 0;
+            max_tv_pitch_deflection = 0;
+            max_tv_roll_assist_deflection = 0;
         }
 
-        const double takeoff_trim_value = 0.18;
-        const double takeoff_trim_rate = 0.05;
+        constexpr double takeoff_trim_value = 0.18;
+        constexpr double takeoff_trim_rate = 0.05;
 
-        double ias_ms = RAPTOR::V_scalar * sqrt(RAPTOR::atmosphere_density / 1.225);
-        double ias_knots = ias_ms * 1.94384;
-
-        double pitch_cmd_source = RAPTOR::pitch_analog ? RAPTOR::pitch_input : RAPTOR::pitch_discrete;
         bool takeoff_trim_enabled = RAPTOR::on_ground &&
             ias_knots < 160.0 && 
             RAPTOR::pitch_trim == 0.0 &&
@@ -444,27 +422,23 @@ void ed_fm_simulate(double dt) {
         double trim_error = target_takeoff_trim - RAPTOR::takeoff_trim_cmd;
         RAPTOR::takeoff_trim_cmd += limit(trim_error, -takeoff_trim_rate * dt, takeoff_trim_rate * dt);
 
-        const double autotrim_gain = 0.06;
-        const double autotrim_max_cmd = 0.25;
-        const double autotrim_rate_limit = 0.06;
-        const double autotrim_fade_rate = 0.1;
-        const double ref_q = 0.5 * 1.225 * 200.0 * 200.0;
-        const double input_deadzone = 0.025;
+	    constexpr double ref_q = 0.5 * 1.225 * 200.0 * 200.0;
 
-        bool autotrim_disabled = RAPTOR::on_ground ||
+	    bool autotrim_disabled = RAPTOR::on_ground ||
             fabs(RAPTOR::roll) > 1.2217 ||
             RAPTOR::manual_trim_applied ||
             RAPTOR::alpha >= 7.0;
 
         if (!autotrim_disabled) {
-            RAPTOR::autotrim_active = true;
+	        constexpr double autotrim_gain = 0.06;
+	        constexpr double autotrim_max_cmd = 0.25;
+	        constexpr double autotrim_rate_limit = 0.06;
+	        RAPTOR::autotrim_active = true;
             double pitch_rate_deg_s = RAPTOR::pitch_rate * RAPTOR::rad_to_deg;
-            double q = 0.5 * RAPTOR::atmosphere_density * RAPTOR::V_scalar * RAPTOR::V_scalar;
             double q_scale = (q > 100.0) ? ref_q / q : 1.0;
-            double pitch_cmd_source = RAPTOR::pitch_analog ? RAPTOR::pitch_input : RAPTOR::pitch_discrete;
 
             double pitch_rate_error = 0.0;
-            if (pitch_cmd_source < -input_deadzone) {
+            if (constexpr double input_deadzone = 0.025; pitch_cmd_source < -input_deadzone) {
                 if (pitch_rate_deg_s >= 0.0) {
                     pitch_rate_error = 0.0 - pitch_rate_deg_s;
                 }
@@ -483,7 +457,8 @@ void ed_fm_simulate(double dt) {
             RAPTOR::autotrim_elevator_cmd = limit(RAPTOR::autotrim_elevator_cmd + delta_cmd, -autotrim_max_cmd, autotrim_max_cmd);
         }
         else {
-            RAPTOR::autotrim_active = false;
+	        constexpr double autotrim_fade_rate = 0.1;
+	        RAPTOR::autotrim_active = false;
             if (RAPTOR::autotrim_elevator_cmd > 0) {
                 RAPTOR::autotrim_elevator_cmd = std::max(RAPTOR::autotrim_elevator_cmd - autotrim_fade_rate * dt, 0.0);
             }
@@ -503,7 +478,7 @@ void ed_fm_simulate(double dt) {
         elevator_cmd += RAPTOR::takeoff_trim_cmd;
         elevator_cmd = limit(elevator_cmd, -1.0, 1.0);
 
-        const double g_reduction_factor = 0.1;
+        constexpr double g_reduction_factor = 0.1;
 
         if (RAPTOR::g > RAPTOR::g_limit_positive && elevator_cmd > 0.0) {
             double g_excess = RAPTOR::g - RAPTOR::g_limit_positive;
@@ -546,29 +521,57 @@ void ed_fm_simulate(double dt) {
             RAPTOR::right_elevon_angle = std::max<double>(RAPTOR::right_elevon_angle - elevon_step, target_right_elevon_angle);
         }
 
-        double tv_pitch_cmd = (pitch_cmd_source * fabs(pitch_cmd_source) * 1.1) * tv_sensitivity;
-
+        double tv_pitch_cmd = (pitch_cmd_source * fabs(pitch_cmd_source) * 1.1) * tv_pitch_sensitivity;
         if (RAPTOR::alpha > 70.0) tv_pitch_cmd -= (RAPTOR::alpha - 70.0) * 0.0285;
         if (RAPTOR::alpha < -40.0) tv_pitch_cmd += (-RAPTOR::alpha - 40.0) * 0.033;
 
         tv_pitch_cmd += -RAPTOR::pitch_rate;
 
-        double tv_command = limit(RAPTOR::last_tv_cmd + limit(tv_pitch_cmd - RAPTOR::last_tv_cmd, -max_rate * dt, max_rate * dt), -1.0, 1.0);
-        RAPTOR::last_tv_cmd = tv_command;
+        double tv_pitch_command = limit(RAPTOR::last_tv_pitch_cmd + limit(tv_pitch_cmd - RAPTOR::last_tv_pitch_cmd, -max_rate * dt, max_rate * dt), -1.0, 1.0);
+        RAPTOR::last_tv_pitch_cmd = tv_pitch_command;
 
-        double target_tv_angle = -tv_command * RAPTOR::rad(max_tv_deflection);
-        double tv_step = tv_rate * dt;
-        if (RAPTOR::tv_angle < target_tv_angle) {
-            RAPTOR::tv_angle = std::min<double>(RAPTOR::tv_angle + tv_step, target_tv_angle);
+        double target_tv_pitch_angle = -tv_pitch_command * RAPTOR::rad(max_tv_pitch_deflection);
+        double tv_pitch_step = tv_pitch_rate * dt;
+
+        constexpr bool roll_assist_tv_enabled = false;
+
+        if (roll_assist_tv_enabled)
+        {
+            double tv_roll_assist_sensitivity = 1.2;
+            double tv_roll_assist_cmd = roll_cmd_source * fabs(roll_cmd_source) * 1.1 * tv_roll_assist_sensitivity;
+            tv_roll_assist_cmd += RAPTOR::roll_rate;
+
+            double tv_roll_assist_command = limit(RAPTOR::last_tv_roll_assist_cmd + limit(tv_roll_assist_cmd - RAPTOR::last_tv_roll_assist_cmd, -max_rate * dt, max_rate * dt), -1.0, 1.0);
+            RAPTOR::last_tv_roll_assist_cmd = tv_roll_assist_command;
+
+            double target_tv_roll_assist_angle = tv_roll_assist_cmd * RAPTOR::rad(max_tv_roll_assist_deflection);
+            double tv_roll_assist_step = tv_roll_assist_rate * dt;
+
+            if (RAPTOR::tv_pitch_angle < target_tv_pitch_angle) {
+                RAPTOR::tv_pitch_angle = std::min<double>(RAPTOR::tv_pitch_angle + tv_pitch_step, target_tv_pitch_angle);
+            }
+            else if (RAPTOR::tv_pitch_angle > target_tv_pitch_angle) {
+                RAPTOR::tv_pitch_angle = std::max<double>(RAPTOR::tv_pitch_angle - tv_pitch_step, target_tv_pitch_angle);
+            }
+
+            if (RAPTOR::tv_roll_assist_angle < target_tv_roll_assist_angle) {
+                RAPTOR::tv_roll_assist_angle = std::min<double>(RAPTOR::tv_roll_assist_angle + tv_roll_assist_step, target_tv_roll_assist_angle);
+            }
+            else if (RAPTOR::tv_roll_assist_angle > target_tv_roll_assist_angle) {
+                RAPTOR::tv_roll_assist_angle = std::max<double>(RAPTOR::tv_roll_assist_angle - tv_roll_assist_step, target_tv_roll_assist_angle);
+            }
+
+            RAPTOR::left_tv_angle = limit(RAPTOR::tv_pitch_angle + RAPTOR::tv_roll_assist_angle, -RAPTOR::rad(20), RAPTOR::rad(20));
+            RAPTOR::right_tv_angle = limit(RAPTOR::tv_pitch_angle - RAPTOR::tv_roll_assist_angle, -RAPTOR::rad(20), RAPTOR::rad(20));
         }
-        else if (RAPTOR::tv_angle > target_tv_angle) {
-            RAPTOR::tv_angle = std::max<double>(RAPTOR::tv_angle - tv_step, target_tv_angle);
+        else
+        {
+            RAPTOR::left_tv_angle = RAPTOR::tv_pitch_angle;
+            RAPTOR::right_tv_angle = RAPTOR::tv_pitch_angle;
         }
 
         double yaw_cmd;
-        const double beta_integral_gain = 0.016;
-        const double beta_integral_limit = 0.005;
-        const double beta_integral_decay = 0.2;
+	    constexpr double beta_integral_decay = 0.2;
 
         double adverse_yaw_cmd = 0.0;
         if (fabs(yaw_cmd_source) < 0.01) {
@@ -582,7 +585,9 @@ void ed_fm_simulate(double dt) {
             yaw_cmd += adverse_yaw_cmd;
 
             if (fabs(RAPTOR::beta) < 3.0 && !RAPTOR::on_ground && fabs(RAPTOR::rudder_command) < 0.9) {
-                RAPTOR::beta_integral += RAPTOR::beta * beta_integral_gain * dt;
+	            constexpr double beta_integral_gain = 0.016;
+	            constexpr double beta_integral_limit = 0.005;
+	            RAPTOR::beta_integral += RAPTOR::beta * beta_integral_gain * dt;
                 RAPTOR::beta_integral = limit(RAPTOR::beta_integral, -beta_integral_limit, beta_integral_limit);
             }
             else {
@@ -595,7 +600,7 @@ void ed_fm_simulate(double dt) {
                 yaw_cmd += limit(pitch_yaw_coupling, -0.5, 0.5);
             }
             RAPTOR::last_yaw_input -= dt / 0.5;
-            if (RAPTOR::last_yaw_input < 0.0) RAPTOR::last_yaw_input = 0.0;
+            RAPTOR::last_yaw_input = std::max(RAPTOR::last_yaw_input, 0.0);
         }
         else {
             yaw_cmd = 0.5 * yaw_cmd_source * sqrt(fabs(yaw_cmd_source)) - RAPTOR::yaw_rate * Kd_yaw;
@@ -616,25 +621,32 @@ void ed_fm_simulate(double dt) {
         add_local_force(Vec3(0, RAPTOR::right_elevon_angle * elevon_force_magnitude * RAPTOR::right_elevon_integrity, 0), RAPTOR::right_elevon_pos);
 
         double aileron_deflection = RAPTOR::aileron_command * RAPTOR::rad(30);
-        add_local_force(Vec3(0, aileron_deflection * q * RAPTOR::S * 0.25, 0), RAPTOR::left_aileron_pos);
-        add_local_force(Vec3(0, -aileron_deflection * q * RAPTOR::S * 0.25, 0), RAPTOR::right_aileron_pos);
+        add_local_force(Vec3(0, aileron_deflection * q * RAPTOR::S * 0.25 * RAPTOR::left_aileron_integrity, 0), RAPTOR::left_aileron_pos);
+        add_local_force(Vec3(0, -aileron_deflection * q * RAPTOR::S * 0.25 * RAPTOR::right_aileron_integrity, 0), RAPTOR::right_aileron_pos);
         double rudder_deflection = RAPTOR::rudder_command * RAPTOR::rad(25 + (RAPTOR::mach < 0.5 ? 5.0 : 0.0));
-        if (RAPTOR::is_destroyed == true) { rudder_deflection = 0.0; }
-        add_local_force(Vec3(0, 0, rudder_deflection * q * RAPTOR::S * 0.3), RAPTOR::rudder_pos);
+        add_local_force(Vec3(
+				0,
+			    rudder_deflection * q * RAPTOR::S * 0.3 * 0.5 * RAPTOR::left_rudder_integrity * cos(rad(110)),
+	            rudder_deflection * q * RAPTOR::S * 0.3 * 0.5 * RAPTOR::left_rudder_integrity * sin(rad(110))),
+    		RAPTOR::left_rudder_pos);
+        add_local_force(Vec3(
+				0,
+	            rudder_deflection * q * RAPTOR::S * 0.3 * 0.5 * RAPTOR::right_rudder_integrity * cos(rad(70)),
+	            rudder_deflection * q * RAPTOR::S * 0.3 * 0.5 * RAPTOR::right_rudder_integrity * sin(rad(70))),
+            RAPTOR::right_rudder_pos);
 
-        double left_tv_force = RAPTOR::left_thrust_force * RAPTOR::left_throttle_output * sin(RAPTOR::tv_angle);
-        double right_tv_force = RAPTOR::right_thrust_force * RAPTOR::right_throttle_output * sin(RAPTOR::tv_angle);
-        if (RAPTOR::is_destroyed == true) { left_tv_force = right_tv_force = 0.0; }
-        add_local_force(Vec3(RAPTOR::left_thrust_force * cos(RAPTOR::tv_angle), left_tv_force, 0), RAPTOR::left_engine_pos);
-        add_local_force(Vec3(RAPTOR::right_thrust_force * cos(RAPTOR::tv_angle), right_tv_force, 0), RAPTOR::right_engine_pos);
+        double left_tv_force = RAPTOR::left_thrust_force * RAPTOR::left_throttle_output * sin(RAPTOR::left_tv_angle);
+        double right_tv_force = RAPTOR::right_thrust_force * RAPTOR::right_throttle_output * sin(RAPTOR::right_tv_angle);
+        add_local_force(Vec3(RAPTOR::left_thrust_force * cos(RAPTOR::left_tv_angle) * RAPTOR::left_engine_integrity, left_tv_force, 0), RAPTOR::left_engine_pos);
+        add_local_force(Vec3(RAPTOR::right_thrust_force * cos(RAPTOR::right_tv_angle) * RAPTOR::right_engine_integrity, right_tv_force, 0), RAPTOR::right_engine_pos);
     }
 
     double idle_thrust = lerp(FM_DATA::mach_table.data(), FM_DATA::idle_thrust.data(), FM_DATA::mach_table.size(), RAPTOR::mach);
     double max_dry_thrust_base = lerp(FM_DATA::mach_table.data(), FM_DATA::max_thrust.data(), FM_DATA::mach_table.size(), RAPTOR::mach);
     double max_ab_thrust_base = lerp(FM_DATA::mach_table.data(), FM_DATA::ab_thrust.data(), FM_DATA::mach_table.size(), RAPTOR::mach);
 
-    const double static_max_dry_thrust = 112654.0;
-    const double static_max_ab_thrust = 155688.0;
+    constexpr double static_max_dry_thrust = 112654.0;
+    constexpr double static_max_ab_thrust = 155688.0;
 
     double max_dry_thrust = RAPTOR::on_ground ? static_max_dry_thrust : max_dry_thrust_base;
     double max_ab_thrust = RAPTOR::on_ground ? static_max_ab_thrust : max_ab_thrust_base;
@@ -642,13 +654,13 @@ void ed_fm_simulate(double dt) {
     double dry_range = max_dry_thrust - idle_thrust;
     double ab_range = max_ab_thrust - max_dry_thrust;
 
-    const double ab_spool_time_air = 1.1;
-    const double spool_up_rate_air = 0.1285;
-    const double spool_down_rate_air = 0.122;
-    const double ab_spool_time_ground = 1.65;
-    const double spool_up_rate_ground = 0.079;
-    const double spool_down_rate_ground = 0.0813;
-    const double shutoff_spool_down = 0.041;
+    constexpr double ab_spool_time_air = 1.1;
+    constexpr double spool_up_rate_air = 0.1285;
+    constexpr double spool_down_rate_air = 0.122;
+    constexpr double ab_spool_time_ground = 1.65;
+    constexpr double spool_up_rate_ground = 0.079;
+    constexpr double spool_down_rate_ground = 0.0813;
+    constexpr double shutoff_spool_down = 0.041;
 
     double ab_spool_time = RAPTOR::on_ground ? ab_spool_time_ground : ab_spool_time_air;
     double spool_up_rate = RAPTOR::on_ground ? spool_up_rate_ground : spool_up_rate_air;
@@ -658,8 +670,8 @@ void ed_fm_simulate(double dt) {
     RAPTOR::right_throttle_input = limit(RAPTOR::right_throttle_input, 0, 1);
 
     double thrust_alt_factor = RAPTOR::atmosphere_density / 1.225;
-    const double idle_rps = 50.0;
-    const double max_rps = 150.0;
+    constexpr double idle_rps = 50.0;
+    constexpr double max_rps = 150.0;
 
     if (RAPTOR::left_engine_state == RAPTOR::OFF) {
         RAPTOR::left_throttle_output = 0.0;
@@ -947,7 +959,7 @@ void ed_fm_simulate(double dt) {
     RAPTOR::sim_initialised = true;
 }
 
-void ed_fm_set_atmosphere(double h, double t, double a, double ro, double p, double wind_vx, double wind_vy, double wind_vz) {
+void ed_fm_set_atmosphere(const double h, const double t, const double a, const double ro, double p, const double wind_vx, const double wind_vy, const double wind_vz) {
     RAPTOR::wind = Vec3(wind_vx, wind_vy, wind_vz);
     RAPTOR::atmosphere_density = ro;
     RAPTOR::speed_of_sound = a;
@@ -956,26 +968,26 @@ void ed_fm_set_atmosphere(double h, double t, double a, double ro, double p, dou
     RAPTOR::atmosphere_temperature = t;
 }
 
-void ed_fm_set_surface(double h, double h_obj, unsigned surface_type, double normal_x, double normal_y, double normal_z) {
+void ed_fm_set_surface(const double h, const double h_obj, unsigned surface_type, double normal_x, double normal_y, double normal_z) {
     RAPTOR::altitude_AGL = RAPTOR::altitude_ASL - (h + h_obj * 0.5);
 }
 
-void ed_fm_set_current_mass_state(double mass, double center_of_mass_x, double center_of_mass_y, double center_of_mass_z, double moment_of_inertia_x, double moment_of_inertia_y, double moment_of_inertia_z)
+void ed_fm_set_current_mass_state(double mass, const double center_of_mass_x, const double center_of_mass_y, const double center_of_mass_z, double moment_of_inertia_x, double moment_of_inertia_y, double moment_of_inertia_z)
 {
     RAPTOR::center_of_mass.x = center_of_mass_x;
     RAPTOR::center_of_mass.y = center_of_mass_y;
     RAPTOR::center_of_mass.z = center_of_mass_z;
 }
 
-void ed_fm_set_current_state(double ax, double ay, double az, double vx, double vy, double vz, double px, double py, double pz,
+void ed_fm_set_current_state(double ax, double ay, double az, const double vx, const double vy, const double vz, double px, double py, double pz,
     double omegadotx, double omegadoty, double omegadotz, double omegax, double omegay, double omegaz,
     double quaternion_x, double quaternion_y, double quaternion_z, double quaternion_w) {
     RAPTOR::velocity_world = Vec3(vx, vy, vz);
 }
 
-void ed_fm_set_current_state_body_axis(double ax, double ay, double az, double vx, double vy, double vz, double wind_vx, double wind_vy, double wind_vz,
-    double omegadotx, double omegadoty, double omegadotz, double omegax, double omegay, double omegaz,
-    double yaw, double pitch, double roll, double common_angle_of_attack, double common_angle_of_slide) {
+void ed_fm_set_current_state_body_axis(double ax, const double ay, double az, double vx, double vy, double vz, double wind_vx, double wind_vy, double wind_vz,
+    double omegadotx, double omegadoty, double omegadotz, const double omegax, const double omegay, const double omegaz,
+    const double yaw, const double pitch, const double roll, const double common_angle_of_attack, const double common_angle_of_slide) {
     RAPTOR::aoa = common_angle_of_attack;
     RAPTOR::alpha = RAPTOR::aoa * RAPTOR::rad_to_deg;
     RAPTOR::aos = common_angle_of_slide;
@@ -989,9 +1001,9 @@ void ed_fm_set_current_state_body_axis(double ax, double ay, double az, double v
     RAPTOR::pitch_rate = omegaz;
 }
 
-void ed_fm_set_command(int command, float value) {
-    double ias_ms = RAPTOR::V_scalar * sqrt(RAPTOR::atmosphere_density / 1.225);
-    double ias_knots_local = ias_ms * 1.94384;
+void ed_fm_set_command(const int command, const float value) {
+    const double ias_ms = RAPTOR::V_scalar * sqrt(RAPTOR::atmosphere_density / 1.225);
+    const double ias_knots_local = ias_ms * 1.94384;
     switch (command) {
     case JoystickPitch:
         RAPTOR::pitch_input = limit(value, -1, 1);
@@ -1207,7 +1219,7 @@ bool ed_fm_change_mass(double& delta_mass, double& delta_mass_pos_x, double& del
     return false;
 }
 
-void ed_fm_set_internal_fuel(double fuel) {
+void ed_fm_set_internal_fuel(const double fuel) {
     RAPTOR::internal_fuel = fuel;
 }
 
@@ -1215,7 +1227,7 @@ double ed_fm_get_internal_fuel() {
     return RAPTOR::internal_fuel;
 }
 
-void ed_fm_set_external_fuel(int station, double fuel, double x, double y, double z) {
+void ed_fm_set_external_fuel(const int station, const double fuel, double x, double y, double z) {
     if (fuel > 0 && RAPTOR::external_fuel_stations.find(station) == RAPTOR::external_fuel_stations.end()) {
         RAPTOR::external_fuel_stations[station] = 1850.0;
         RAPTOR::external_tanks_equipped = true;
@@ -1241,92 +1253,91 @@ double ed_fm_get_external_fuel() {
     return RAPTOR::external_fuel;
 }
 
-void ed_fm_set_fc3_cockpit_draw_args_v2(float* data, size_t size) {
+void ed_fm_set_fc3_cockpit_draw_args_v2(float* data, const size_t size) {
     cockpit_manager.updateDrawArgs(data, size);
 }
 
-void ed_fm_set_draw_args_v2(float* data, size_t size) {
-    data[0] = (float)limit(RAPTOR::gear_pos, 0, 1);
-    data[3] = (float)limit(RAPTOR::gear_pos, 0, 1);
-    data[5] = (float)limit(RAPTOR::gear_pos, 0, 1);
-    data[15] = (float)limit(RAPTOR::right_elevon_command, -1, 1);
-    data[16] = (float)limit(RAPTOR::left_elevon_command, -1, 1);
-    double max_tv_deflection_rad = RAPTOR::rad(lerp(FM_DATA::mach_table.data(), FM_DATA::max_thrust_vector_deflection, FM_DATA::mach_table.size(), RAPTOR::mach));
-    if (max_tv_deflection_rad == 0.0) {
-        data[622] = 0.0f;
-        data[623] = 0.0f;
-    }
-    else {
-        data[622] = (float)limit((-RAPTOR::tv_angle / max_tv_deflection_rad) * 1.25, -1.0, 1.0);
-        data[623] = (float)limit((-RAPTOR::tv_angle / max_tv_deflection_rad) * 1.25, -1.0, 1.0);
-    }
-    data[11] = (float)limit(RAPTOR::aileron_command, -1, 1);
-    data[12] = (float)limit(-RAPTOR::aileron_command, -1, 1);
-    data[17] = (float)limit(RAPTOR::rudder_command, -1, 1);
-    data[18] = (float)limit(RAPTOR::rudder_command, -1, 1);
-    data[21] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
+void ed_fm_set_draw_args_v2(float* data, const size_t size) {
+    data[0] = static_cast<float>(limit(RAPTOR::gear_pos, 0, 1));
+    data[3] = static_cast<float>(limit(RAPTOR::gear_pos, 0, 1));
+    data[5] = static_cast<float>(limit(RAPTOR::gear_pos, 0, 1));
+    data[15] = static_cast<float>(limit(RAPTOR::right_elevon_command, -1, 1));
+    data[16] = static_cast<float>(limit(RAPTOR::left_elevon_command, -1, 1));
+    data[622] = static_cast<float>(limit(RAPTOR::tv_pitch_angle + RAPTOR::tv_roll_assist_angle, -1, 1));
+    data[623] = static_cast<float>(limit(RAPTOR::tv_pitch_angle - RAPTOR::tv_roll_assist_angle, -1, 1));
+    data[11] = static_cast<float>(limit(RAPTOR::aileron_command, -1, 1));
+    data[12] = static_cast<float>(limit(-RAPTOR::aileron_command, -1, 1));
+    data[17] = static_cast<float>(limit(RAPTOR::rudder_command, -1, 1));
+    data[18] = static_cast<float>(limit(RAPTOR::rudder_command, -1, 1));
+    data[21] = static_cast<float>(limit(RAPTOR::airbrake_pos, 0, 1));
     if (RAPTOR::landing_brake_assist >= 1.0f) {
         data[182] = 0.0f; 
     }
     else {
-        data[182] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
+        data[182] = static_cast<float>(limit(RAPTOR::airbrake_pos, 0, 1));
     }
-    data[184] = (float)limit(RAPTOR::airbrake_pos, 0, 1);
-    static float current_left_flap = (float)RAPTOR::flaps_pos;
-    static float current_right_flap = (float)RAPTOR::flaps_pos;
-    static float current_left_aileron = (float)RAPTOR::aileron_command;
-    static float current_right_aileron = (float)-RAPTOR::aileron_command;
-    static float current_left_rudder = (float)RAPTOR::rudder_command;
-    static float current_right_rudder = (float)RAPTOR::rudder_command;
-    auto rate_limit = [](float current, float target, float rate_per_second, float dt) -> float {
-        float delta = target - current;
-        float max_change = rate_per_second * dt;
+    data[184] = static_cast<float>(limit(RAPTOR::airbrake_pos, 0, 1));
+    static float current_left_flap = static_cast<float>(RAPTOR::flaps_pos);
+    static float current_right_flap = static_cast<float>(RAPTOR::flaps_pos);
+    static float current_left_aileron = static_cast<float>(RAPTOR::aileron_command);
+    static float current_right_aileron = static_cast<float>(-RAPTOR::aileron_command);
+    static float current_left_rudder = static_cast<float>(RAPTOR::rudder_command);
+    static float current_right_rudder = static_cast<float>(RAPTOR::rudder_command);
+    auto rate_limit = [](const float current, const float target, const float rate_per_second, const float dt) -> float {
+        const float delta = target - current;
+        const float max_change = rate_per_second * dt;
         return current + std::clamp(delta, -max_change, max_change);
         };
-    const float flap_actuator_rate = 0.4f; 
-    const float control_surface_rate = 2.0f; 
-    const float rate = 0.0189f;
+    constexpr float control_surface_rate = 2.0f;
+    constexpr float rate = 0.0189f;
     if (RAPTOR::landing_brake_assist >= 1.0f && RAPTOR::on_ground) {
-        current_left_flap = (float)limit(rate_limit(current_left_flap, -1.0f, flap_actuator_rate, rate), -1.0f, 1.0f);
-        current_right_flap = (float)limit(rate_limit(current_right_flap, -1.0f, flap_actuator_rate, rate), -1.0f, 1.0f);
+	    constexpr float flap_actuator_rate = 0.4f;
+	    current_left_flap = static_cast<float>(limit(rate_limit(current_left_flap, -1.0f, flap_actuator_rate, rate), -1.0f, 1.0f));
+        current_right_flap = static_cast<float>(limit(rate_limit(current_right_flap, -1.0f, flap_actuator_rate, rate), -1.0f, 1.0f));
         data[9] = current_left_flap;
         data[10] = current_right_flap;
-        current_left_aileron = (float)limit(rate_limit(current_left_aileron, 1.0f, control_surface_rate, rate), -1.0f, 1.0f);
-        current_right_aileron = (float)limit(rate_limit(current_right_aileron, 1.0f, control_surface_rate, rate), -1.0f, 1.0f);
+        current_left_aileron = static_cast<float>(limit(rate_limit(current_left_aileron, 1.0f, control_surface_rate, rate), -1.0f, 1.0f));
+        current_right_aileron = static_cast<float>(limit(rate_limit(current_right_aileron, 1.0f, control_surface_rate, rate), -1.0f, 1.0f));
         data[11] = current_left_aileron;
         data[12] = current_right_aileron;
-        current_left_rudder = (float)limit(rate_limit(current_left_rudder, 1.0f, control_surface_rate, rate), -1.0f, 1.0f);
-        current_right_rudder = (float)limit(rate_limit(current_right_rudder, -1.0f, control_surface_rate, rate), -1.0f, 1.0f);
+        current_left_rudder = static_cast<float>(limit(rate_limit(current_left_rudder, 1.0f, control_surface_rate, rate), -1.0f, 1.0f));
+        current_right_rudder = static_cast<float>(limit(rate_limit(current_right_rudder, -1.0f, control_surface_rate, rate), -1.0f, 1.0f));
         data[17] = current_left_rudder;
         data[18] = current_right_rudder;
     }
     else {
-        float target_left_aileron = (RAPTOR::g_assist_pos > 0.0f) ? RAPTOR::g_assist_pos : (float)limit(RAPTOR::aileron_command, -1, 1);
-        float target_right_aileron = (RAPTOR::g_assist_pos > 0.0f) ? RAPTOR::g_assist_pos : (float)limit(-RAPTOR::aileron_command, -1, 1);
-        current_left_aileron = (float)limit(rate_limit(current_left_aileron, target_left_aileron, control_surface_rate, rate), -1.0f, 1.0f);
-        current_right_aileron = (float)limit(rate_limit(current_right_aileron, target_right_aileron, control_surface_rate, rate), -1.0f, 1.0f);
+        const float target_left_aileron = (RAPTOR::g_assist_pos > 0.0f) ? RAPTOR::g_assist_pos : static_cast<float>(limit(RAPTOR::aileron_command, -1, 1));
+        const float target_right_aileron = (RAPTOR::g_assist_pos > 0.0f) ? RAPTOR::g_assist_pos : static_cast<float>(limit(-RAPTOR::aileron_command, -1, 1));
+        current_left_aileron = static_cast<float>(limit(rate_limit(current_left_aileron, target_left_aileron, control_surface_rate, rate), -1.0f,
+                                                        1.0f));
+        current_right_aileron = static_cast<float>(limit(rate_limit(current_right_aileron, target_right_aileron, control_surface_rate, rate), -1.0f,
+                                                         1.0f));
         data[11] = current_left_aileron;
         data[12] = current_right_aileron;
-        current_left_rudder = (float)limit(rate_limit(current_left_rudder, (float)RAPTOR::rudder_command, control_surface_rate, rate), -1.0f, 1.0f);
-        current_right_rudder = (float)limit(rate_limit(current_right_rudder, (float)RAPTOR::rudder_command, control_surface_rate, rate), -1.0f, 1.0f);
+        current_left_rudder = static_cast<float>(limit(rate_limit(current_left_rudder, static_cast<float>(RAPTOR::rudder_command), control_surface_rate, rate),
+                                                       -1.0f, 1.0f));
+        current_right_rudder = static_cast<float>(limit(rate_limit(current_right_rudder, static_cast<float>(RAPTOR::rudder_command), control_surface_rate, rate),
+                                                        -1.0f, 1.0f));
         data[17] = current_left_rudder;
         data[18] = current_right_rudder;
         if (RAPTOR::flaps_pos > 0.0f) {
-            current_left_flap = (float)limit(rate_limit(current_left_flap, (float)RAPTOR::flaps_pos, control_surface_rate, rate), -1.0f, 1.0f);
-            current_right_flap = (float)limit(rate_limit(current_right_flap, (float)RAPTOR::flaps_pos, control_surface_rate, rate), -1.0f, 1.0f);
+            current_left_flap = static_cast<float>(limit(rate_limit(current_left_flap, static_cast<float>(RAPTOR::flaps_pos), control_surface_rate, rate), -1.0f,
+                                                         1.0f));
+            current_right_flap = static_cast<float>(limit(rate_limit(current_right_flap, static_cast<float>(RAPTOR::flaps_pos), control_surface_rate, rate), -1.0f,
+                                                          1.0f));
             data[9] = current_left_flap;
             data[10] = current_right_flap;
         }
         else {
-            float flap_target_left = (float)limit(-RAPTOR::aileron_command, -1, 1);
-            float flap_target_right = (float)limit(RAPTOR::aileron_command, -1, 1);
-            current_left_flap = (float)limit(rate_limit(current_left_flap, flap_target_left, control_surface_rate, rate), -1.0f, 1.0f);
-            current_right_flap = (float)limit(rate_limit(current_right_flap, flap_target_right, control_surface_rate, rate), -1.0f, 1.0f);
+            const float flap_target_left = static_cast<float>(limit(-RAPTOR::aileron_command, -1, 1));
+            const float flap_target_right = static_cast<float>(limit(RAPTOR::aileron_command, -1, 1));
+            current_left_flap = static_cast<float>(limit(rate_limit(current_left_flap, flap_target_left, control_surface_rate, rate), -1.0f, 1.0f));
+            current_right_flap = static_cast<float>(limit(rate_limit(current_right_flap, flap_target_right, control_surface_rate, rate), -1.0f, 1.0f));
             data[9] = current_left_flap;
             data[10] = current_right_flap;
         }
  }
-    float lef_flap = (float)limit((RAPTOR::flaps_pos + RAPTOR::slats_pos) / 2.0, 0.0, 1.0);
+    const float lef_flap = static_cast<float>(limit((RAPTOR::flaps_pos + RAPTOR::slats_pos) / 2.0, 0.0, 1.0));
     data[603] = lef_flap;
     if (RAPTOR::left_engine_state == RAPTOR::OFF) {
         data[29] = 0.0f;
@@ -1351,7 +1362,7 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
         data[611] = 1.0f;
     }
     else {
-        float rpm = static_cast<float>(RAPTOR::left_engine_power_readout);
+        const float rpm = static_cast<float>(RAPTOR::left_engine_power_readout);
         if (rpm >= 0.67f) {
             data[611] = 0.0f;
         }
@@ -1361,7 +1372,7 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     }
     data[611] = static_cast<float>(limit(data[611], 0.0f, 1.0f));
 
-    float rpml = static_cast<float>(RAPTOR::left_engine_power_readout);
+    const float rpml = static_cast<float>(RAPTOR::left_engine_power_readout);
     if (rpml <= 0.70f) {
         data[90] = 1.0f;
     }
@@ -1372,7 +1383,7 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
         data[90] = 0.0f;
     }
     else {
-        float rpm_factor = (rpml - 1.035f) / (1.1f - 1.035f);
+        const float rpm_factor = (rpml - 1.035f) / (1.1f - 1.035f);
         data[90] = limit(rpm_factor, 0.0f, 1.0f);
     }
     data[90] = static_cast<float>(limit(data[90], 0.0f, 1.0f));
@@ -1382,7 +1393,7 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
         data[610] = 1.0f;
     }
     else {
-        float rpm = static_cast<float>(RAPTOR::right_engine_power_readout);
+        const float rpm = static_cast<float>(RAPTOR::right_engine_power_readout);
         if (rpm >= 0.67f) {
             data[610] = 0.0f;
         }
@@ -1392,7 +1403,7 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     }
     data[610] = static_cast<float>(limit(data[610], 0.0f, 1.0f));
 
-    float rpmr = static_cast<float>(RAPTOR::right_engine_power_readout);
+    const float rpmr = static_cast<float>(RAPTOR::right_engine_power_readout);
     if (rpmr <= 0.70f) {
         data[89] = 1.0f;
     }
@@ -1403,7 +1414,7 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
         data[89] = 0.0f;
     }
     else {
-        float rpm_factor = (rpmr - 1.035f) / (1.1f - 1.035f);
+        const float rpm_factor = (rpmr - 1.035f) / (1.1f - 1.035f);
         data[89] = limit(rpm_factor, 0.0f, 1.0f);
     }
     data[89] = static_cast<float>(limit(data[89], 0.0f, 1.0f));
@@ -1432,9 +1443,9 @@ void ed_fm_set_draw_args_v2(float* data, size_t size) {
     data[612] = RAPTOR::nav_lights ? 1.0f : 0.0f;
     data[613] = RAPTOR::nav_lights ? 1.0f : 0.0f;
     data[610] = static_cast<float>(limit(data[610], 0.0f, 1.0f));
-    if (RAPTOR::is_destroyed == true) {
-        data[114] = 1.0f;
-    }
+    data[619] = 0.0f;
+    data[620] = 0.0f;
+    data[621] = 0.0f;
 }
 
 void ed_fm_configure(const char* cfg_path) {
@@ -1442,12 +1453,15 @@ void ed_fm_configure(const char* cfg_path) {
         cockpit_manager.initialize();
         RAPTOR::left_wing_pos = Vec3(RAPTOR::center_of_mass.x - 0.8, RAPTOR::center_of_mass.y + 0.5, -RAPTOR::wingspan / 2);
         RAPTOR::right_wing_pos = Vec3(RAPTOR::center_of_mass.x - 0.8, RAPTOR::center_of_mass.y + 0.5, RAPTOR::wingspan / 2);
-        RAPTOR::tail_pos = Vec3(RAPTOR::center_of_mass.x - 0.7, RAPTOR::center_of_mass.y, 0);
+        RAPTOR::fuselage_pos = Vec3(RAPTOR::center_of_mass.x - 0.5, RAPTOR::center_of_mass.y + 0.2, 0);
+        RAPTOR::left_tail_pos = Vec3(-RAPTOR::length / 2, RAPTOR::center_of_mass.y + 1.2, -RAPTOR::wingspan / 8);
+        RAPTOR::right_tail_pos = Vec3(-RAPTOR::length / 2, RAPTOR::center_of_mass.y + 1.2, RAPTOR::wingspan / 8);
         RAPTOR::left_elevon_pos = Vec3(-RAPTOR::length / 2, RAPTOR::center_of_mass.y, -RAPTOR::wingspan * 0.25);
         RAPTOR::right_elevon_pos = Vec3(-RAPTOR::length / 2, RAPTOR::center_of_mass.y, RAPTOR::wingspan * 0.25);
         RAPTOR::left_aileron_pos = Vec3(RAPTOR::center_of_mass.x, RAPTOR::center_of_mass.y, -RAPTOR::wingspan * 0.5);
         RAPTOR::right_aileron_pos = Vec3(RAPTOR::center_of_mass.x, RAPTOR::center_of_mass.y, RAPTOR::wingspan * 0.5);
-        RAPTOR::rudder_pos = Vec3(-RAPTOR::length / 2, RAPTOR::height / 2, 0);
+        RAPTOR::left_rudder_pos = Vec3(-RAPTOR::length / 2 * 0.95, RAPTOR::height / 2, -RAPTOR::wingspan / 8);
+        RAPTOR::right_rudder_pos = Vec3(-RAPTOR::length / 2 * 0.95, RAPTOR::height / 2, RAPTOR::wingspan / 8);
         RAPTOR::left_engine_pos = Vec3(-3.793, 0.0, -0.716);
         RAPTOR::right_engine_pos = Vec3(-3.793, 0.0, 0.716);
         RAPTOR::left_elevon_command = RAPTOR::right_elevon_command = 0.0;
@@ -1456,19 +1470,23 @@ void ed_fm_configure(const char* cfg_path) {
         RAPTOR::rudder_command = RAPTOR::last_rudder_cmd = 0.0;
         RAPTOR::roll_error_i = RAPTOR::yaw_error_i = 0.0;
         RAPTOR::last_yaw_input = 0.0;
-        RAPTOR::tv_angle = 0.0;
-        RAPTOR::last_tv_cmd = 0.0;
+        RAPTOR::tv_pitch_angle = 0.0;
+        RAPTOR::tv_roll_assist_angle = 0.0;
+        RAPTOR::left_tv_angle = 0.0;
+        RAPTOR::right_tv_angle = 0.0;
+        RAPTOR::last_tv_pitch_cmd = 0.0;
+        RAPTOR::last_tv_roll_assist_cmd = 0.0;
         RAPTOR::last_pitch_input = 0.0;
         RAPTOR::idle_rpm = 0.675;
     }
 }
 
-double ed_fm_get_param(unsigned index) {
+double ed_fm_get_param(const unsigned index) {
     switch (index) {
     case ED_FM_SUSPENSION_0_WHEEL_YAW:
     {
-        double yaw_source = RAPTOR::yaw_analog ? RAPTOR::yaw_input : RAPTOR::yaw_discrete;
-        double ground_speed_knots = RAPTOR::ground_speed_knots;
+        const double yaw_source = RAPTOR::yaw_analog ? RAPTOR::yaw_input : RAPTOR::yaw_discrete;
+        const double ground_speed_knots = RAPTOR::ground_speed_knots;
         double max_steering_rad = 0.0;
 
         if (RAPTOR::on_ground) {
@@ -1476,7 +1494,7 @@ double ed_fm_get_param(unsigned index) {
                 max_steering_rad = RAPTOR::rad(60.0);
             }
             else if (ground_speed_knots <= 30.0) {
-                double slope = (RAPTOR::rad(25.0) - RAPTOR::rad(60.0)) / (30.0 - 8.0);
+                const double slope = (RAPTOR::rad(25.0) - RAPTOR::rad(60.0)) / (30.0 - 8.0);
                 max_steering_rad = RAPTOR::rad(60.0) + slope * (ground_speed_knots - 8.0);
             }
             else if (ground_speed_knots <= 60.0) {
@@ -1513,9 +1531,9 @@ double ed_fm_get_param(unsigned index) {
     case ED_FM_ENGINE_1_COMBUSTION: return RAPTOR::left_engine_integrity;
     case ED_FM_ENGINE_1_RELATED_THRUST: return limit(RAPTOR::left_engine_power_readout * 0.35, 0.0, 0.9);
     case ED_FM_ENGINE_1_CORE_RELATED_THRUST: {
-        double max_dry_thrust = lerp(FM_DATA::mach_table.data(), FM_DATA::max_thrust.data(), FM_DATA::mach_table.size(), RAPTOR::mach);
-        double max_dry_core_thrust = max_dry_thrust * 0.7;
-        double core_thrust = RAPTOR::left_thrust_force * (RAPTOR::left_throttle_output > 1.025 ? 0.6 : 0.7);
+        const double max_dry_thrust = lerp(FM_DATA::mach_table.data(), FM_DATA::max_thrust.data(), FM_DATA::mach_table.size(), RAPTOR::mach);
+        const double max_dry_core_thrust = max_dry_thrust * 0.7;
+        const double core_thrust = RAPTOR::left_thrust_force * (RAPTOR::left_throttle_output > 1.025 ? 0.6 : 0.7);
         return max_dry_core_thrust > 0 ? limit(core_thrust / max_dry_core_thrust, 0.0, 2.0) : 0.0;
     }
     case ED_FM_ENGINE_1_RELATED_RPM: return limit(RAPTOR::left_engine_power_readout * 0.35, 0.0, 0.9);
@@ -1530,9 +1548,9 @@ double ed_fm_get_param(unsigned index) {
     case ED_FM_ENGINE_2_COMBUSTION: return RAPTOR::right_engine_integrity;
     case ED_FM_ENGINE_2_RELATED_THRUST: return limit(RAPTOR::right_engine_power_readout * 0.35, 0.0, 0.9);
     case ED_FM_ENGINE_2_CORE_RELATED_THRUST: {
-        double max_dry_thrust = lerp(FM_DATA::mach_table.data(), FM_DATA::max_thrust.data(), FM_DATA::mach_table.size(), RAPTOR::mach);
-        double max_dry_core_thrust = max_dry_thrust * 0.7;
-        double core_thrust = RAPTOR::right_thrust_force * (RAPTOR::right_throttle_output > 1.025 ? 0.6 : 0.7);
+        const double max_dry_thrust = lerp(FM_DATA::mach_table.data(), FM_DATA::max_thrust.data(), FM_DATA::mach_table.size(), RAPTOR::mach);
+        const double max_dry_core_thrust = max_dry_thrust * 0.7;
+        const double core_thrust = RAPTOR::right_thrust_force * (RAPTOR::right_throttle_output > 1.025 ? 0.6 : 0.7);
         return max_dry_core_thrust > 0 ? limit(core_thrust / max_dry_core_thrust, 0.0, 2.0) : 0.0;
     }
     case ED_FM_ENGINE_2_RELATED_RPM: return limit(RAPTOR::right_engine_power_readout * 0.35, 0.0, 0.9);
@@ -1551,17 +1569,17 @@ double ed_fm_get_param(unsigned index) {
     return 0;
 }
 
-void ed_fm_refueling_add_fuel(double fuel)
+void ed_fm_refueling_add_fuel(const double fuel)
 {
     if (fuel > 0) {
-        double dt = 0.006;
-        double fuel_to_add = std::min(fuel, 100.0 * dt);
+        const double dt = 0.006;
+        const double fuel_to_add = std::min(fuel, 100.0 * dt);
 
-        double internal_space = RAPTOR::max_internal_fuel - RAPTOR::internal_fuel;
-        double internal_added = std::min(fuel_to_add, internal_space);
+        const double internal_space = RAPTOR::max_internal_fuel - RAPTOR::internal_fuel;
+        const double internal_added = std::min(fuel_to_add, internal_space);
         if (internal_added > 0) {
             RAPTOR::internal_fuel += internal_added * 10;
-            double fuel_fraction = std::min(1.0, std::max(0.0, RAPTOR::internal_fuel / RAPTOR::max_internal_fuel));
+            const double fuel_fraction = std::min(1.0, std::max(0.0, RAPTOR::internal_fuel / RAPTOR::max_internal_fuel));
             g_mass_changes.push({
                 -internal_added,
                 {-0.32 * (1.0 - fuel_fraction), 0.0, 0.0},
@@ -1569,8 +1587,7 @@ void ed_fm_refueling_add_fuel(double fuel)
                 });
         }
 
-        double remaining_fuel = fuel_to_add - internal_added;
-        if (remaining_fuel > 0 && !RAPTOR::external_fuel_stations.empty()) {
+        if (const double remaining_fuel = fuel_to_add - internal_added; remaining_fuel > 0 && !RAPTOR::external_fuel_stations.empty()) {
             size_t num_refuelable_stations = 0;
             for (const auto& [station, fuel_qty] : RAPTOR::external_fuel_stations) {
                 if ((station == 2 || station == 10) && fuel_qty > 0 && fuel_qty < 1850.0) {
@@ -1578,11 +1595,11 @@ void ed_fm_refueling_add_fuel(double fuel)
                 }
             }
             if (num_refuelable_stations > 0) {
-                double fuel_per_station = remaining_fuel / num_refuelable_stations;
+                const double fuel_per_station = remaining_fuel / num_refuelable_stations;
                 for (auto& [station, fuel_qty] : RAPTOR::external_fuel_stations) {
                     if ((station == 2 || station == 10) && fuel_qty > 0 && fuel_qty < 1850.0) {
                         double space = 1850.0 - fuel_qty;
-                        double added = std::min(fuel_per_station, space);
+                        const double added = std::min(fuel_per_station, space);
                         fuel_qty += added;
                     }
                 }
@@ -1600,58 +1617,62 @@ void ed_fm_refueling_add_fuel(double fuel)
 }
 
 
-void ed_fm_unlimited_fuel(bool value) { RAPTOR::infinite_fuel = value; }
-void ed_fm_set_easy_flight(bool value) { RAPTOR::easy_flight = value; }
-void ed_fm_set_immortal(bool value) { RAPTOR::invincible = value; }
+void ed_fm_unlimited_fuel(const bool value) { RAPTOR::infinite_fuel = value; }
+void ed_fm_set_easy_flight(const bool value) { RAPTOR::easy_flight = value; }
+void ed_fm_set_immortal(const bool value) { RAPTOR::invincible = value; }
 
-void ed_fm_on_damage(int Element, double element_integrity_factor) {
+void ed_fm_on_damage(const int Element, const double element_integrity_factor) {
     if (Element >= 0 && Element < 111) {
         RAPTOR::element_integrity[Element] = element_integrity_factor;
     }
-    g_damage_events.push({ Element, element_integrity_factor });
+    //g_damage_events.push({ Element, element_integrity_factor });
     if (!RAPTOR::invincible) {
-        RAPTOR::left_wing_integrity = RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingOutLeft)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingCentreLeft)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingInLeft)];
-        RAPTOR::right_wing_integrity = RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingOutRight)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingCentreRight)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingInRight)];
-        RAPTOR::tail_integrity = RAPTOR::element_integrity[static_cast<size_t>(DamageElement::RudderLeft)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::RudderRight)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Tail)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::TailLeft)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::TailRight)];
-        RAPTOR::left_engine_integrity = RAPTOR::element_integrity[static_cast<size_t>(DamageElement::NacelleLeftBottom)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::NacelleLeft)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Engine1)];
-        RAPTOR::right_engine_integrity = RAPTOR::element_integrity[static_cast<size_t>(DamageElement::NacelleRightBottom)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::NacelleRight)] *
-            RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Engine2)];
-
-        if (RAPTOR::left_engine_integrity <= 0.2 &&
-            RAPTOR::right_engine_integrity <= 0.2 &&
-            RAPTOR::left_wing_integrity <= 0.2 ||
-            RAPTOR::right_wing_integrity <= 0.2 &&
-            RAPTOR::tail_integrity <= 0.2) {
-            RAPTOR::is_destroyed = true;
-        }
-
+        RAPTOR::left_wing_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingOutLeft)] * 0.15
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingCentreLeft)] * 0.35
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingInLeft)] * 0.5;
+        RAPTOR::right_wing_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingOutRight)] * 0.15
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingCentreRight)] * 0.35
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::WingInRight)] * 0.5;
+        RAPTOR::left_elevon_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::ElevatorInLeft)] * 0.6
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::ElevatorOutLeft)] * 0.4;
+        RAPTOR::right_elevon_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::ElevatorInRight)] * 0.6
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::ElevatorOutRight)] * 0.4;
+        RAPTOR::left_tail_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::TailLeft)] * 0.9
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::RudderLeft)] * 0.1;
+        RAPTOR::right_tail_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::TailRight)] * 0.9
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::RudderRight)] * 0.1;;
+        RAPTOR::left_aileron_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::AileronLeft)];
+        RAPTOR::right_aileron_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::AileronRight)];
+        RAPTOR::left_flap_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::FlapInLeft)] * 0.4
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::FlapCentreLeft)] * 0.3
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::FlapOutLeft)] * 0.3;
+        RAPTOR::right_flap_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::FlapInRight)] * 0.4
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::FlapCentreRight)] * 0.3
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::FlapOutRight)] * 0.3;
+        RAPTOR::left_rudder_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::RudderLeft)];
+        RAPTOR::right_rudder_integrity *= RAPTOR::element_integrity[static_cast<size_t>(DamageElement::RudderRight)];
+        RAPTOR::left_engine_integrity = RAPTOR::element_integrity[static_cast<size_t>(DamageElement::NacelleLeftBottom)] * 0.15
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::NacelleLeft)] * 0.15
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Engine1)] * 0.7;
+        RAPTOR::right_engine_integrity = RAPTOR::element_integrity[static_cast<size_t>(DamageElement::NacelleRightBottom)] * 0.15
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::NacelleRight)] * 0.15
+            + RAPTOR::element_integrity[static_cast<size_t>(DamageElement::Engine2)] * 0.7;
     }
 }
 
 void ed_fm_repair() {
-    for (int i = 0; i < 111; i++) RAPTOR::element_integrity[i] = 1;
+    for (double& i : RAPTOR::element_integrity) i = 1;
     while (!g_damage_events.empty()) g_damage_events.pop();
 }
 
 bool ed_fm_pop_simulation_event(ed_fm_simulation_event& out) {
 
     if (!g_damage_events.empty()) {
-        DamageEvent event = g_damage_events.front();
+        const auto [element_number, integrity_factor] = g_damage_events.front();
         g_damage_events.pop();
         out.event_type = ED_FM_EVENT_STRUCTURE_DAMAGE;
-        out.event_params[0] = static_cast<double>(event.element_number);
-        out.event_params[1] = event.integrity_factor;
+        out.event_params[0] = static_cast<double>(element_number);
+        out.event_params[1] = integrity_factor;
         out.event_message[0] = '\0';
 
         return true;
@@ -1770,12 +1791,6 @@ bool ed_fm_enable_debug_info() { return false; }
 
     // ----- Cockpit Logic -----
 
-inline float limit(float value, float min_val, float max_val) {
-    if (value < min_val) return min_val;
-    if (value > max_val) return max_val;
-    return value;
-}
-
 CockpitManager::CockpitManager() {
     draw_args_[709] = 0.0f;
     draw_args_[712] = 0.0f;
@@ -1811,7 +1826,7 @@ void CockpitManager::initialize() {
     param_api_.setParamNumber(param_handles_["BATTERY_POWER"], (RAPTOR::left_engine_switch || RAPTOR::right_engine_switch) ? 1.0 : 0.0);
 }
 
-void CockpitManager::update(double dt) {
+void CockpitManager::update(const double dt) {
     updateGearLights(dt);
     updateTaxiLandingLights(dt);
     updateAARLight(dt);
@@ -1819,9 +1834,9 @@ void CockpitManager::update(double dt) {
     updateNavAntiCollisionLights(dt);
 }
 
-void CockpitManager::updateDrawArgs(float* data, size_t size) {
-    auto setArg = [&](int index, float value) {
-        if (index >= 0 && static_cast<size_t>(index) < size) {
+void CockpitManager::updateDrawArgs(float* data, const size_t size) {
+    auto setArg = [&](const int index, const float value) {
+        if (index >= 0 && std::cmp_less(index, size)) {
             data[index] = value;
         }
         };
@@ -1833,9 +1848,9 @@ void CockpitManager::updateDrawArgs(float* data, size_t size) {
     setArg(715, static_cast<float>(getParameter("NAV_LIGHT_SWITCH", 0.0)));
 }
 
-double CockpitManager::getParameter(const std::string& name, double fallback_value) {
+double CockpitManager::getParameter(const std::string& name, const double fallback_value) {
     if (!RAPTOR::sim_initialised) {
-        bool engines_on = (RAPTOR::left_engine_state == RAPTOR::RUNNING || RAPTOR::right_engine_state == RAPTOR::RUNNING);
+        const bool engines_on = (RAPTOR::left_engine_state == RAPTOR::RUNNING || RAPTOR::right_engine_state == RAPTOR::RUNNING);
         if (name == "NAV_LIGHT_SWITCH") {
             if (engines_on) {
                 if (name == "NAV_LIGHT_SWITCH") return 0.3;
@@ -1850,12 +1865,12 @@ double CockpitManager::getParameter(const std::string& name, double fallback_val
             return 0.0;
         }
     }
-    auto it = param_handles_.find(name);
+    const auto it = param_handles_.find(name);
     if (it == param_handles_.end()) {
         return fallback_value;
     }
 
-    double result = param_api_.getParamNumber(it->second);
+    const double result = param_api_.getParamNumber(it->second);
     if (result != result) {
         if (name == "WoW") {
             return RAPTOR::on_ground ? 1.0 : 0.0;
@@ -1872,14 +1887,14 @@ double CockpitManager::getParameter(const std::string& name, double fallback_val
 }
 
 void CockpitManager::updateGearLights(double dt) {
-    double battery_power = getParameter("BATTERY_POWER");
-    double nose_gear = RAPTOR::gear_pos;
-    double right_gear = RAPTOR::gear_pos;
-    double left_gear = RAPTOR::gear_pos;
+    const double battery_power = getParameter("BATTERY_POWER");
+    const double nose_gear = RAPTOR::gear_pos;
+    const double right_gear = RAPTOR::gear_pos;
+    const double left_gear = RAPTOR::gear_pos;
 
-    double nose_gear_light = (nose_gear >= 1.0 && battery_power >= 1.0) ? 1.0 : 0.0;
-    double right_gear_light = (right_gear >= 1.0 && battery_power >= 1.0) ? 1.0 : 0.0;
-    double left_gear_light = (left_gear >= 1.0 && battery_power >= 1.0) ? 1.0 : 0.0;
+    const double nose_gear_light = (nose_gear >= 1.0 && battery_power >= 1.0) ? 1.0 : 0.0;
+    const double right_gear_light = (right_gear >= 1.0 && battery_power >= 1.0) ? 1.0 : 0.0;
+    const double left_gear_light = (left_gear >= 1.0 && battery_power >= 1.0) ? 1.0 : 0.0;
 
     param_api_.setParamNumber(param_handles_["N_GEAR_LIGHT"], nose_gear_light);
     param_api_.setParamNumber(param_handles_["R_GEAR_LIGHT"], right_gear_light);
@@ -1887,9 +1902,9 @@ void CockpitManager::updateGearLights(double dt) {
 }
 
 void CockpitManager::updateTaxiLandingLights(double dt) {
-    double taxi_switch = getParameter("TAXI_SWITCH");
-    double main_power = getParameter("MAIN_POWER");
-    double nose_gear = RAPTOR::gear_pos;
+    const double taxi_switch = getParameter("TAXI_SWITCH");
+    const double main_power = getParameter("MAIN_POWER");
+    const double nose_gear = RAPTOR::gear_pos;
 
     RAPTOR::taxi_lights = false;
     RAPTOR::landing_lights = false;
@@ -1903,24 +1918,24 @@ void CockpitManager::updateTaxiLandingLights(double dt) {
 }
 
 void CockpitManager::updateAARLight(double dt) {
-    double aar = getParameter("AAR");
-    double aar_knob = getParameter("AAR_KNOB");
-    double main_power = getParameter("MAIN_POWER");
-    double aar_ready = getParameter("AAR_READY");
+    const double aar = getParameter("AAR");
+    const double aar_knob = getParameter("AAR_KNOB");
+    const double main_power = getParameter("MAIN_POWER");
+    const double aar_ready = getParameter("AAR_READY");
 
     RAPTOR::aar_light = (aar >= 1.0 && aar_ready >= 1.0 && main_power >= 1.0 && aar_knob > 0.0);
 }
 
 void CockpitManager::updateFormationLights(double dt) {
-    double form_knob = getParameter("FORM_KNOB");
-    double main_power = getParameter("MAIN_POWER");
+    const double form_knob = getParameter("FORM_KNOB");
+    const double main_power = getParameter("MAIN_POWER");
 
     RAPTOR::form_light = (main_power >= 1.0 && form_knob > 0.0);
 }
 
-void CockpitManager::updateNavAntiCollisionLights(double dt) {
-    double light_switch = getParameter("NAV_LIGHT_SWITCH");
-    double main_power = getParameter("MAIN_POWER");
+void CockpitManager::updateNavAntiCollisionLights(const double dt) {
+    const double light_switch = getParameter("NAV_LIGHT_SWITCH");
+    const double main_power = getParameter("MAIN_POWER");
 
     static double flash_timer = 0.0;
     flash_timer += dt;
