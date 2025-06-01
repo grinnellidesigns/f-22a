@@ -334,24 +334,28 @@ void ed_fm_simulate(double dt) {
         RAPTOR::landing_brake_assist = limit(actuator(RAPTOR::landing_brake_assist, 0.0, -0.008, 0.007), 0.0, 1.0);
     }
 
-    Vec3 left_wing_forces(-Drag * drag_direction * (-aos_effect + 1) * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity,
+    Vec3 left_wing_forces(-Drag * 0.8 * drag_direction * (-aos_effect + 1) * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity,
         Lift * 0.8 * (-aos_effect / 2 + 1) * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity,
+        //0);
         Cy_tail * q * (RAPTOR::S / 2) * RAPTOR::left_wing_integrity);
-    Vec3 right_wing_forces(-Drag * drag_direction * (aos_effect + 1) * q * (RAPTOR::S / 2) * RAPTOR::right_wing_integrity,
+    Vec3 right_wing_forces(-Drag * 0.8 * drag_direction * (aos_effect + 1) * q * (RAPTOR::S / 2) * RAPTOR::right_wing_integrity,
         Lift * 0.8 * (aos_effect / 2 + 1) * q * (RAPTOR::S / 2) * RAPTOR::right_wing_integrity,
+        //0);
         -Cy_tail * q * (RAPTOR::S / 2) * RAPTOR::right_wing_integrity);
-    Vec3 fuselage_forces(Drag* drag_direction* (-aos_effect + 1)* q* (RAPTOR::S / 2),
-        Lift * 0.2 * (-aos_effect / 2 + 1) * q * (RAPTOR::S / 2),
-        Cy_tail* q* (RAPTOR::S / 2));
+    Vec3 fuselage_forces(-Drag * 0.3 * drag_direction * q * (RAPTOR::S / 2),
+        Lift * 0.4 * q * (RAPTOR::S / 2),
+        0);
 
     add_local_force(left_wing_forces, RAPTOR::left_wing_pos);
     add_local_force(right_wing_forces, RAPTOR::right_wing_pos);
     add_local_force(fuselage_forces, RAPTOR::fuselage_pos);
 
     Vec3 left_tail_force(-Cy_tail * sin(RAPTOR::aoa) * (RAPTOR::S / 4) * q * RAPTOR::left_tail_integrity,
-        0, -Cy_tail * cos(RAPTOR::aoa) * q * (RAPTOR::S / 4) * RAPTOR::left_tail_integrity);
+        -Cy_tail * cos(RAPTOR::aoa) * q * (RAPTOR::S / 4) * RAPTOR::left_tail_integrity * cos(rad(110)),
+        -Cy_tail * cos(RAPTOR::aoa) * q * (RAPTOR::S / 4) * RAPTOR::left_tail_integrity * sin(rad(110)));
     Vec3 right_tail_force(-Cy_tail * sin(RAPTOR::aoa) * (RAPTOR::S / 4) * q * RAPTOR::right_tail_integrity,
-        0, -Cy_tail * cos(RAPTOR::aoa) * q * (RAPTOR::S / 4) * RAPTOR::right_tail_integrity);
+        -Cy_tail * cos(RAPTOR::aoa) * q * (RAPTOR::S / 4) * RAPTOR::right_tail_integrity * cos(rad(70)),
+        -Cy_tail * cos(RAPTOR::aoa) * q * (RAPTOR::S / 4) * RAPTOR::right_tail_integrity * sin(rad(70)));
     add_local_force(left_tail_force, RAPTOR::left_tail_pos);
     add_local_force(right_tail_force, RAPTOR::right_tail_pos);
 
@@ -529,7 +533,7 @@ void ed_fm_simulate(double dt) {
         double target_tv_pitch_angle = -tv_pitch_command * RAPTOR::rad(max_tv_pitch_deflection);
         double tv_pitch_step = tv_pitch_rate * dt;
 
-        constexpr bool roll_assist_tv_enabled = true;
+        constexpr bool roll_assist_tv_enabled = false;
 
         if (roll_assist_tv_enabled)
         {
@@ -620,8 +624,16 @@ void ed_fm_simulate(double dt) {
         add_local_force(Vec3(0, aileron_deflection * q * RAPTOR::S * 0.25 * RAPTOR::left_aileron_integrity, 0), RAPTOR::left_aileron_pos);
         add_local_force(Vec3(0, -aileron_deflection * q * RAPTOR::S * 0.25 * RAPTOR::right_aileron_integrity, 0), RAPTOR::right_aileron_pos);
         double rudder_deflection = RAPTOR::rudder_command * RAPTOR::rad(25 + (RAPTOR::mach < 0.5 ? 5.0 : 0.0));
-        add_local_force(Vec3(0, 0, rudder_deflection * q * RAPTOR::S * 0.3 * 0.5 * RAPTOR::left_rudder_integrity), RAPTOR::left_rudder_pos);
-        add_local_force(Vec3(0, 0, rudder_deflection * q * RAPTOR::S * 0.3 * 0.5 * RAPTOR::right_rudder_integrity), RAPTOR::right_rudder_pos);
+        add_local_force(Vec3(
+				0,
+			    rudder_deflection * q * RAPTOR::S * 0.3 * 0.5 * RAPTOR::left_rudder_integrity * cos(rad(110)),
+	            rudder_deflection * q * RAPTOR::S * 0.3 * 0.5 * RAPTOR::left_rudder_integrity * sin(rad(110))),
+    		RAPTOR::left_rudder_pos);
+        add_local_force(Vec3(
+				0,
+	            rudder_deflection * q * RAPTOR::S * 0.3 * 0.5 * RAPTOR::right_rudder_integrity * cos(rad(70)),
+	            rudder_deflection * q * RAPTOR::S * 0.3 * 0.5 * RAPTOR::right_rudder_integrity * sin(rad(70))),
+            RAPTOR::right_rudder_pos);
 
         double left_tv_force = RAPTOR::left_thrust_force * RAPTOR::left_throttle_output * sin(RAPTOR::left_tv_angle);
         double right_tv_force = RAPTOR::right_thrust_force * RAPTOR::right_throttle_output * sin(RAPTOR::right_tv_angle);
@@ -1302,16 +1314,16 @@ void ed_fm_set_draw_args_v2(float* data, const size_t size) {
                                                          1.0f));
         data[11] = current_left_aileron;
         data[12] = current_right_aileron;
-        current_left_rudder = static_cast<float>(limit(rate_limit(current_left_rudder, (float)RAPTOR::rudder_command, control_surface_rate, rate),
+        current_left_rudder = static_cast<float>(limit(rate_limit(current_left_rudder, static_cast<float>(RAPTOR::rudder_command), control_surface_rate, rate),
                                                        -1.0f, 1.0f));
-        current_right_rudder = static_cast<float>(limit(rate_limit(current_right_rudder, (float)RAPTOR::rudder_command, control_surface_rate, rate),
+        current_right_rudder = static_cast<float>(limit(rate_limit(current_right_rudder, static_cast<float>(RAPTOR::rudder_command), control_surface_rate, rate),
                                                         -1.0f, 1.0f));
         data[17] = current_left_rudder;
         data[18] = current_right_rudder;
         if (RAPTOR::flaps_pos > 0.0f) {
-            current_left_flap = static_cast<float>(limit(rate_limit(current_left_flap, (float)RAPTOR::flaps_pos, control_surface_rate, rate), -1.0f,
+            current_left_flap = static_cast<float>(limit(rate_limit(current_left_flap, static_cast<float>(RAPTOR::flaps_pos), control_surface_rate, rate), -1.0f,
                                                          1.0f));
-            current_right_flap = static_cast<float>(limit(rate_limit(current_right_flap, (float)RAPTOR::flaps_pos, control_surface_rate, rate), -1.0f,
+            current_right_flap = static_cast<float>(limit(rate_limit(current_right_flap, static_cast<float>(RAPTOR::flaps_pos), control_surface_rate, rate), -1.0f,
                                                           1.0f));
             data[9] = current_left_flap;
             data[10] = current_right_flap;
