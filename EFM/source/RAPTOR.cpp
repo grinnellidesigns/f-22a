@@ -534,31 +534,6 @@ void ed_fm_simulate(double dt) {
             elevator_cmd += g_excess * g_reduction_factor;
             elevator_cmd = std::min(elevator_cmd, 0.0);
         }
-        
-        const double max_alpha = 60.0;
-        const double aoa_limit_gain = 0.1;
-        const double throttle_lower_bound = 0.7;
-        const double throttle_upper_bound = 0.95;
-
-        double effective_throttle = std::min(RAPTOR::left_throttle_input, RAPTOR::right_throttle_input);
-
-        double aoa_limiter_scale = 1.0;
-        if (effective_throttle > throttle_lower_bound) {
-            aoa_limiter_scale = (throttle_upper_bound - effective_throttle) / (throttle_upper_bound - throttle_lower_bound);
-            aoa_limiter_scale = std::clamp(aoa_limiter_scale, 0.0, 1.0);
-        }
-
-        if (RAPTOR::alpha > max_alpha && elevator_cmd > 0.0) {
-            double alpha_excess = RAPTOR::alpha - max_alpha;
-            elevator_cmd -= alpha_excess * aoa_limit_gain * aoa_limiter_scale;
-            elevator_cmd = std::max(elevator_cmd, 0.0);
-        }
-        else if (RAPTOR::alpha < -max_alpha && elevator_cmd < 0.0) {
-            double alpha_excess = -RAPTOR::alpha - max_alpha;
-            elevator_cmd += alpha_excess * aoa_limit_gain * aoa_limiter_scale;
-            elevator_cmd = std::min(elevator_cmd, 0.0);
-        }
-
 
         elevator_cmd = limit(RAPTOR::last_elevator_cmd + limit(elevator_cmd - RAPTOR::last_elevator_cmd, -max_rate * dt, max_rate * dt), -1.0, 1.0);
         RAPTOR::last_elevator_cmd = elevator_cmd;
@@ -601,15 +576,7 @@ void ed_fm_simulate(double dt) {
             if (RAPTOR::alpha < -15.0) tv_pitch_cmd += (-RAPTOR::alpha - 12.0) * 0.1;
         }
 
-        double tv_throttle_scale = (RAPTOR::left_throttle_input - 0.68) / (0.7 - 0.68);
-        tv_throttle_scale = limit(tv_throttle_scale, 0.0, 1.0);
-        tv_pitch_cmd *= tv_throttle_scale;
-
         tv_pitch_cmd += -RAPTOR::pitch_rate;
-
-        if (tv_throttle_scale <= 0.9) {
-            tv_pitch_cmd = 0.0; 
-        }
 
         double tv_command = limit(RAPTOR::last_tv_cmd + limit(tv_pitch_cmd - RAPTOR::last_tv_cmd, -max_rate * dt, max_rate * dt), -1.0, 1.0);
         RAPTOR::last_tv_cmd = tv_command;
@@ -667,20 +634,16 @@ void ed_fm_simulate(double dt) {
         RAPTOR::last_rudder_cmd = RAPTOR::rudder_command;
 
         double elevon_force_magnitude = q * RAPTOR::S * 0.20;
-
-        double ias_scale = 1.0;
-        if (ias_knots < 110.0) {
-            if (ias_knots <= 60.0) {
-                ias_scale = 0.1;
-            }
-            else {
-                ias_scale = 0.1 + (ias_knots - 60.0) * (1.0 - 0.1) / (110.0 - 60.0);
-            }
+        
+        double aoa_abs = fabs(RAPTOR::alpha);
+        double elevon_aoa_scale = 1.0;
+        if (aoa_abs > 30.0) {
+            elevon_aoa_scale = 1.0 - (0.9 * (aoa_abs - 30.0) / (60.0 - 30.0));
+            elevon_aoa_scale = limit(elevon_aoa_scale, 0.1, 1.0);
         }
-        elevon_force_magnitude *= ias_scale;
 
-        add_local_force(Vec3(0, RAPTOR::left_elevon_angle * elevon_force_magnitude * RAPTOR::left_elevon_integrity, 0), RAPTOR::left_elevon_pos);
-        add_local_force(Vec3(0, RAPTOR::right_elevon_angle * elevon_force_magnitude * RAPTOR::right_elevon_integrity, 0), RAPTOR::right_elevon_pos);
+        add_local_force(Vec3(0, RAPTOR::left_elevon_angle * elevon_force_magnitude * elevon_aoa_scale * RAPTOR::left_elevon_integrity, 0), RAPTOR::left_elevon_pos);
+        add_local_force(Vec3(0, RAPTOR::right_elevon_angle * elevon_force_magnitude * elevon_aoa_scale * RAPTOR::right_elevon_integrity, 0), RAPTOR::right_elevon_pos);
 
         double aileron_deflection = RAPTOR::aileron_command * RAPTOR::rad(30);
         add_local_force(Vec3(0, aileron_deflection * q * RAPTOR::S * 0.25, 0), RAPTOR::left_aileron_pos);
