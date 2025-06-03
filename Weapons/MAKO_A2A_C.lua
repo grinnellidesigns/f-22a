@@ -17,7 +17,7 @@
 --]]
 
 
---v1.0
+--v1.1
 local MAKO_A2A_C =
 {
 	category		= CAT_AIR_TO_AIR,
@@ -30,10 +30,10 @@ local MAKO_A2A_C =
 	model			= "Mako_A2A_C",
     wsTypeOfWeapon  = {4,4,7,WSTYPE_PLACEHOLDER},
 
-	warhead 	= enhanced_a2a_warhead(60, 160),
-	warhead_air = enhanced_a2a_warhead(60, 160),
+	warhead 	= enhanced_a2a_warhead(160, 160),
+	warhead_air = enhanced_a2a_warhead(160, 160),
 	proximity_fuze = {
-		radius		= 9.0,
+		radius		= 30.0,
 		arm_delay	= 1.6,
 	},	
 	
@@ -60,7 +60,7 @@ local MAKO_A2A_C =
     D_max = 30000.0,
     D_min = 500.0,
     Head_Form = 1,
-    Life_Time = 240.0,
+    Life_Time = 340.0,
     Nr_max = 40,
     v_min = 140.0,
     v_mid = 2200.0,
@@ -70,11 +70,11 @@ local MAKO_A2A_C =
     t_marsh = 4.0,
     Range_max = 280000.0,
     H_min_t = 1.0,
-    Fi_start = 3.14152,
+    Fi_start = 0.5,
     Fi_rak = 3.14152,
-    Fi_excort = 2.2,
-    Fi_search = 99.9,
-    OmViz_max = 99.9,
+    Fi_excort = 1.05,
+    Fi_search = 1.05,
+    OmViz_max = 0.52,
 	exhaust = { 1, 1, 1, 1 },
     X_back = -1.9,
     Y_back = 0.0,
@@ -94,7 +94,7 @@ local MAKO_A2A_C =
 	
 	controller = {
 		boost_start = 0.5,
-		march_start = 48.5,
+		march_start = 38.5,
 	},
 
 	boost = {
@@ -149,7 +149,7 @@ local MAKO_A2A_C =
 				0.0,		0.0,	10.5,		2.0,		0.0,			0.0,		0.0,        -- fuel flow rate in second
 				0.0,		0.0,	23770.0,    7530.0, 	0.0,			0.0,		0.0,        -- thrust, newtons
 				1.0e9,
-				240.0,       -- LIFETIME BATTERY	(SEC)	
+				340.0,       -- LIFETIME BATTERY	(SEC)	
 				0,
 				1.0,
 				30000.0,     -- RANGE TO TARGET AT LAUNCH, BEYOND THAT MISSILE EXECUTE LOFT
@@ -217,22 +217,22 @@ local MAKO_A2A_C =
 
 	sensor = {
 		delay						= 1.5,
-		op_time						= 240,
-		FOV							= math.rad(60),
-		max_w_LOS					= math.rad(60),
+		op_time						= 340.0,
+		FOV							= math.rad(140),
+		max_w_LOS					= math.rad(140),
 		sens_near_dist				= 100,
 		sens_far_dist				= 40000,
-		ccm_k0						= 0.001,
+		ccm_k0						= 0.01,
 		aim_sigma					= 2.0,
 		height_error_k				= 10,
 		height_error_max_vel		= 30,
-		height_error_max_h			= 250,
+		height_error_max_h			= 200,
 		hoj							= 1,
 	},
 	
 	gimbal = {
 		delay				= 0,
-		op_time				= 240,
+		op_time				= 340.0,
 		pitch_max			= math.rad(60),
 		yaw_max				= math.rad(60),
 		max_tracking_rate	= math.rad(30),
@@ -241,28 +241,28 @@ local MAKO_A2A_C =
 
 	autopilot = {
 		delay				= 0.2,
-		cmd_delay 			= 0.8,
-		op_time				= 240,
+		cmd_delay			= 0.8,
+		op_time				= 340.0,
 		Tf					= 0.1,
 		Knav				= 4.0,
-		Kd					= 110.0,
-		Ka					= 22.0,
-		T1					= 292.0,
-		Tc					= 0.04,
+		Kd					= 180.0,
+		Ka					= 16.0,
+		T1					= 309.0,
+		Tc					= 0.06,
 		Kx					= 0.1,
 		Krx					= 2.0,
 		gload_limit			= 40.0,
 		fins_limit			= math.rad(18),
 		fins_limit_x		= math.rad(5),
 		null_roll			= math.rad(45),
-		accel_coeffs		= { 0, 3.4, -0.4, -0.2, 13.6,
-								0.0248 * 1.0 * 0.009 },
+		accel_coeffs		= { 0, 11.5,-1.2,-0.25, 24.0,
+								0.0248 * 0.75 * 0.0091 },
 
 		loft_active			= 1,
 		loft_factor			= 4.5,
 		loft_sin			= math.sin(30/57.3),
-		loft_off_range		= 15000.0,
-		dV0					= 347,
+		loft_off_range		= 15000,
+		dV0					= 393,
 	},
 
 	actuator = {

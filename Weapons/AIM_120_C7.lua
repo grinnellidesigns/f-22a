@@ -17,7 +17,7 @@
 --]]
 
 
---v1.0
+--v1.1
 local AIM_120_C7 =
 {
 	category		= CAT_AIR_TO_AIR,
@@ -335,59 +335,3 @@ declare_loadout({
     
     JettisonSubmunitionOnly = false,
 })
-
-declare_loadout({
-    category        = CAT_AIR_TO_AIR,
-    CLSID           = "{AIM_120C-7_IRST_LEFT}",  --BAY 4
-    wsTypeOfWeapon  = AIM_120_C7.wsTypeOfWeapon,
-    attribute       = {4,4,32,WSTYPE_PLACEHOLDER},
-    Count           = 1,
-    Picture         = "AIM-120C7+IRST.png",
-    displayName     = _("AIM-120C7 - Active Radar AAM + IRST POD"),
-    Weight          = 161.48 * 1 + 105,
-    Elements = {
-
-        {
-            ShapeName    =    "F22_IRST",
-            IsAdapter = true,
-        },
-
-        {
-            DrawArgs = {[1] = {1,1},[2] = {2,1},},
-            Position    =    {2.825,  -0.360, 3.90}, 
-            ShapeName    =    "AIM-120C7",
-            Rotation = {0,0,0},
-        },
-
-    },
-
-    JettisonSubmunitionOnly = true,
-})
-
-declare_loadout({
-    category        = CAT_AIR_TO_AIR,
-    CLSID           = "{AIM_120C-7_IRST_RIGHT}", --BAY 8
-    wsTypeOfWeapon    = AIM_120_C7.wsTypeOfWeapon,
-    attribute        = {4,4,32,WSTYPE_PLACEHOLDER},
-    Count           = 1,
-    Picture         = "AIM-120C7+IRST.png",
-    displayName     = _("AIM-120C7 - Active Radar AAM + IRST POD"),
-    Weight          = 161.48 * 1 + 105,
-    Elements = {
-
-        {
-            ShapeName    =    "F22_IRST",
-            IsAdapter = true,
-        },
-
-        {
-            DrawArgs = {[1] = {1,1},[2] = {2,1},},
-            Position    =    {2.795,  -0.360, -3.90},
-            ShapeName    =    "AIM-120C7",
-            Rotation = {0,0,0},
-        },
-
-    },
-
-    JettisonSubmunitionOnly = true,
-})	

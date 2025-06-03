@@ -25,23 +25,37 @@ local declare_pod = function (tbl)
 end
 
 declare_pod({
-	CLSID			= "{IRST_SENSOR_Pod}",
+	CLSID			= "{F22_IRST}",
 	Picture			= "F22_Sensor_Pod.png",
-	attribute		 = {4,	15,	45,	WSTYPE_PLACEHOLDER},
-	Weight			 = 105,
-	Cx_pil			 = 0.00070256637315,
+	attribute		= {4,	15,	45,	WSTYPE_PLACEHOLDER},
+    Count           = 2,	
+	Weight			= 0,
+	Cx_pil			= 0.00070256637315,
 	displayName		= _("IRST Sensor Pod"),
 	shape_table_data =
 	{
 		{
-			file	= "F22_Sensor_Pod";
+			file	= "F22_IRST";
 			life = 1,
 			fire = { 0, 1},
-			username	= "F22_Sensor_Pod";
+			username	= "F22_IRST";
 			index = WSTYPE_PLACEHOLDER,
 		},
 	},
-	ShapeName	=	"F22_Sensor_Pod",
+	Elements = {
+	
+		{
+			ShapeName	=	"null",
+			IsAdapter = true,
+		},
+		
+		{
+			DrawArgs = {[1] = {1,1},[2] = {2,1},},
+			Position	=	{0.170, 0.229, -8.94},
+			ShapeName	=	"F22_IRST",
+			Rotation = {0,0,0},
+		},	
+	},
 
 	Sensors	 = 
 	{
