@@ -445,7 +445,7 @@ void ed_fm_simulate(double dt) {
             max_tv_deflection = 0;
         }
 
-        const double takeoff_trim_value = 0.24;
+        const double takeoff_trim_value = 0.25;
         const double takeoff_trim_rate = 0.05;
 
         double ias_ms = RAPTOR::V_scalar * sqrt(RAPTOR::atmosphere_density / 1.225);
@@ -1865,7 +1865,7 @@ bool ed_fm_LERX_vortex_update(unsigned idx, LERX_vortex& out) {
     const unsigned num_points = 10;
     static std::vector<LERX_vortex_spline_point> spline_points(num_points);
 
-    float start_x = RAPTOR::left_wing_pos.x + 7.0f;
+    float start_x = RAPTOR::left_wing_pos.x + 6.0f;
     float start_z = (idx == 0) ? -1.2f : 1.2f;
     float start_y = RAPTOR::left_wing_pos.y + 0.025f;
 
@@ -1873,7 +1873,7 @@ bool ed_fm_LERX_vortex_update(unsigned idx, LERX_vortex& out) {
         auto& point = spline_points[i];
         float t = static_cast<float>(i) / (num_points - 1);
 
-        point.pos[0] = start_x - t * 8.0f;
+        //point.pos[0] = start_x - t * 8.0f;
         point.pos[0] = start_x - t * 8.0f;
         point.pos[1] = start_y + t * (idx == 0 ? 0.75f : 0.75f);
         point.pos[2] = start_z + t * 0.0f; 

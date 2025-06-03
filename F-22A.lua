@@ -28,7 +28,7 @@ F_22A =
         Picture 		= "F-22A.png",
         Rate 			= "50",
         Shape			= "F-22A",--AG	
-        WorldID			=  7,     
+        WorldID			=  F_22A,     
 	shape_table_data 	= 
 	{
 		{
