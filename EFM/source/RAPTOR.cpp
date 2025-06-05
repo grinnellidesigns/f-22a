@@ -1836,7 +1836,6 @@ bool ed_fm_LERX_vortex_update(unsigned idx, LERX_vortex& out) {
         auto& point = spline_points[i];
         float t = static_cast<float>(i) / (num_points - 1);
 
-        //point.pos[0] = start_x - t * 8.0f;
         point.pos[0] = start_x - t * 8.0f;
         point.pos[1] = start_y + t * (idx == 0 ? 0.75f : 0.75f);
         point.pos[2] = start_z + t * 0.0f; 

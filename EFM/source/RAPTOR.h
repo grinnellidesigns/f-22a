@@ -220,22 +220,6 @@ namespace RAPTOR {
     static double smoothed_roll_discrete;
     static double smoothed_yaw_discrete;
 
-    struct LERX_vortex_spline_point {
-        float pos[3]; 
-        float vel[3]; 
-        float radius; 
-        float opacity; 
-    };
-
-    struct LERX_vortex {
-        float opacity = 1.0f;                             
-        float explosion_start = 1.0f;                     
-        LERX_vortex_spline_point* spline = nullptr;   
-        unsigned spline_points_count = 0;        
-        unsigned spline_point_size_in_bytes = sizeof(LERX_vortex_spline_point);
-        unsigned version = 0;                             
-    };
-
 }
 
     // ----- Damage Elements -----
