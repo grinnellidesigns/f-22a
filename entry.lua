@@ -67,7 +67,6 @@ dofile(cfg_path)
 local FM = {
 [1] = self_ID,
 [2] = 'F22.dll',
-center_of_mass = {1.21, -0.14, 0.0},
 config_path = cfg_path,
 suspension = suspension,
 old = 6,

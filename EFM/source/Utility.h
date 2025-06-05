@@ -179,3 +179,10 @@ double smooth_lerp(double current, double target, double t)
 {
 	return current + (target - current) * t;
 };
+
+//Slew Rate Limiter
+inline double slew_rate_limit(double current, double target, double rate, double dt) {
+	double delta = target - current;
+	double max_change = rate * dt;
+	return current + std::clamp(delta, -max_change, max_change);
+}

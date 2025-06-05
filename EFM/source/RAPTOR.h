@@ -39,14 +39,15 @@ namespace FM_DATA
 
     double cx_gear = 0.14;
     double cx_brk = 0.062;
-    double cx_flap = 0.051;
-    double cy_flap = 0.082;
+    double cx_flap = 0.042;
+    double cy_flap = 0.048;
 
     double cx0[] = { 0.013, 0.0135, 0.014, 0.021, 0.0358, 0.0505, 0.0455, 0.04175, 0.038, 0.037, 0.0368, 0.0362, 0.039 };
-    double Cya[] = { 0.015, 0.075, 0.07, 0.065, 0.06, 0.055, 0.05, 0.045, 0.04, 0.0375, 0.035, 0.0325, 0.03 };
+    double Cya[] = { 0.015, 0.055, 0.07, 0.065, 0.06, 0.055, 0.05, 0.045, 0.04, 0.0375, 0.035, 0.0325, 0.03 };
     double OmxMax[] = { 1.65, 2.45, 3.25, 4.7, 3.98, 3.2, 2.5, 2.25, 2.0, 1.85, 1.7, 1.5, 1.3 };
     double Aldop[] = { 60, 57.5, 55, 50, 45, 40, 35, 32.5, 30, 30, 30, 30, 30 };
     double CyMax[] = { 1.8, 1.85, 1.9, 1.85, 1.75, 1.6, 1.45, 1.35, 1.25, 1.15, 1.1, 1.05, 1.0 };
+
 
     double AoA_table[] = { 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0 };
     double AoA_drag_factor[] = { 0.0, 0.005, 0.02, 0.082, 0.17, 0.275, 0.41, 0.58, 0.7, 0.81 };
@@ -68,16 +69,15 @@ namespace FM_DATA
 
     double elevator_rate_table[] = { 1.396, 1.396, 1.30, 1.016, 0.912, 0.912, 0.912, 0.942, 1.105, 1.105, 1.105, 1.105, 1.105 };
     double max_elevator_deflection[] = { 30.0, 28.0, 21.5, 13.8, 11.5, 11.0, 11.0, 11.0, 13.0, 13.0, 13.0, 13.0, 13.0 };
-    const double max_aileron_rate = 15.55;
+    const double max_aileron_rate = 14.55;
     double max_thrust_vector_deflection[] = { 20.0, 20.0, 17.0, 11.5, 6.0, 4.0, 2.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0 };
     double thrust_vector_rate[] = { 1.396, 1.3905, 1.189, 0.855, 0.759, 0.737, 0.601, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-    double Kd_pitch[] = { 0.635, 0.662, 0.654, 0.80, 1.25, 1.95, 2.2, 2.5, 2.8, 2.8, 2.8, 2.8, 2.8 };
+    double Kd_pitch[] = { 0.675, 0.668, 0.654, 0.80, 1.25, 1.95, 2.2, 2.5, 2.8, 2.8, 2.8, 2.8, 2.8 };
     double Kd_roll[] = { 0.50, 0.35, 0.33, 0.29, 0.33, 0.37, 0.42, 0.52, 0.62, 0.74, 0.85, 0.88, 0.81 };
     double Kd_yaw[] = { 2.0, 2.0, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0 };
-
 }
 
-// ----- EFM Data -----
+    // ----- EFM Data -----
 
 namespace RAPTOR {
     Vec3 common_force, common_moment, center_of_mass, wind, velocity_world, airspeed;
@@ -98,14 +98,16 @@ namespace RAPTOR {
     Vec3 left_aileron_pos(center_of_mass.x, center_of_mass.y, -wingspan * 0.5);
     Vec3 right_aileron_pos(center_of_mass.x, center_of_mass.y, wingspan * 0.5);
     Vec3 rudder_pos(-length / 2, height / 2, 0);
-    Vec3 left_engine_pos(-3.793, 0, -0.716);
-    Vec3 right_engine_pos(-3.793, 0, 0.716);
+    Vec3 left_engine_pos(-4.793, 0, -0.716);
+    Vec3 right_engine_pos(-4.793, 0, 0.716);
 
     double pitch_input = 0, pitch_discrete = 0, pitch_trim = 0;
     double left_elevon_command = 0, right_elevon_command = 0;
     double left_elevon_angle = 0.0, right_elevon_angle = 0.0;
     bool pitch_analog = true;
     double roll_input = 0, roll_discrete = 0, roll_trim = 0, aileron_command = 0;
+    double left_aileron_angle = 0.0;
+    double right_aileron_angle = 0.0;
     bool roll_analog = true;
     double yaw_input = 0, yaw_discrete = 0, yaw_trim = 0, rudder_command = 0;
     bool yaw_analog = true;
@@ -212,10 +214,15 @@ namespace RAPTOR {
     const double blink_on_time = 0.10;
     const double blink_off_time = 1.50;
     const double blink_period = blink_on_time + blink_off_time;
+    static double aileron_animation_command;
+
+    static double smoothed_pitch_discrete;
+    static double smoothed_roll_discrete;
+    static double smoothed_yaw_discrete;
 
 }
 
-// ----- Damage Elements -----
+    // ----- Damage Elements -----
 
 enum class DamageElement : size_t {
     NoseCenter = 0,
@@ -356,7 +363,7 @@ enum class DamageElement : size_t {
     TailRotor = 136
 };
 
-// ----- Cockpit Logic -----
+    // ----- Cockpit Logic -----
 
 class CockpitManager {
 public:

@@ -28,7 +28,7 @@ F_22A =
         Picture 		= "F-22A.png",
         Rate 			= "50",
         Shape			= "F-22A",--AG	
-        WorldID			=  6,     
+        WorldID			=  F_22A,     
 	shape_table_data 	= 
 	{
 		{
@@ -108,7 +108,7 @@ F_22A =
 		flaps_maneuver				=	1,
 		Mach_max					=	2.25,	-- Max speed in Mach (for AI)
 		range						=	2540,	-- Max range in km (for AI)
-		RCS							=	0.00001,   -- Radar Cross Section m2 was 0.0001
+		RCS							=	0.0001,   -- Radar Cross Section m2 was 0.0001
 		Ny_max_e					=	8,		-- Max G (for AI)
 		detection_range_max			=	800,
 		IR_emission_coeff			=	0.15,	-- Normal engine -- IR_emission_coeff = 1 is Su-27 without afterburner. It is reference. was /25
@@ -290,6 +290,7 @@ F_22A =
 				use_full_connector_position = true,
             },
             {
+			    { CLSID = "CATM-9M", attach_point_position = {0.01, 0.030, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0},			
 				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}", attach_point_position = {-0.02, -0.043, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM9X
 				{ CLSID = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}", attach_point_position = {-0.07, -0.038, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM9M		
 				{ CLSID = "{AIM9X-BLKII}", attach_point_position = {0.14, 0.02, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
@@ -302,6 +303,7 @@ F_22A =
 				arg_increment = 1,
             },
             {
+				{ CLSID = "<CLEAN>" },				
 			    { CLSID = "{E1F29B21-F291-4589-9FD8-3272EEC69506}",arg_value = 0, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --F-15C Fuel Tank 600 Gallons
 				{ CLSID = "{LDTP_FUEL_Tank}",arg_value = 1,attach_point_position = {1.36,  -0.220, 0.00}, Cx_gain_empty = 0.0, Cx_gain_item = 1.5},					
 				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",attach_point_position = {0.22, -0.11,  0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM9X
@@ -337,19 +339,27 @@ F_22A =
 				arg 	  		= 311,
 				arg_increment = 1,
             },
-            {
-                { CLSID = "{IRST_SENSOR_Pod}",arg_value = 1,attach_point_position = {-2.84,  0.358, -4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 1.0},			
+            {	
 				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}", attach_point_position = {0.18, -0.11, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120C
 			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120B
 			    { CLSID = "{AIM-120C-7}", attach_point_position = {0.18, -0.11, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
 				{ CLSID = "{AIM-120C-8}", attach_point_position = {0.18, -0.11, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
 				{ CLSID = "{AIM-120D-3}", attach_point_position = {0.18, -0.11, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},	
                 { CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11, -0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},		
-                { CLSID = "{MAKO_A2A_C}", attach_point_position = {-0.03,-0.08, -0.20}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},
-                { CLSID = "{AIM_120C-7_IRST_LEFT}", attach_point_position = {-2.84, 0.358, -4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
-                { CLSID = "{AIM_120C-8_IRST_LEFT}", attach_point_position = {-2.84, 0.358, -4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
-                { CLSID = "{AIM_120D-3_IRST_LEFT}", attach_point_position = {-2.84, 0.358, -4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},					
-                { CLSID = "{AIM_260A_IRST_LEFT}"  , attach_point_position = {-2.84, 0.358, -4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
+                { CLSID = "{MAKO_A2A_C}", attach_point_position = {-0.03,-0.08, -0.20}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {
+				{ station = 3, loadout = {"{AIM-260A}"}},		
+                { station = 3, loadout = {"{AIM-120D-3}"}},	
+				{ station = 3, loadout = {"{AIM-120C-8}"}},
+				{ station = 3, loadout = {"{AIM-120C-7}"}},
+				{ station = 3, loadout = {"{C8E06185-7CD6-4C90-959F-044679E90751}"}},
+				{ station = 3, loadout = {"{40EF17B7-F508-45de-8566-6FFECC0C1AB8}"}}}},
+                { CLSID = "{MAKO_A2G_C}", attach_point_position = {-0.03,-0.08, -0.20}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {
+				{ station = 3, loadout = {"{AIM-260A}"}},		
+                { station = 3, loadout = {"{AIM-120D-3}"}},	
+				{ station = 3, loadout = {"{AIM-120C-8}"}},
+				{ station = 3, loadout = {"{AIM-120C-7}"}},
+				{ station = 3, loadout = {"{C8E06185-7CD6-4C90-959F-044679E90751}"}},
+				{ station = 3, loadout = {"{40EF17B7-F508-45de-8566-6FFECC0C1AB8}"}}}},				
             }
         ),
         pylon(5, 1, -2.083, -0.30, -0.37,--Weapons Bay Left 3
@@ -359,25 +369,51 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",	Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120C
-			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120B
-			    { CLSID = "{AIM-120C-7}", Cx_gain_empty = 0.0, Cx_gain_item = 0},				
-				{ CLSID = "{AIM-120C-8}", Cx_gain_empty = 0.0, Cx_gain_item = 0},
-				{ CLSID = "{AIM-120D-3}", Cx_gain_empty = 0.0, Cx_gain_item = 0},	
-				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11,  0.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
-                { CLSID = "{MAKO_A2A_C}", attach_point_position = {0.03, -0.08, -0.05}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},											
+				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",	Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = { --AIM_120C
+				{ station = 4, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 4, loadout = {"{MAKO_A2G_C}"}}}},				
+			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = { --AIM_120B
+				{ station = 4, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 4, loadout = {"{MAKO_A2G_C}"}}}},				
+			    { CLSID = "{AIM-120C-7}", Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {
+				{ station = 4, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 4, loadout = {"{MAKO_A2G_C}"}}}},					
+				{ CLSID = "{AIM-120C-8}", Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {
+				{ station = 4, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 4, loadout = {"{MAKO_A2G_C}"}}}},					
+				{ CLSID = "{AIM-120D-3}", Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {	
+				{ station = 4, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 4, loadout = {"{MAKO_A2G_C}"}}}},				
+				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11,  0.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {
+				{ station = 4, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 4, loadout = {"{MAKO_A2G_C}"}}}},
+                { CLSID = "{MAKO_A2A_C}", attach_point_position = {0.03, -0.08, -0.05}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},	
+ 				{ CLSID = "{MAKO_A2G_C}", attach_point_position = {0.03, -0.08, -0.05}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},	
+				{ CLSID = "{GBU32_JDAM}", attach_point_position = {0.12, -0.10, -0.13}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {	
+				{ station = 4, loadout = {"{40EF17B7-F508-45de-8566-6FFECC0C1AB8}"}},	
+				{ station = 4, loadout = {"{C8E06185-7CD6-4C90-959F-044679E90751}"}},	
+				{ station = 4, loadout = {"{AIM-120C-7}"}},	
+				{ station = 4, loadout = {"{AIM-120C-8}"}},		
+				{ station = 4, loadout = {"{AIM-120D-3}"}},	
+				{ station = 4, loadout = {"{AIM-260A}"}},
+				{ station = 4, loadout = {"{MAKO_A2A_C}"}},				
+				{ station = 4, loadout = {"{MAKO_A2G_C}"}}}},				
             }
         ),
         pylon(6, 1, 1.6, -0.31, 0,
             {
-				use_full_connector_position = true,
+				use_full_connector_position = true,	
+                connector = "Pylon4"				
             },
             {
-				{ CLSID	= "{A4BCC903-06C8-47bb-9937-A30FEDB4E741}" }, --Smokewinder - red
-			    { CLSID	= "{A4BCC903-06C8-47bb-9937-A30FEDB4E742}" }, --Smokewinder - green
-			    { CLSID	= "{A4BCC903-06C8-47bb-9937-A30FEDB4E743}" }, --Smokewinder - blue
-			    { CLSID	= "{A4BCC903-06C8-47bb-9937-A30FEDB4E744}" }, --Smokewinder - white
-			    { CLSID	= "{A4BCC903-06C8-47bb-9937-A30FEDB4E745}" }, --Smokewinder - yellow
+				{ CLSID = "<CLEAN>" },					
+				{ CLSID = "{INV-SMOKE-RED}", 	attach_point_position = {-7.0, 0.75, 0.575}},	--red
+				{ CLSID = "{INV-SMOKE-GREEN}", 	attach_point_position = {-7.0, 0.75, 0.575}},	--green
+				{ CLSID = "{INV-SMOKE-BLUE}", 	attach_point_position = {-7.0, 0.75, 0.575}},	--blue
+				{ CLSID = "{INV-SMOKE-WHITE}", 	attach_point_position = {-7.0, 0.75, 0.575}},	--white
+				{ CLSID = "{INV-SMOKE-YELLOW}", attach_point_position = {-7.0, 0.75, 0.575}},	--yellow
+				{ CLSID = "{INV-SMOKE-ORANGE}",	attach_point_position = {-7.0, 0.75, 0.575}},	--orange
+                { CLSID = "{F22_IRST}",arg_value = 1, attach_point_position = {-2.81,  0.349, 4.95}, Cx_gain_empty = 0.0, Cx_gain_item = 1.0},
             }
         ),
         pylon(7, 1, -2.083, -0.30, 0.37,--Weapons Bay Right 3
@@ -387,13 +423,35 @@ F_22A =
 				arg_increment = 1,
             },
             {
-				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",	Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120C
-			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120B
-			    { CLSID = "{AIM-120C-7}", Cx_gain_empty = 0.0, Cx_gain_item = 0},
-				{ CLSID = "{AIM-120C-8}", Cx_gain_empty = 0.0, Cx_gain_item = 0},
-				{ CLSID = "{AIM-120D-3}", Cx_gain_empty = 0.0, Cx_gain_item = 0},	
-				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11, 0.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},	
-                { CLSID = "{MAKO_A2A_C}", attach_point_position = {0.03, -0.08, 0.05}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},										
+				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",	Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = { --AIM_120C
+                { station = 8, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 8, loadout = {"{MAKO_A2G_C}"}}}},					
+			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = { --AIM_120B
+                { station = 8, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 8, loadout = {"{MAKO_A2G_C}"}}}},					
+			    { CLSID = "{AIM-120C-7}", Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {
+                { station = 8, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 8, loadout = {"{MAKO_A2G_C}"}}}},					
+				{ CLSID = "{AIM-120C-8}", Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {
+                { station = 8, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 8, loadout = {"{MAKO_A2G_C}"}}}},					
+				{ CLSID = "{AIM-120D-3}", Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {	
+                { station = 8, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 8, loadout = {"{MAKO_A2G_C}"}}}},					
+				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11, 0.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {
+                { station = 8, loadout = {"{MAKO_A2A_C}"}},	
+				{ station = 8, loadout = {"{MAKO_A2G_C}"}}}},				
+                { CLSID = "{MAKO_A2A_C}", attach_point_position = {0.03, -0.08, 0.05}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},	
+                { CLSID = "{MAKO_A2G_C}", attach_point_position = {0.03, -0.08, 0.05}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},					
+				{ CLSID = "{GBU32_JDAM}", attach_point_position = {0.12, -0.10, 0.13}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {		
+				{ station = 8, loadout = {"{40EF17B7-F508-45de-8566-6FFECC0C1AB8}"}},	
+				{ station = 8, loadout = {"{C8E06185-7CD6-4C90-959F-044679E90751}"}},	
+				{ station = 8, loadout = {"{AIM-120C-7}"}},	
+				{ station = 8, loadout = {"{AIM-120C-8}"}},		
+				{ station = 8, loadout = {"{AIM-120D-3}"}},					
+				{ station = 8, loadout = {"{AIM-260A}"}},
+				{ station = 8, loadout = {"{MAKO_A2A_C}"}},				
+				{ station = 8, loadout = {"{MAKO_A2G_C}"}}}},					
             }
         ),
         pylon(8, 1, 2.649, -0.48, 0.37,--Weapons Bay Right 2
@@ -403,18 +461,26 @@ F_22A =
 				arg_increment = 1,
             },
             {
-			    { CLSID = "{IRST_SENSOR_Pod}",arg_value = 1,attach_point_position = {-2.81,  0.350, 4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 1.0},
 				{ CLSID = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}", attach_point_position = {0.18, -0.11, 0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120C
 			    { CLSID = "{C8E06185-7CD6-4C90-959F-044679E90751}", attach_point_position = {0.17, -0.05, 0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM_120B
 			    { CLSID = "{AIM-120C-7}", attach_point_position = {0.18, -0.11,  0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
 				{ CLSID = "{AIM-120C-8}", attach_point_position = {0.18, -0.11,  0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
 				{ CLSID = "{AIM-120D-3}", attach_point_position = {0.18, -0.11,  0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
 				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11,  0.09}, Cx_gain_empty = 0.0, Cx_gain_item = 0},		
-                { CLSID = "{MAKO_A2A_C}", attach_point_position = {-0.03,-0.08,  0.20}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0},
-                { CLSID = "{AIM_120C-7_IRST_RIGHT}", attach_point_position = {-2.81, 0.350, 4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},					
-                { CLSID = "{AIM_120C-8_IRST_RIGHT}", attach_point_position = {-2.81, 0.350, 4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
-                { CLSID = "{AIM_120D-3_IRST_RIGHT}", attach_point_position = {-2.81, 0.350, 4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},					
-                { CLSID = "{AIM_260A_IRST_RIGHT}"  , attach_point_position = {-2.81, 0.350, 4.00}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
+                { CLSID = "{MAKO_A2A_C}", attach_point_position = {-0.03,-0.08,  0.20}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {
+				{ station = 9, loadout = {"{AIM-260A}"}},		
+                { station = 9, loadout = {"{AIM-120D-3}"}},	
+				{ station = 9, loadout = {"{AIM-120C-8}"}},
+				{ station = 9, loadout = {"{AIM-120C-7}"}},
+				{ station = 9, loadout = {"{C8E06185-7CD6-4C90-959F-044679E90751}"}},
+				{ station = 9, loadout = {"{40EF17B7-F508-45de-8566-6FFECC0C1AB8}"}}}},				
+				{ CLSID = "{MAKO_A2G_C}", attach_point_position = {-0.03,-0.08,  0.20}, Type = 1, Cx_gain_empty = 0.0, Cx_gain_item = 0,  forbidden = {
+				{ station = 9, loadout = {"{AIM-260A}"}},		
+                { station = 9, loadout = {"{AIM-120D-3}"}},	
+				{ station = 9, loadout = {"{AIM-120C-8}"}},
+				{ station = 9, loadout = {"{AIM-120C-7}"}},
+				{ station = 9, loadout = {"{C8E06185-7CD6-4C90-959F-044679E90751}"}},
+				{ station = 9, loadout = {"{40EF17B7-F508-45de-8566-6FFECC0C1AB8}"}}}},					
             }
         ),
 		pylon(9, 1, 1.2, -0.1, 2.95,--Weapons Bay Right 1
@@ -428,7 +494,7 @@ F_22A =
 			    { CLSID = "{AIM-120C-7}", attach_point_position = {0.18, -0.10, 0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},					
 				{ CLSID = "{AIM-120C-8}", attach_point_position = {0.18, -0.10, 0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},					
 				{ CLSID = "{AIM-120D-3}", attach_point_position = {0.18, -0.10, 0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},
-				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11, 0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
+				{ CLSID = "{AIM-260A}"  , attach_point_position = {0.22, -0.11, 0.1}, Cx_gain_empty = 0.0, Cx_gain_item = 0},           				
             }
         ),
 		pylon(10, 0, -0.210, -0.9, 1.487,--Right Wing Pylon
@@ -438,6 +504,7 @@ F_22A =
 				arg_increment = 1,
             },
             {
+				{ CLSID = "<CLEAN>" },				
 			    { CLSID = "{E1F29B21-F291-4589-9FD8-3272EEC69506}",arg_value = 0, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --F-15C Fuel Tank 600 Gallons
 				{ CLSID = "{LDTP_FUEL_Tank}",arg_value = 1,attach_point_position = {1.36,  -0.227, 0.00}, Cx_gain_empty = 0.0, Cx_gain_item = 1.5},				
 				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",attach_point_position = {0.22, -0.11,  0.0}, arg_increment = 0.7, Cx_gain_empty = 0.0, Cx_gain_item = 2.5}, --AIM9X
@@ -459,9 +526,10 @@ F_22A =
 				use_full_connector_position = true,
             },
             {
+                { CLSID = "CATM-9M", attach_point_position = {0.01, 0.020, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0},							
 				{ CLSID = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}", attach_point_position = {-0.02, -0.047, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM9X
 				{ CLSID = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}", attach_point_position = {-0.07, -0.043, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0}, --AIM9M		
-				{ CLSID = "{AIM9X-BLKII}", attach_point_position = {0.14, 0.01, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0},			
+				{ CLSID = "{AIM9X-BLKII}", attach_point_position = {0.14, 0.01, 0.0}, Cx_gain_empty = 0.0, Cx_gain_item = 0},				
             }
         ),	
 },
@@ -472,6 +540,7 @@ F_22A =
       	aircraft_task(FighterSweep),
 		aircraft_task(Intercept),
 		aircraft_task(Reconnaissance),
+		aircraft_task(GroundAttack),
     },	
 	DefaultTask = aircraft_task(CAP),
 

@@ -17,7 +17,7 @@
 --]]
 
 
---v1.0
+--v1.1
 local AIM_120_D3 =
 {
 	category		= CAT_AIR_TO_AIR,
@@ -33,7 +33,7 @@ local AIM_120_D3 =
 	warhead 	= predefined_warhead("AIM_120"),
 	warhead_air = predefined_warhead("AIM_120"),
 	proximity_fuze = {
-		radius		= 9.0,
+		radius		= 14.0,
 		arm_delay	= 1.6,
 	},
 	
@@ -219,8 +219,8 @@ local AIM_120_D3 =
 	sensor = {
 		delay						= 1.5,
 		op_time						= 170,
-		FOV							= math.rad(90),
-		max_w_LOS					= math.rad(30),
+		FOV							= math.rad(140),
+		max_w_LOS					= math.rad(140),
 		sens_near_dist				= 100,
 		sens_far_dist				= 40000,
 		ccm_k0						= 0.01,
@@ -335,59 +335,3 @@ declare_loadout({
     
     JettisonSubmunitionOnly = false,
 })
-
-declare_loadout({
-    category        = CAT_AIR_TO_AIR,
-    CLSID           = "{AIM_120D-3_IRST_LEFT}",  --BAY 4
-    wsTypeOfWeapon  = AIM_120_D3.wsTypeOfWeapon,
-    attribute       = {4,4,32,WSTYPE_PLACEHOLDER},
-    Count           = 1,
-    Picture         = "AIM-120D+IRST.png",
-    displayName     = _("AIM-120D3 - Active Radar AAM + IRST POD"),
-    Weight          = 165 * 1 + 105,
-    Elements = {
-
-        {
-            ShapeName    =    "F22_IRST",
-            IsAdapter = true,
-        },
-
-        {
-            DrawArgs = {[1] = {1,1},[2] = {2,1},},
-            Position    =    {2.825,  -0.360, 3.90}, 
-            ShapeName    =    "AIM-120D3",
-            Rotation = {0,0,0},
-        },
-
-    },
-
-    JettisonSubmunitionOnly = true,
-})
-
-declare_loadout({
-    category        = CAT_AIR_TO_AIR,
-    CLSID           = "{AIM_120D-3_IRST_RIGHT}", --BAY 8
-    wsTypeOfWeapon    = AIM_120_D3.wsTypeOfWeapon,
-    attribute        = {4,4,32,WSTYPE_PLACEHOLDER},
-    Count           = 1,
-    Picture         = "AIM-120D+IRST.png",
-    displayName     = _("AIM-120D3 - Active Radar AAM + IRST POD"),
-    Weight          = 165 * 1 + 105,
-    Elements = {
-
-        {
-            ShapeName    =    "F22_IRST",
-            IsAdapter = true,
-        },
-
-        {
-            DrawArgs = {[1] = {1,1},[2] = {2,1},},
-            Position    =    {2.795,  -0.360, -3.90},
-            ShapeName    =    "AIM-120D3",
-            Rotation = {0,0,0},
-        },
-
-    },
-
-    JettisonSubmunitionOnly = true,
-})	

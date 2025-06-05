@@ -33,11 +33,11 @@ local unitPayloads = {
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[4] = {
@@ -54,11 +54,11 @@ local unitPayloads = {
 			["name"] = "02) 2xAIM9X BLK II, 6xAIM-260",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -103,11 +103,11 @@ local unitPayloads = {
 			["name"] = "03) 2xAIM9X BLK II, 6xAIM-260, IRST POD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -123,7 +123,7 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[6] = {
-					["CLSID"] = "{AIM_260A_IRST_RIGHT}",
+					["CLSID"] = "{AIM-260A}",
 					["num"] = 8,
 				},
 				[7] = {
@@ -131,7 +131,7 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[8] = {
-					["CLSID"] = "{AIM_260A_IRST_LEFT}",
+					["CLSID"] = "{AIM-260A}",
 					["num"] = 4,
 				},
 				[9] = {
@@ -142,6 +142,10 @@ local unitPayloads = {
 					["CLSID"] = "{AIM-260A}",
 					["num"] = 5,
 				},
+				[11] = {
+					["CLSID"] = "{F22_IRST}",
+					["num"] = 6,
+				},				
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -172,7 +176,7 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[6] = {
-					["CLSID"] = "{AIM_260A_IRST_RIGHT}",
+					["CLSID"] = "{AIM-260A}",
 					["num"] = 8,
 				},
 				[7] = {
@@ -180,7 +184,7 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[8] = {
-					["CLSID"] = "{AIM_260A_IRST_LEFT}",
+					["CLSID"] = "{AIM-260A}",
 					["num"] = 4,
 				},
 				[9] = {
@@ -191,6 +195,10 @@ local unitPayloads = {
 					["CLSID"] = "{AIM-260A}",
 					["num"] = 5,
 				},
+				[11] = {
+					["CLSID"] = "{F22_IRST}",
+					["num"] = 6,
+				},				
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -201,11 +209,11 @@ local unitPayloads = {
 			["name"] = "05) 2xAIM9X BLK II, 6xAIM-120D3",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -250,11 +258,11 @@ local unitPayloads = {
 			["name"] = "06) 2xAIM9X BLK II, 6xAIM-120D3, IRST POD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -270,7 +278,7 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[6] = {
-					["CLSID"] = "{AIM_120D-3_IRST_RIGHT}",
+					["CLSID"] = "{AIM-120D-3}",
 					["num"] = 8,
 				},
 				[7] = {
@@ -278,7 +286,7 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[8] = {
-					["CLSID"] = "{AIM_120D-3_IRST_LEFT}",
+					["CLSID"] = "{AIM-120D-3}",
 					["num"] = 4,
 				},
 				[9] = {
@@ -289,6 +297,10 @@ local unitPayloads = {
 					["CLSID"] = "{AIM-120D-3}",
 					["num"] = 5,
 				},
+				[11] = {
+					["CLSID"] = "{F22_IRST}",
+					["num"] = 6,
+				},				
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -319,7 +331,7 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[6] = {
-					["CLSID"] = "{AIM_120D-3_IRST_RIGHT}",
+					["CLSID"] = "{AIM-120D-3}",
 					["num"] = 8,
 				},
 				[7] = {
@@ -327,7 +339,7 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[8] = {
-					["CLSID"] = "{AIM_120D-3_IRST_LEFT}",
+					["CLSID"] = "{AIM-120D-3}",
 					["num"] = 4,
 				},
 				[9] = {
@@ -338,6 +350,10 @@ local unitPayloads = {
 					["CLSID"] = "{AIM-120D-3}",
 					["num"] = 5,
 				},
+				[11] = {
+					["CLSID"] = "{F22_IRST}",
+					["num"] = 6,
+				},				
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -348,11 +364,11 @@ local unitPayloads = {
 			["name"] = "08) 2xAIM9X BLK II, 4xAIM-260, 2xMAKO",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -397,11 +413,11 @@ local unitPayloads = {
 			["name"] = "09) 2xAIM9X BLK II, 4xAIM-260, 2xMAKO, IRST POD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -417,7 +433,7 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[6] = {
-					["CLSID"] = "{AIM_260A_IRST_RIGHT}",
+					["CLSID"] = "{AIM-260A}",
 					["num"] = 8,
 				},
 				[7] = {
@@ -425,7 +441,7 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[8] = {
-					["CLSID"] = "{AIM_260A_IRST_LEFT}",
+					["CLSID"] = "{AIM-260A}",
 					["num"] = 4,
 				},
 				[9] = {
@@ -436,6 +452,10 @@ local unitPayloads = {
 					["CLSID"] = "{MAKO_A2A_C}",
 					["num"] = 5,
 				},
+				[11] = {
+					["CLSID"] = "{F22_IRST}",
+					["num"] = 6,
+				},				
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -446,11 +466,11 @@ local unitPayloads = {
 			["name"] = "10) 2xAIM9X BLK II, 4xAIM-120D3, 2xMAKO",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -495,11 +515,11 @@ local unitPayloads = {
 			["name"] = "11) 2xAIM9X BLK II, 4xAIM-120D3, 2xMAKO, IRST POD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -515,7 +535,7 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[6] = {
-					["CLSID"] = "{AIM_120D-3_IRST_RIGHT}",
+					["CLSID"] = "{AIM-120D-3}",
 					["num"] = 8,
 				},
 				[7] = {
@@ -523,7 +543,7 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[8] = {
-					["CLSID"] = "{AIM_120D-3_IRST_LEFT}",
+					["CLSID"] = "{AIM-120D-3}",
 					["num"] = 4,
 				},
 				[9] = {
@@ -534,6 +554,10 @@ local unitPayloads = {
 					["CLSID"] = "{MAKO_A2A_C}",
 					["num"] = 5,
 				},
+				[11] = {
+					["CLSID"] = "{F22_IRST}",
+					["num"] = 6,
+				},				
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -544,11 +568,11 @@ local unitPayloads = {
 			["name"] = "12) 2xAIM9X BLK II, 4xMAKO",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -617,6 +641,10 @@ local unitPayloads = {
 					["CLSID"] = "{IRST_SENSOR_Pod}",
 					["num"] = 4,
 				},
+				[5] = {
+					["CLSID"] = "{F22_IRST}",
+					["num"] = 6,
+				},				
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -627,11 +655,11 @@ local unitPayloads = {
 			["name"] = "15) 2xAIM9M, 6xAIM-120B",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -676,7 +704,7 @@ local unitPayloads = {
 			["name"] = "16) 2xAIM9X, 6xAIM-120C",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
@@ -712,7 +740,7 @@ local unitPayloads = {
 					["num"] = 5,
 				},
 				[10] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 			},
@@ -725,11 +753,11 @@ local unitPayloads = {
 			["name"] = "17) 2xAIM9X BLK II, 6xAIM-120C7",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -774,11 +802,11 @@ local unitPayloads = {
 			["name"] = "18) 2xAIM9X BLK II, 6xAIM-120C8",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
@@ -857,22 +885,153 @@ local unitPayloads = {
 			["name"] = "21) Airshow Configuration",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{<CLEAN>}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{A4BCC903-06C8-47bb-9937-A30FEDB4E744}",
+					["CLSID"] = "{INV-SMOKE-WHITE}",
 					["num"] = 6,
 				},
 			},
 			["tasks"] = {
 				[1] = 11,
 			},
-		},		
+		},	
+		[22] = {
+			["displayName"] = "01) 2xGBU-32_JDAM, 2xAIM-120D3, 2xAIM9X BLK II",
+			["name"] = "01) 2xGBU-32_JDAM, 2xAIM-120D3, 2xAIM9X BLK II",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "{AIM-120D-3}",
+					["num"] = 9,
+				},
+				[4] = {
+					["CLSID"] = "{AIM-120D-3}",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{AIM9X-BLKII}",
+					["num"] = 1,
+				},
+				[6] = {
+					["CLSID"] = "{AIM9X-BLKII}",
+					["num"] = 11,
+				},
+				[7] = {
+					["CLSID"] = "{GBU32_JDAM}",
+					["num"] = 7,
+				},
+				[8] = {
+					["CLSID"] = "{GBU32_JDAM}",
+					["num"] = 5,
+				},
+			},
+			["tasks"] = {
+				[1] = 32,
+			},
+		},
+		[23] = {
+			["displayName"] = "02) 2xMako ARM, 4xAIM-120D3, 2xAIM9X BLK II",
+			["name"] = "02) 2xMako ARM, 4xAIM-120D3, 2xAIM9X BLK II",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "{AIM-120D-3}",
+					["num"] = 9,
+				},
+				[4] = {
+					["CLSID"] = "{AIM-120D-3}",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{AIM9X-BLKII}",
+					["num"] = 1,
+				},
+				[6] = {
+					["CLSID"] = "{AIM9X-BLKII}",
+					["num"] = 11,
+				},
+				[7] = {
+					["CLSID"] = "{MAKO_A2G_C}",
+					["num"] = 7,
+				},
+				[8] = {
+					["CLSID"] = "{MAKO_A2G_C}",
+					["num"] = 5,
+				},
+				[9] = {
+					["CLSID"] = "{AIM-120D-3}",
+					["num"] = 8,
+				},
+				[10] = {
+					["CLSID"] = "{AIM-120D-3}",
+					["num"] = 4,
+				},
+			},
+			["tasks"] = {
+				[1] = 32,
+			},
+		},
+		[24] = {
+			["displayName"] = "03) 4xMako ARM, 2xAIM9X BLK II",
+			["name"] = "03) 4xMako ARM, 2xAIM9X BLK II",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "{AIM9X-BLKII}",
+					["num"] = 1,
+				},
+				[4] = {
+					["CLSID"] = "{AIM9X-BLKII}",
+					["num"] = 11,
+				},
+				[5] = {
+					["CLSID"] = "{MAKO_A2G_C}",
+					["num"] = 7,
+				},
+				[6] = {
+					["CLSID"] = "{MAKO_A2G_C}",
+					["num"] = 5,
+				},
+				[7] = {
+					["CLSID"] = "{MAKO_A2G_C}",
+					["num"] = 8,
+				},
+				[8] = {
+					["CLSID"] = "{MAKO_A2G_C}",
+					["num"] = 4,
+				},
+			},
+			["tasks"] = {
+				[1] = 32,
+			},
+		},
 	},
 	["tasks"] = {
 	},
