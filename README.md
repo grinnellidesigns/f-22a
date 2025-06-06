@@ -3,7 +3,7 @@ Welcome! This GitHub repository contains the source code and release versions of
 If you're here for the Raptor mod, please follow [this link](https://github.com/grinnellidesigns/f-22a/releases/latest) to download it. **Please note that the DCS: F-15C or DCS: Flaming Cliffs 3 expansions are required for this mod to work properly.**
 
 ### Important Note
-Because the mod relies on the F-15C Avionics, you will need to add `load immediately = true` inside of `Mods/aircraft/F-15C/F-15C.lua`. See [this message on Discord](https://discord.com/channels/778817642860904468/1010337321620623410/1375669978568593419) for details.
+Because the mod relies on the F-15C Avionics, you will need to add `load immediately = true` inside of `Mods/aircraft/F-15C/entry.lua`. See [this message on Discord](https://discord.com/channels/778817642860904468/1010337321620623410/1375669978568593419) for details.
 
 <ins>**NOTE:** This will cause integrity check to fail!</ins>
 
