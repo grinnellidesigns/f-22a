@@ -18,7 +18,20 @@
 
 
 local res = external_profile("Config/Input/Aircrafts/base_keyboard_binding.lua")
-ignore_features(res.keyCommands,{"dragchute"})
+
+-- Countermeasures go to the F-22A's own dispenser (Cockpit/Scripts/Systems/Countermeasures.lua) under the
+-- stock names and default keys. The stock commands are dropped because the F-15C avionics act on them too.
+local stock_combos = {}
+for _, command in ipairs(res.keyCommands) do
+    if command.down then stock_combos[command.down] = command.combos end
+end
+ignore_features(res.keyCommands,{"dragchute", "Countermeasures"})
+join(res.keyCommands,{
+    {combos = stock_combos[iCommandPlaneDropChaffOnce], down = 10160, name = _('Countermeasures Chaff Dispense'),         category = _('Countermeasures')},
+    {combos = stock_combos[iCommandPlaneDropFlareOnce], down = 10161, name = _('Countermeasures Flares Dispense'),        category = _('Countermeasures')},
+    {combos = stock_combos[iCommandPlaneDropSnarOnce],  down = 10162, name = _('Countermeasures Release'),                category = _('Countermeasures')},
+    {combos = stock_combos[iCommandPlaneDropSnar],      down = 10163, name = _('Countermeasures Continuously Dispense'), category = _('Countermeasures')},
+})
 
 local SelectLeft    = 10000
 local SelectRight   = 10001

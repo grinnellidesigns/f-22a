@@ -32,3 +32,4 @@ devices["MFD_SYSTEM"]			= counter()--05
 devices["PMFD_SYSTEM"]			= counter()--06
 devices["ICP_SYSTEM"]			= counter()--07
 --devices["FCS"]		  			= counter()--08
+devices["COUNTERMEASURES"]		= counter()--08
