@@ -18,8 +18,9 @@ local function new_env(chaff, flare, power)
 		listen_command  = function(_, c) listened[c] = true end,
 		get_chaff_count = function() return chaff end,
 		get_flare_count = function() return flare end,
-		drop_chaff = function(_, n, d) chaff = chaff - n; drops[#drops + 1] = "C" .. d end,
-		drop_flare = function(_, n, d) flare = flare - n; drops[#drops + 1] = "F" .. d end,
+		-- A dispenser index is recorded when one is passed
+		drop_chaff = function(_, n, d) chaff = chaff - n; drops[#drops + 1] = "C" .. (d or "") end,
+		drop_flare = function(_, n, d) flare = flare - n; drops[#drops + 1] = "F" .. (d or "") end,
 	}
 	env.LockOn_Options = {script_path = root .. "/"}
 	env.GetSelf = function() return dev end
@@ -52,12 +53,14 @@ do local a = new_env(10, 10, 0)
 end
 do local a = new_env(10, 10, 1)
 	a.env.SetCommand(CHAFF, 1); a.env.SetCommand(FLARE, 1); a.env.SetCommand(SALVO, 1)
-	check(join(a.drops) == "C0,F1,C0,F1", "chaff, flare and salvo alternate dispensers: " .. join(a.drops))
+	-- Naming a dispenser cost flares in flight: after a single chaff the program's flares went to
+	-- dispenser 0 and none came out. Without one, DCS picks it (one flare per call, per ethanw05's tests).
+	check(join(a.drops) == "C,F,C,F", "chaff, flare and salvo drop one each, without naming a dispenser: " .. join(a.drops))
 	check(a.messages[#a.messages] == "CM: chaff 8, flares 8", "shows what is left after each drop: " .. tostring(a.messages[#a.messages]))
 end
 do local a = new_env(0, 5, 1)
 	a.env.SetCommand(CHAFF, 1); a.env.SetCommand(SALVO, 1); a.env.update()
-	check(join(a.drops) == "F0", "empty chaff skipped, flare still released: " .. join(a.drops))
+	check(join(a.drops) == "F", "empty chaff skipped, flare still released: " .. join(a.drops))
 end
 do local a = new_env(10, 10, 1)
 	a.env.SetCommand(PROGRAM, 1)
@@ -66,6 +69,12 @@ do local a = new_env(10, 10, 1)
 	a.env.SetCommand(PROGRAM, 1)
 	for _ = 1, 50 do a.env.update() end
 	check(#a.drops == 6, "continuous program stops on second toggle")
+end
+do local a = new_env(10, 10, 1)
+	a.env.SetCommand(PROGRAM, 1); a.env.update()
+	a.env.SetCommand(CHAFF, 1)
+	for _ = 1, 20 do a.env.update() end -- 1 s: the next salvo
+	check(join(a.drops) == "C,F,C,C,F", "a single chaff during the program leaves its salvos whole: " .. join(a.drops))
 end
 do local a = new_env(10, 10, 1)
 	a.env.SetCommand(PROGRAM, 1); a.env.update(); a.params.MAIN_POWER = 0
