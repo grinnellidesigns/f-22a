@@ -56,7 +56,7 @@ do local a = new_env(10, 10, 1)
 	-- Naming a dispenser cost flares in flight: after a single chaff the program's flares went to
 	-- dispenser 0 and none came out. Without one, DCS picks it (one flare per call, per ethanw05's tests).
 	check(join(a.drops) == "C,F,C,F", "chaff, flare and salvo drop one each, without naming a dispenser: " .. join(a.drops))
-	check(a.messages[#a.messages] == "CM: chaff 8, flares 8", "shows what is left after each drop: " .. tostring(a.messages[#a.messages]))
+	check(#a.messages == 0, "no on-screen messages (the flight-test count readout is gone)")
 end
 do local a = new_env(0, 5, 1)
 	a.env.SetCommand(CHAFF, 1); a.env.SetCommand(SALVO, 1); a.env.update()

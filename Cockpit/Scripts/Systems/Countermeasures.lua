@@ -42,9 +42,6 @@ local WEAPON_COMMANDS = {Keys.PlaneFire, Keys.PlaneFireOff, Keys.PlanePickleOn, 
 
 local PROGRAM_INTERVAL = 1.0 -- seconds between salvos of the continuous program
 
--- Experiment aid: whether this device and the F-15C avionics share one cartridge count is unknown
-local SHOW_COUNTS = true
-
 -- The chaff/flare cockpit lights (args 254/255) stay with the F-15C avionics while they are loaded
 
 local MAIN_POWER = get_param_handle("MAIN_POWER")
@@ -61,12 +58,6 @@ end
 
 local function has_power()
 	return MAIN_POWER:get() == 1
-end
-
-local function show_counts()
-	if SHOW_COUNTS then
-		print_message_to_user(string.format("CM: chaff %d, flares %d", dev:get_chaff_count(), dev:get_flare_count()))
-	end
 end
 
 -- No dispenser index: naming one cost flares in flight (after a single chaff, the program's flares
@@ -93,11 +84,11 @@ function SetCommand(command, value)
 		return
 	end
 	if command == CHAFF then
-		drop_chaff(); show_counts()
+		drop_chaff()
 	elseif command == FLARE then
-		drop_flare(); show_counts()
+		drop_flare()
 	elseif command == SALVO then
-		drop_salvo(); show_counts()
+		drop_salvo()
 	elseif command == PROGRAM then
 		program_active = not program_active
 		-- First salvo goes out on the next update rather than one interval later
@@ -116,6 +107,6 @@ function update()
 	program_elapsed = program_elapsed + update_time_step
 	if program_elapsed >= PROGRAM_INTERVAL then
 		program_elapsed = 0
-		drop_salvo(); show_counts()
+		drop_salvo()
 	end
 end
