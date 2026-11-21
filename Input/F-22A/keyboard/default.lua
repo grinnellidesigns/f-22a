@@ -309,7 +309,7 @@ join(res.keyCommands,{
 --Special Switch Functionality
     {down = Battery, up = Battery,      name = _('Battery On/Off'),                     category = _('F-22A Systems')},
     {down = Battery_T,                  name = _('Battery Toggle'),                     category = _('F-22A Systems')},
-    {down = MasterArm, up = MasterArm,  name = _('Master Arm On/Off'),                  category = _('F-22A Systems')},
+    {down = MasterArm, up = MasterArm, value_down = 1, value_up = 0, name = _('Master Arm On (Hold)'), category = _('F-22A Systems')},
     {down = MasterArm_T,                name = _('Master Arm Toggle'),                  category = _('F-22A Systems')},
     {down = DayNight, up = DayNight,    name = _('Day/Night Mode'),                     category = _('F-22A Systems')},
     {down = DayNight_T,                 name = _('Day/Night Mode Toggle'),              category = _('F-22A Systems')},
