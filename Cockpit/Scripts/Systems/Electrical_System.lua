@@ -87,24 +87,30 @@ function post_initialize()
 end
 
 ------------------------------------------------------------------FUNCTION-SETCOMMAND---------------------------------------------------------------------------------------------------
+-- performClickableAction calls SetCommand again with the control's own command. So a control's own
+-- command only ever sets state, and only keybinds move the control: calling performClickableAction
+-- for the command being handled recursed until "SetCommand: C stack overflow".
+
+local function set_aar(state)
+    if state ~= aar_state then
+        aar_state = state
+        dispatch_action(nil, PlaneAirRefuel) -- the refuel door command is itself a toggle
+        parameters.AAR:set(aar_state)
+    end
+end
+
 function SetCommand(command, value)
-    -- AAR Switch
-    if (command == AAR_SWITCH or command == 10015 or command == 10016) and aar_state == 0 then
-        aar_state = 1
-        dispatch_action(nil, PlaneAirRefuel)
+    -- AAR Switch: clicks send its new position or direction, keybinds toggle it
+    if command == AAR_SWITCH then
+        set_aar(value > 0 and 1 or 0)
+    elseif command == 10015 or command == 10016 then
+        set_aar(1 - aar_state)
         dev:performClickableAction(AAR_SWITCH, aar_state, false)
-        parameters.AAR:set(aar_state)
-    elseif (command == AAR_SWITCH or command == 10015 or command == 10016) and aar_state == 1 then
-        aar_state = 0
-        dispatch_action(nil, PlaneAirRefuel)
-        dev:performClickableAction(AAR_SWITCH, aar_state, false)
-        parameters.AAR:set(aar_state)
     end
 
     -- AAR Light Knob (continuous axis)
     if command == AAR_LIGHT then
         aar_knob = math.max(0, math.min(1, value))
-        dev:performClickableAction(AAR_LIGHT, aar_knob, false)
         parameters.AAR_KNOB:set(aar_knob)
     end
 
@@ -138,7 +144,6 @@ function SetCommand(command, value)
     -- Formation Light Knob (continuous axis)
     if command == FORM_LIGHT then
         form_knob = math.max(0, math.min(1, value))
-        dev:performClickableAction(FORM_LIGHT, form_knob, false)
         parameters.FORM_KNOB:set(form_knob)
     end
 end
