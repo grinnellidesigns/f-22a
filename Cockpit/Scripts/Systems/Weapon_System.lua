@@ -154,6 +154,11 @@ function post_initialize()
 		--dispatch_action(nil,Battery)
 		--dev:performClickableAction(battery_switch, 1, false)
 	end
+	-- An air start begins in the fight, so it begins armed. Arming through the cockpit switch moves the
+	-- switch too; its click toggles master_arm_state in SetCommand, which starts SAFE.
+	if birth == "AIR_HOT" then
+		dev:performClickableAction(master_arm_switch, 1, false)
+	end
 	--Bay Arg Preset
 	if bay_option_state == 0 then
 		--parameters.GROUND_ORIDE:set(1)
