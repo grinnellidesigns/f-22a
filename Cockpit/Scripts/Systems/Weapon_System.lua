@@ -154,6 +154,10 @@ function post_initialize()
 		--dispatch_action(nil,Battery)
 		--dev:performClickableAction(battery_switch, 1, false)
 	end
+	-- An air start begins in the fight, so it begins armed, with the cockpit switch at ARM
+	if birth == "AIR_HOT" then
+		dev:performClickableAction(master_arm_switch, 1, false)
+	end
 	--Bay Arg Preset
 	if bay_option_state == 0 then
 		--parameters.GROUND_ORIDE:set(1)
@@ -235,14 +239,17 @@ end
 		mode_state = 6
 		--print_message_to_user("FLOOD MODE")
 	end					
---Master Arm JOYSTICK/KEYBOARD BINDS
-	if (command == 10007 or command == 10008 or command == master_arm_switch) and master_arm_state == 0 then
-		master_arm_state = 1
-		--print_message_to_user("MASTER ARM ON")
-	elseif (command == 10007 or command == 10008 or command == master_arm_switch) and master_arm_state == 1 then
-		master_arm_state = 0
-		--print_message_to_user("MASTER ARM OFF")
-	end		
+--Master Arm
+	-- A click sends the switch's new position, and moving the switch (performClickableAction) sends it
+	-- again here, so the switch command only sets the state. Bindings move the switch, so it matches.
+	-- "On (Hold)" sends 1 on press and 0 on release, which keeps a physical switch in step.
+	if command == master_arm_switch then
+		master_arm_state = value > 0 and 1 or 0
+	elseif command == 10007 then
+		dev:performClickableAction(master_arm_switch, value > 0 and 1 or 0, false)
+	elseif command == 10008 then
+		dev:performClickableAction(master_arm_switch, 1 - master_arm_state, false)
+	end
 	-- --Bay Doors Open Close
 	-- if command == PickleON and weapon_release_state == 0 then
 	-- 	weapon_release_state = 1
